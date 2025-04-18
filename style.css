@@ -111,8 +111,10 @@ input[type=number] {
 }
 
 .YS{
-    border: 10px black solid;
+    width: 100px;
+    height: 83.333px;
 }
+
 
 
 
