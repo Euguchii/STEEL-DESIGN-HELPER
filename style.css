@@ -65,21 +65,27 @@ header{
 .AxielT{
 
     text-align: center;
-    display: inline-bloc;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     
 }
 
 .AxialTen{
     padding: 10px;    
-    height: 400px;
+    height: 500px;
     width: 400px;
+   
+}
+
+.AxialTenR{
+    padding: 10px;    
+    height: 500px;
+    width: 1400px;
    
 }
 
 .AnalysisTen{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 
@@ -98,6 +104,16 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+#Result{
+    background-color: #FFDEDE;
+    
+}
+
+.YS{
+    border: 10px black solid;
+}
+
 
 
 
