@@ -46,7 +46,7 @@
                 <h1 style="font-size: 22px;"><b>ASTM SPECIFICATION</b></h1>
                 <label for="Specification"></label>
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-                <select name="ASTM"  required onfocus='this.size=5;' onblur='this.size=1;' onchange='this.size=1; this.blur();' >
+                <select name="ASTM"  required >
                 <option value="A36">A36</option>
                 <option value="A572Gr.42">A572 Gr. 42</option> 
                 <option value="A572Gr.50">A572 Gr. 50</option> 
@@ -62,11 +62,11 @@
 
                 <h1 style="font-size: 22px;"><b>HOLE</b></h1>
                 <label for="dhole">diameter of hole:</label>
-                <input type="text" placeholder="inches" ><Br>
+                <input type="text" placeholder="inches" id="class"><Br>
                 <label for="hole">holes(<i>in a column</i>):</label>
-                <input type="number" placeholder="0" >
+                <input type="number" placeholder="0" id="class">
                 <h1 style="font-size: 22px;"><b>SHEAR LAG FACTOR</b></h1>
-                <input type="text" placeholder="0"><Br>
+                <input type="text" placeholder="0" id="class"><Br>
                 <h1 style="font-size: 22px;"><b>STEEL </b></h1><br>
                 <label for="Shape">Shape</label>
                 <select name="STEEL TYPE" id="">
@@ -79,8 +79,8 @@
                 </select>
             
                 <label for="Dim">Dimension</label>
-                <input type="text" placeholder="12X44"><br>
-                <input type="button" value="Calculate">
+                <input type="text" placeholder="12X44" id="class"><br>
+                <input type="button" value="Calculate" class="Calculate">
                 </form>
 
 
