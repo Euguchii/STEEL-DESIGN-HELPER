@@ -2,6 +2,7 @@
 
 body{
     background-color:black;
+    
 
 }
 
@@ -34,6 +35,7 @@ header{
     align-content: center;
     padding: 10px;
     text-align: center;
+
     
 }
 
@@ -44,16 +46,27 @@ header{
     align-content: center;
     text-decoration: none;
     color: black;
+    border: 1px black solid;
+    box-shadow: 1px 2px;
+    border-radius: 40px;
     
     
 }
 
 .ADcon a#active{
-    background-color: rgb(255, 253, 253);
+    background-color: rgb(255, 251, 251);
     font-style: bold;
+    border-radius: 50px;
 
     
 }
+.ADcon a:hover{
+    background-color: grey;
+    font-style: normal;
+    text-decoration: none;
+
+}
+
 
 .AnalysisAxialTen{
     background-color: rgb(255, 255, 255);
@@ -73,6 +86,7 @@ header{
     padding: 10px;    
     height: 500px;
     width: 400px;
+    overlay: auto;
    
 }
 
@@ -114,6 +128,7 @@ input[type=number] {
 #Result{
     background-color: #FFDEDE;
     border-top-right-radius: 20px;
+    box-shadow: 10px 1px black ;
     
 }
 
@@ -121,6 +136,25 @@ input[type=number] {
     width: 100px;
     height: 83.333px;
 }
+
+.Calculate{
+  margin-left: 280px;
+  margin-top: 60px;
+  box-shadow: 2px 2px;
+  background-color: rgb(32, 30, 30)E;
+  font-size: large;
+  font-family: 'Times New Roman', Times, serif;
+  color:rgb(38, 48, 48)e;
+}
+
+
+#class{
+   border-radius: 10px;
+
+}
+
+
+
 
 
 
