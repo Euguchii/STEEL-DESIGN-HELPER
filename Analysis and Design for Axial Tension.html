@@ -59,6 +59,7 @@
                 <option value="A687">A687</option>
                 <option value="A992">A992</option>
                 </select><br>
+
                 <h1 style="font-size: 22px;"><b>HOLE</b></h1>
                 <label for="dhole">diameter of hole:</label>
                 <input type="text" placeholder="inches" ><Br>
@@ -66,11 +67,59 @@
                 <input type="number" placeholder="0" >
                 <h1 style="font-size: 22px;"><b>SHEAR LAG FACTOR</b></h1>
                 <input type="text" placeholder="0"><Br>
-                <h1 style="font-size: 22px;"><b>LENGHT</b></h1>
-                <input type="text" placeholder="feet"><Br>
-                <input type="button" value="Calculate">
-
+                <h1 style="font-size: 22px;"><b>STEEL </b></h1><br>
+                <label for="Shape">Shape</label>
+                <select name="STEEL TYPE" id="">
+                    <option value="W">W</option>
+                    <option value="M">M</option>
+                    <option value="S">S</option>
+                    <option value="HP">HP</option>
+                    <option value="C">C</option>
+                    <option value="L">L</option>
+                </select>
             
+                <label for="Dim">Dimension</label>
+                <input type="text" placeholder="12X44"><br>
+                <input type="button" value="Calculate">
+                </form>
+
+
+                
+     </div>
+
+
+
+
+
+
+
+                <div class="AxialTenR"  id="Result">
+                    <div class="YS">
+                        GROSS AREA
+                        
+                        
+                    </div>
+                    <div class="YS">
+                        AREA NET
+                        
+                        
+                    </div>
+                    <div class="YS">
+                        YIELDING
+                        
+                        
+                    </div>
+                    <div class="YS">
+                        FRACTURE
+                        
+                        
+                    </div>
+                
+                
+            
+                </div>
+            
+
             
                 
                     
@@ -84,33 +133,26 @@
 
 
 
-                
-                </form>
+        
+       
 
                     
 
         
-    </select>
+
     
-    <py-script>
-        print
-    </py-script>
 
-           
 
                 
 
                 
-                
-            </div>
-        
+      
            
 
       
 
 
-        
-    </div>
+  
     
 </body>
 </html>
