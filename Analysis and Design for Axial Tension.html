@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Principle of Steel  Design</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css">
-    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
-
+    
 </head>
 <body>
     <header>
@@ -62,11 +60,11 @@
 
                 <h1 style="font-size: 22px;"><b>HOLE</b></h1>
                 <label for="dhole">diameter of hole:</label>
-                <input type="text" placeholder="inches" id="class"><Br>
+                <input type="number" placeholder="inches" id="class" step="0.001" required><Br>
                 <label for="hole">holes(<i>in a column</i>):</label>
-                <input type="number" placeholder="0" id="class">
+                <input type="number" placeholder="0" id="class" >
                 <h1 style="font-size: 22px;"><b>SHEAR LAG FACTOR</b></h1>
-                <input type="text" placeholder="0" id="class"><Br>
+                <input type="text" placeholder="0" id="class" required><Br>
                 <h1 style="font-size: 22px;"><b>STEEL </b></h1><br>
                 <label for="Shape">Shape</label>
                 <select name="STEEL TYPE" id="">
@@ -79,7 +77,7 @@
                 </select>
             
                 <label for="Dim">Dimension</label>
-                <input type="text" placeholder="12X44" id="class"><br>
+                <input type="text" placeholder="12X44" id="class" required><br>
                 <input type="button" value="Calculate" class="Calculate">
                 </form>
 
@@ -88,46 +86,77 @@
      </div>
 
 
-
-
-
-
-
                 <div class="AxialTenR"  id="Result">
                     <div class="YS">
                         GROSS AREA
+                        <div class="RESULT" id="AG">
+                            
+                        </div>
                         
                         
                     </div>
                     <div class="YS">
                         AREA NET
+                        <div class="RESULT" id="">
+                            
+                        </div>
+                        
                         
                         
                     </div>
                     <div class="YS">
                         YIELDING
+                        <div class="RESULT" id="">
+                            
+                        </div>
+                        
                         
                         
                     </div>
                     <div class="YS">
                         FRACTURE
+                        <div class="RESULT" id="">
+                            
+                        </div>
+                        
                         
                         
                     </div>
                     <div class="YS">
                         LRFD
+                        <div class="RESULT" id="">
+                            
+                        </div>
+                        
                         
                         
                     </div>
                     <div class="YS">
                         ASD
+                        <div class="RESULT" id="">
+                            
+                        </div>
                         
+                    
                         
                     </div>
                 
                 
             
                 </div>
+    
+    
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css">
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+
+ <script>
+    
+ </script>
+    
+
+
+    
+                
             
 
             
