@@ -93,7 +93,12 @@ header{
 .AxialTenR{
     padding: 10px;    
     height: 500px;
-    width: 1400px;
+    width: 1000em;
+    font-weight: bold;
+    overflow: hidden;
+    
+    
+    
    
 }
 
@@ -151,6 +156,16 @@ input[type=number] {
 #class{
    border-radius: 10px;
 
+}
+
+.RESULT{
+    background-color: #ffffff;
+    margin-left: 50px;
+    width: 300px;
+    height: 40px;
+    border-radius: 10px;
+    box-shadow: 3PX 4PX #FF0B55;
+    
 }
 
 
