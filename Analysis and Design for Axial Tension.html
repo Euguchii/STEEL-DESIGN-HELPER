@@ -44,7 +44,7 @@
                 <h1 style="font-size: 22px;"><b>ASTM SPECIFICATION</b></h1>
                 <label for="Specification"></label>
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-                <select name="ASTM"  required >
+                <select name="ASTM"  required id="ASpecA">
                 <option value="A36">A36</option>
                 <option value="A572Gr.42">A572 Gr. 42</option> 
                 <option value="A572Gr.50">A572 Gr. 50</option> 
@@ -60,14 +60,14 @@
 
                 <h1 style="font-size: 22px;"><b>HOLE</b></h1>
                 <label for="dhole">diameter of hole:</label>
-                <input type="number" placeholder="inches" id="class" step="0.001" required><Br>
+                <input type="number" placeholder="inches" id="dholeA" step="0.001" required><Br>
                 <label for="hole">holes(<i>in a column</i>):</label>
-                <input type="number" placeholder="0" id="class" >
+                <input type="number" placeholder="0" id="nholeA" >
                 <h1 style="font-size: 22px;"><b>SHEAR LAG FACTOR</b></h1>
-                <input type="text" placeholder="0" id="class" required><Br>
+                <input type="text" placeholder="0" id="ulagA" required><Br>
                 <h1 style="font-size: 22px;"><b>STEEL </b></h1><br>
                 <label for="Shape">Shape</label>
-                <select name="STEEL TYPE" id="">
+                <select name="STEEL TYPE" id="shapeA">
                     <option value="W">W</option>
                     <option value="M">M</option>
                     <option value="S">S</option>
@@ -77,7 +77,7 @@
                 </select>
             
                 <label for="Dim">Dimension</label>
-                <input type="text" placeholder="12X44" id="class" required><br>
+                <input type="text" placeholder="12X44" id="dimA" required><br>
                 <input type="button" value="Calculate" class="Calculate">
                 </form>
 
@@ -90,6 +90,7 @@
                     <div class="YS">
                         GROSS AREA
                         <div class="RESULT" id="AG">
+                            <p id="AG"></p>
                             
                         </div>
                         
@@ -150,6 +151,19 @@
     <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
 
  <script>
+    
+    let username = "W12x44";
+
+
+
+
+username.toUpperCase();
+
+
+document.getElementById('AG').textContent = username
+
+    
+    
     
  </script>
     

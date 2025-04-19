@@ -133,7 +133,7 @@ input[type=number] {
 #Result{
     background-color: #FFDEDE;
     border-top-right-radius: 20px;
-    box-shadow: 10px 1px black ;
+    box-shadow: 10px 0px black ;
     
 }
 
@@ -153,7 +153,7 @@ input[type=number] {
 }
 
 
-#class{
+input{
    border-radius: 10px;
 
 }
