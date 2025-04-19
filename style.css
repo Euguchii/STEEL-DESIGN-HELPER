@@ -78,7 +78,7 @@ header{
 .AxielT{
 
     text-align: center;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     
 }
 
@@ -97,9 +97,6 @@ header{
     font-weight: bold;
     overflow: hidden;
     
-    
-    
-   
 }
 
 .AnalysisTen{
@@ -139,16 +136,17 @@ input[type=number] {
 
 .YS{
     width: 100px;
-    height: 83.333px;
+    height: 80px;
+    
+    
 }
-
 .Calculate{
   margin-left: 280px;
   margin-top: 60px;
   box-shadow: 2px 2px;
   background-color: rgb(32, 30, 30)E;
   font-size: large;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   color:rgb(38, 48, 48)e;
 }
 
@@ -165,6 +163,9 @@ input{
     height: 40px;
     border-radius: 10px;
     box-shadow: 3PX 4PX #FF0B55;
+    padding: 10px;
+    padding-left: 30px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     
 }
 

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Principle of Steel  Design</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     
 </head>
 <body>
@@ -38,7 +39,7 @@
 
 
         <div class="AnalysisTen" >
-        <form action="index.php" method="POST">
+
             <div id="ASTMSPEC" class="AxialTen"  >
                 <form action="index.php" method="POST">
                 <h1 style="font-size: 22px;"><b>ASTM SPECIFICATION</b></h1>
@@ -57,7 +58,6 @@
                 <option value="A687">A687</option>
                 <option value="A992">A992</option>
                 </select><br>
-
                 <h1 style="font-size: 22px;"><b>HOLE</b></h1>
                 <label for="dhole">diameter of hole:</label>
                 <input type="number" placeholder="inches" id="dholeA" step="0.001" required><Br>
@@ -77,8 +77,9 @@
                 </select>
             
                 <label for="Dim">Dimension</label>
-                <input type="text" placeholder="12X44" id="dimA" required><br>
+                <input type="text" placeholder="12X45" id="dimA" required><br>
                 <input type="button" value="Calculate" class="Calculate">
+                
                 </form>
 
 
@@ -89,7 +90,7 @@
                 <div class="AxialTenR"  id="Result">
                     <div class="YS">
                         GROSS AREA
-                        <div class="RESULT" id="AG">
+                        <div class="RESULT">
                             <p id="AG"></p>
                             
                         </div>
@@ -99,6 +100,7 @@
                     <div class="YS">
                         AREA NET
                         <div class="RESULT" id="">
+                            <p id="AE"></p>
                             
                         </div>
                         
@@ -108,6 +110,7 @@
                     <div class="YS">
                         YIELDING
                         <div class="RESULT" id="">
+                            <p id="YC"></p>
                             
                         </div>
                         
@@ -117,6 +120,8 @@
                     <div class="YS">
                         FRACTURE
                         <div class="RESULT" id="">
+                            <p id="FS"></p>
+                            
                             
                         </div>
                         
@@ -126,6 +131,7 @@
                     <div class="YS">
                         LRFD
                         <div class="RESULT" id="">
+                            <p id="LRFD"></p>
                             
                         </div>
                         
@@ -135,6 +141,7 @@
                     <div class="YS">
                         ASD
                         <div class="RESULT" id="">
+                            <p id="ASD">
                             
                         </div>
                         
@@ -145,30 +152,136 @@
                 
             
                 </div>
-    
-    
-    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css">
-    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
-
- <script>
-    
-    let username = "W12x44";
-
-
-
-
-username.toUpperCase();
-
-
-document.getElementById('AG').textContent = username
-
-    
-    
-    
- </script>
-    
-
-
+                
+                <script>
+                    let steelData = {};
+                
+                    const astmData = {
+                        "A36": { Fy: 36, Fu: 58 },
+                        "A572GR.42": { Fy: 42, Fu: 60 },
+                        "A572GR.50": { Fy: 50, Fu: 65 },
+                        "A572GR.55": { Fy: 55, Fu: 70 },
+                        "A572GR.60": { Fy: 60, Fu: 75 },
+                        "A572GR.65": { Fy: 65, Fu: 80 },
+                        "A588GR.42": { Fy: 42, Fu: 63 },
+                        "A588GR.46": { Fy: 46, Fu: 67 },
+                        "A588GR.50": { Fy: 50, Fu: 70 },
+                        "A687":      { Fy: 45, Fu: 75 },
+                        "A992":      { Fy: 50, Fu: 65 }
+                    };
+                
+                    function fractionToDecimal(fraction) {
+                        if (!fraction.includes("/")) return parseFloat(fraction);
+                        const parts = fraction.split("/");
+                        return parseFloat(parts[0]) / parseFloat(parts[1]);
+                    }
+                
+                    function extractThicknessFromLLabel(label) {
+                        const parts = label.replace(/\s/g, "").toUpperCase().split("X");
+                        const raw = parts[2]; // e.g., "3/8"
+                        return fractionToDecimal(raw);
+                    }
+                
+                    function loadExcelData() {
+                        fetch('ASTMSPEC.xlsx')
+                            .then(response => response.arrayBuffer())
+                            .then(data => {
+                                const workbook = XLSX.read(data, { type: 'array' });
+                                const shapeSheet = workbook.Sheets[workbook.SheetNames[1]];
+                                const shapeRows = XLSX.utils.sheet_to_json(shapeSheet);
+                
+                                shapeRows.forEach(row => {
+                                    if (row["AISC_Manual_Label"]) {
+                                        const label = row["AISC_Manual_Label"].trim().toUpperCase().replace(/\s/g, '');
+                                        const shape = label.startsWith("L") ? "L" : "OTHER";
+                                        let t = null;
+                
+                                        if (shape === "L") {
+                                            try {
+                                                t = extractThicknessFromLLabel(label);
+                                            } catch (err) {
+                                                console.warn("Could not extract thickness from label:", label);
+                                            }
+                                        }
+                
+                                        steelData[label] = {
+                                            A: parseFloat(row.A),
+                                            tw: parseFloat(row.tw), // used for non-L shapes
+                                            t: t // for L-shapes
+                                        };
+                                    }
+                                });
+                
+                                console.log("Steel shape data loaded");
+                            })
+                            .catch(err => {
+                                console.error("Error loading Excel file:", err);
+                            });
+                    }
+                
+                    window.onload = function () {
+                        loadExcelData();
+                
+                        document.querySelector('.Calculate').addEventListener('click', function (event) {
+                            event.preventDefault();
+                
+                            const ASTM = document.getElementById('ASpecA').value.toUpperCase().trim();
+                            const dhole = parseFloat(document.getElementById('dholeA').value);
+                            const nhole = parseInt(document.getElementById('nholeA').value) || 0;
+                            const ulag = parseFloat(document.getElementById('ulagA').value);
+                            const shape = document.getElementById('shapeA').value.trim().toUpperCase();
+                            const dim = document.getElementById('dimA').value.trim().toUpperCase().replace(/\s/g, '');
+                            const key = shape + dim;
+                
+                            const astm = astmData[ASTM];
+                            const steel = steelData[key];
+                
+                            if (!astm) {
+                                window.alert(`ASTM specification "${ASTM}" not found.`);
+                                return;
+                            }
+                
+                            if (!steel) {
+                                window.alert(`Steel section "${key}" not found in Excel data.`);
+                                return;
+                            }
+                
+                            const Ag = steel.A;
+                            let t = steel.tw;
+                
+                            if (shape === "L") {
+                                t = steel.t;
+                                if (!t || isNaN(t)) {
+                                    window.alert(`Couldn't determine thickness for L-shape "${key}".`);
+                                    return;
+                                }
+                            }
+                
+                            const An = Ag - (nhole * dhole * t);
+                            const Fy = astm.Fy;
+                            const Fu = astm.Fu;
+                
+                            const Pn_yield = Fy * Ag;
+                            const Pn_fracture = Fu * An * ulag;
+                
+                            const φ = 0.9;
+                            const Ω = 1.67;
+                
+                            const LRFD = Math.min(φ * Pn_yield, φ * Pn_fracture);
+                            const ASD = Math.min(Pn_yield / Ω, Pn_fracture / Ω);
+                
+                            document.getElementById('AG').innerHTML = Ag.toFixed(3) + " in²";
+                            document.getElementById('AE').innerHTML = An.toFixed(3) + " in²";
+                            document.getElementById('YC').innerHTML = Pn_yield.toFixed(2) + " kip";
+                            document.getElementById('FS').innerHTML = Pn_fracture.toFixed(2) + " kip";
+                            document.getElementById('LRFD').innerHTML = LRFD.toFixed(2) + " kip";
+                            document.getElementById('ASD').innerHTML = ASD.toFixed(2) + " kip";
+                        });
+                    };
+                </script>
+                
+                
+                
     
                 
             
@@ -208,4 +321,5 @@ document.getElementById('AG').textContent = username
   
     
 </body>
+
 </html>
