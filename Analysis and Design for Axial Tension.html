@@ -66,7 +66,7 @@
                 <h1 style="font-size: 22px;"><b>SHEAR LAG FACTOR</b></h1>
                 <input type="text" placeholder="0" id="ulagA" required><Br>
                 <h1 style="font-size: 22px;"><b>STEEL </b></h1><br>
-                <label for="Shape">Shape</label>
+                <label for="Shape">Shape:</label>
                 <select name="STEEL TYPE" id="shapeA">
                     <option value="W">W</option>
                     <option value="M">M</option>
@@ -76,7 +76,7 @@
                     <option value="L">L</option>
                 </select>
             
-                <label for="Dim">Dimension</label>
+                <label for="Dim">Dimension:</label>
                 <input type="text" placeholder="12X45" id="dimA" required><br>
                 <input type="button" value="Calculate" class="Calculate">
                 
@@ -89,28 +89,20 @@
 
                 <div class="AxialTenR"  id="Result">
                     <div class="YS">
-                        GROSS AREA
+                      
                         <div class="RESULT">
-                            <p id="AG"></p>
+                            <P class="YSt">GROSS CROSS SECTION:</P>                            
+                            <p id="AG" style="color: red;"></p>
                             
                         </div>
                         
                         
                     </div>
                     <div class="YS">
-                        AREA NET
+                  
                         <div class="RESULT" id="">
-                            <p id="AE"></p>
-                            
-                        </div>
-                        
-                        
-                        
-                    </div>
-                    <div class="YS">
-                        YIELDING
-                        <div class="RESULT" id="">
-                            <p id="YC"></p>
+                            <P class="YSt">NET AREA:</P>
+                            <p id="AE" style="color: red;">  </p>
                             
                         </div>
                         
@@ -118,9 +110,23 @@
                         
                     </div>
                     <div class="YS">
-                        FRACTURE
+                        
                         <div class="RESULT" id="">
-                            <p id="FS"></p>
+                            <P class="YSt"> YIELDING IN GROSS CROSS SECTION:
+        
+                            </P>
+                            <p id="YC" class="YSt" style="color: red;"></p>
+                            
+                        </div>
+                        
+                        
+                        
+                    </div>
+                    <div class="YS">
+                      
+                        <div class="RESULT" id="">
+                            <P class="YSt">FRACTURE IN EFFECTIVE NET AREA: </P>
+                            <p id="FS" class="YSt" style="color: red;"></p>
                             
                             
                         </div>
@@ -129,9 +135,10 @@
                         
                     </div>
                     <div class="YS">
-                        LRFD
+                      
                         <div class="RESULT" id="">
-                            <p id="LRFD"></p>
+                            <p class="YSt" >LRDF:</p>
+                            <p id="LRFD" class="YSt" style="color: red;"></p>
                             
                         </div>
                         
@@ -139,9 +146,9 @@
                         
                     </div>
                     <div class="YS">
-                        ASD
+                       
                         <div class="RESULT" id="">
-                            <p id="ASD">
+                            <p class="YSt" > ASD:   </p><p class="YSt" id="ASD" style="color: red;"> </p>
                             
                         </div>
                         
