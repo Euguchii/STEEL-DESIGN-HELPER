@@ -1,17 +1,16 @@
 
 
 body{
-    background-color:black;
+    background-color:rgb(255, 255, 255);
     
 
 }
 
 
 
-
 .filler{
     display: block;
-        background-color: black;
+        background-color: rgb(255, 255, 255);
         border: 5px solid black;
         color: red;
         height: 500px;
@@ -19,9 +18,9 @@ body{
     }
 
 header{
-     background-color:rgb(0, 0, 0);
+     background-color:rgb(255, 255, 255);
      font-family: Verdana, Geneva, Tahoma, sans-serif;
-     color: #eb0042;
+     color: #ffbb00;
      text-align: center;
      font-size: 2em;
      padding: 5vh;
@@ -30,7 +29,7 @@ header{
 
 
 .ADcon{
-    background-color: #FFDEDE;
+    background-color: #ffffff;
     height: auto;
     align-content: center;
     padding: 10px;
@@ -40,28 +39,28 @@ header{
 }
 
 .con{
-    background-color: #FFDEDE;
-    padding:5px;
-    display: inline-block;
+    background-color: #ffffff;
+    margin: 2px;
+    padding: 2px;
+    border: 0.5px dotted black;
     align-content: center;
     text-decoration: none;
     color: black;
-    border: 1px black solid;
-    box-shadow: 1px 2px;
-    border-radius: 40px;
+    box-shadow: 1px 1px 2px black;
+    
     
     
 }
 
 .ADcon a#active{
-    background-color: rgb(255, 251, 251);
+    background-color: rgb(255, 226, 132);
     font-style: bold;
     border-radius: 50px;
 
     
 }
 .ADcon a:hover{
-    background-color: grey;
+    background-color: rgb(255, 142, 107);
     font-style: normal;
     text-decoration: none;
 
@@ -84,15 +83,14 @@ header{
 
 .AxialTen{
     padding: 10px;    
-    height: 500px;
+    height: 740px;
     width: 400px;
-    overlay: auto;
    
 }
 
 .AxialTenR{
     padding: 10px;    
-    height: 500px;
+    height: 550px;
     width: 1000em;
     font-weight: bold;
     overflow: hidden;
@@ -104,14 +102,15 @@ header{
     flex-direction: row;
     padding-left: 100px;
     padding-right: 100px;
+    
 }
 
 
 #ASTMSPEC{
-    background-color: #FF0B55;
+    background-color: #0099ff;
     border-top-left-radius: 20px ;
     left:10px;
-    ; 
+    
 }
 
 
@@ -122,21 +121,22 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-}
+
 
 #Result{
-    background-color: #FFDEDE;
+    
+    height: 740px;
+    background-color: hsl(24, 100%, 71%);
     border-top-right-radius: 20px;
-    box-shadow: 10px 0px black ;
+    box-shadow: 5px 0px  black ;
+    
     
 }
 
 .YS{
     width: 100px;
     height: 80px;
+    margin: 10px;
    
     
     
@@ -144,7 +144,7 @@ input[type=number] {
 }
 .Calculate{
   margin-left: 280px;
-  margin-top: 60px;
+  margin-top: 5px;
   box-shadow: 2px 2px;
   background-color: rgb(32, 30, 30)E;
   font-size: large;
@@ -159,13 +159,12 @@ input{
 }
 
 .RESULT{
+    
     background-color: #ffffff;
-    margin-left: 50px;
     width: 400px;
-    height: 65px;
+    height: 80px;
     border-radius: 10px;
-    box-shadow: 3PX 4PX #FF0B55;
-    padding: 10px;
+    box-shadow: 3PX 4PX 5px #000000;
     padding-left: 30px;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     display: inline-block;
@@ -174,17 +173,113 @@ input{
 }
 
 .YSt{
-    display: flex;
-    flex-direction: column;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    
+}
+
+
+.BLOCKSTAGGER{
+    padding: 10px;
+    margin-left: 100px;
+    margin-right: 100px;
+    background-color: #ff5084;
+    box-shadow: 5px 0px  rgb(0, 0, 0);
+  
+
+}
+
+
+.blockstag{
+    
+    width: 400px;
+    height: 200px;
+    background-color: white;
+    text-align: center;
+    padding: 10px;
+   border-radius: 10px 40px;
+   margin: 12px;
+    
+    
 }
 
 
 
 
+.blockstag-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* optional: centers the blocks horizontally */
+}
 
 
+  #column-inputs {
+        display: none;
+        margin-top: 20px;
+        background-color: #5c2a3b;
+        padding: 20px;
+        border-radius: 8px;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
 
+    .control-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
 
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-width: 150px;
+    }
 
+    .control-group label {
+        font-weight: bold;
+    }
 
+    .control-group input,
+    .control-group button {
+        padding: 6px 10px;
+        font-size: 14px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        width: 100%;
+        box-sizing: border-box;
+    }
 
+    .control-group button {
+        cursor: pointer;
+        border: none;
+    }
+
+    .restore-btn {
+        background-color: #4CAF50;
+        color: white;
+        font-weight: bold;
+    }
+
+    .hole {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: black;
+        position: absolute;
+    }
+    .path-line {
+        position: absolute;
+        height: 2px;
+        background-color: red;
+        transform-origin: left;
+    }
+
+.DesignAxialTen{
+    background-color: #ffffff;
+    text-align: center;
+}
+
+.AxialD{
+    background-color: white;
+    height: 100px;
+}
