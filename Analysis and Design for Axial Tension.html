@@ -10,13 +10,13 @@
 <body>
     <header>
         <div class="header"><b>STEEL DESIGN HELPER</b></div>
-        <hr style="box-shadow:2px 2px 2px black;">
+        
     </header>
 
     <nav class="navbar">
         <div class="ADcon">
             <a class="con" href="index.html">|HOME|</a>
-            <a class="con active" href="Analysis and Design for Axial Tension.html">|Analysis and Design for Axial Tension|</a>
+            <a class="con" id="active" href="Analysis and Design for Axial Tension.html">|Analysis and Design for Axial Tension|</a>
             <a class="con" href="Analysis and Design for Axial Compression.html">|Analysis and Design for Axial Compression|</a>
             <a class="con" href="Analysis and Design of Members for Bending.html">|Analysis and Design of Members for Bending|</a>
             <a class="con" href="Shear Strength of Structural Member.html">|Shear Strength of Structural Member|</a>
@@ -25,8 +25,9 @@
 
     <div class="AnalysisAxialTen">
         <div class="AxielT">
-            <h1>Analysis of Tension Member</h1>
+            <h1 >Analysis of Tension Member</h1>
         </div>
+        <div class="AxialTenionmember">
 
         <div class="AnalysisTen">
             <div id="ASTMSPEC" class="AxialTen">
@@ -148,15 +149,26 @@
                 <div id="dynamicFlange" style="position:relative; width:400px; height:300px; border:2px solid black; background:#f0f0f0; margin-top:20px;"></div>
             </div>
         </div>
-    </div>
-    <div class="DesignAxialTen">
+   
+        <div class="DesignAxialTen">
+        <hr>
         <div class="AxialD">
             <h1 style="text-align: center;">Design of Tension Member</h1>
         </div>
         <div class="DesignT">
             <div class="DesignTenData">
+                
                 <div>
+            
                 <form action="">
+                    <div class="input-group">
+                        <label for="designMethod">Design Method:</label>
+                        <select id="designMethod">
+                            <option value="LRFD">LRFD</option>
+                            <option value="ASD">ASD</option>
+                        </select>
+                    </div>
+                    
                     <label>ASTM Specification</label>
                     <select id="ASpecD" name="ASTM SPECIFICATION">
                         <option value="A36">A36</option>
@@ -188,48 +200,133 @@
                     <input id="Dload" type="number" placeholder="kips">
                 </div>
                 <div>
-                    <label for="DeadDload">Live Load:</label>
+                    <label for="Lload">Live Load:</label>
                     <input id="Lload" type="number" placeholder="kips">
                  </div>
                  <div>
-                    <label for="DeadDload">Length:</label>
+                    <label for="length">Length:</label>
                     
-                    <input id="LenghtD" type="number" placeholder="ft.">
+                    <input id="LenghtD" type="number" placeholder="ft."  step="0.001">
                 </div>
                     <div>
 
                     <label for="dholeD"  >Diameter  of Bolts:</label>
-                    <input id="dholeD" typ="numebr" placeholder="in.">
+                    <input id="dholeD" typ="numebr" placeholder="in."  step="0.001">
                     </div>  
-                    <button class="Design" id="design">DESIGN</button>
 
                     
+                    <div><label>number of holes</label>
+                    <input class="nholeD" placeholder="in." type="number" > </div>
+                    <button class="Design" id="design">DESIGN</button> 
+
                     
-                    
-                    
+            </form>
+
+
+
+            
+            </div>
+    
+
+        </div>
+
+    </div>
+    <div class="DesignTRes">
+        <div class="DesignCalcT">
+            
+            <h1>Design Calculation</h1>
+            <div class="LRFDdis">
+                <H2>Step 1: Load Combinations</H2>
+
+            <h4>LRFD Load Combination: 1.2D + 1.6L=<p id="LRFDdesignComb"></p></h4> <h4>ASD Load Combination: 1.4D =<p id="ASDdesignComb"></p></h4>
+            </div> 
+        </div>    
+            <div class="DesignCalcT">
+            <h2>Step 2: Required Area Calculation</h2>
+            <h3>For Yielding (LRFD):</h3>
+            <h4>Pu ≤ φPn = φFyAg <br>
+                Ag ≥ Pu / (φFy) = <p id="LRFDYielding"></p></h4>
+                <h3>For Yielding (ASD):</h3>
+            <h4>TnΩ = FyAg/Ω = FyAg /1.67 <br>
+                Ag ≥ Pu / (φFy) = <p id="ASDYielding"></p></h4>
+                <h3>For Fracture (LRFD):</h3>
+                <h4>Pu ≤ φPn = φFuAe = <p id="LRFDFracture"></p></p></h4>
+                <h3>For Fracture (ASD):</h3>
+                <h4>Tn/Ω = FuAe/Ω = FuAe/2.00 <p id="ASDFracture"></p></p></h4>
+
+            <H3 >Controlling Ag requirement: <p class="controlR"></p></H3>     
+        </div>
+                                <div class="DesignCon">
+                                                     <div class="recommended-shapes">
+                 <h2>Recommended W Shapes</h2>
+                <p>The following shapes provide sufficient area for the tension member:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Shape</th>
+                            <th>Area (in²)</th>
+                            <th>Capacity/Demand</th>
+                            <th>Weight (lb/ft)</th>
+                            <th>Depth (in)</th>
+                            <th>Width (in)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="rank1"></td>
+                            <td id="Shape1"></td>
+                            <td id="AreaG1"></td>
+                            <td id="CD1"></td>
+                            <td id="Weight1"></td>
+                            <td id="Depth1"></td>
+                            <td id="Width1"></td>
+                        </tr>
+                        <tr>
+                            <td id="rank2"></td>
+                            <td id="Shape2"></td>
+                            <td id="AreaG2"></td>
+                            <td id="CD2"></td>
+                            <td id="Weight2"></td>
+                            <td id="Depth2"></td>
+                            <td id="Width2"></td>
+                        </tr>
+                        <tr>
+                            <td id="rank3"></td>
+                            <td id="Shape3"></td>
+                            <td id="AreaG3"></td>
+                            <td id="CD3"></td>
+                            <td id="Weight3"></td>
+                            <td id="Depth3"></td>
+                            <td id="Width3"></td>
+                        </tr>
+                        <tr>
+                            <td id="rank4"></td>
+                            <td id="Shape4"></td>
+                            <td id="AreaG4"></td>
+                            <td id="CD4"></td>
+                            <td id="Weight4"></td>
+                            <td id="Depth4"></td>
+                            <td id="Width4"></td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+                
+                
+                
+               
+                                        </div>
+                                                    </div>
 
         
-                </form>
-            </div>
-
-
-
-
-
-
-        </div>
-        <div class="DesignTRes">
-            <div class="DTR">LOAD COMBINATIONS </div>
-            <div class="DTR">YIELDING IN GROSS SECTION AREA </div>
-            <div class="DTR" > FRACTURE IN EFFECTIVE NET AREA</div>
-            <div class="DTR"> SLENDERNESS</div>
-        </div>
-        <br>
-        <div class="DesignCon">
-            FINAL DESIGN: 
-        </div>
-       
-    
+            
+ 
+   
+   
+    </div>
+</div>
     <script>
     
     // Add a loading state
@@ -1292,6 +1389,328 @@ document.addEventListener('DOMContentLoaded', function() {
     loadExcelData();
     toggleShearDiv();
 });
+
+// JavaScript for Axial Tension Member Design Calculator with Excel Data Import
+
+// Function to load the SheetJS library
+function loadScript(url) {
+    return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${url}"]`)) {
+            resolve(); // Script already loaded
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = url;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+
+// Function to read local Excel file using File API
+async function readExcelFile(filePath) {
+    try {
+        // Load SheetJS library if not already loaded
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+        
+        // This is a mock function since direct file system access isn't allowed in browsers
+        // In a real implementation, you would use a server-side approach or request user to select the file
+        
+        // For demonstration, we'll use hardcoded data that mimics what would be in the Excel file
+        return [
+            { shape: "W4X13", area: 3.83, weight: 13, depth: 4.16, width: 4.06 },
+            { shape: "W5X16", area: 4.71, weight: 16, depth: 5.01, width: 5.00 },
+            { shape: "W6X9", area: 2.68, weight: 9, depth: 5.90, width: 3.94 },
+            { shape: "W6X12", area: 3.55, weight: 12, depth: 6.03, width: 4.00 },
+            { shape: "W6X15", area: 4.43, weight: 15, depth: 5.99, width: 5.99 },
+            { shape: "W6X16", area: 4.74, weight: 16, depth: 6.28, width: 4.03 },
+            { shape: "W8X10", area: 2.96, weight: 10, depth: 7.89, width: 3.94 },
+            { shape: "W8X13", area: 3.84, weight: 13, depth: 8.00, width: 4.00 },
+            { shape: "W8X15", area: 4.44, weight: 15, depth: 8.11, width: 4.01 },
+            { shape: "W8X18", area: 5.26, weight: 18, depth: 8.14, width: 5.25 },
+            { shape: "W8X21", area: 6.16, weight: 21, depth: 8.28, width: 5.27 },
+            { shape: "W10X12", area: 3.54, weight: 12, depth: 9.87, width: 3.96 },
+            { shape: "W10X15", area: 4.41, weight: 15, depth: 10.11, width: 4.00 },
+            { shape: "W10X17", area: 4.99, weight: 17, depth: 10.11, width: 4.01 },
+            { shape: "W10X19", area: 5.62, weight: 19, depth: 10.24, width: 4.02 },
+            { shape: "W10X22", area: 6.49, weight: 22, depth: 10.17, width: 5.75 },
+            { shape: "W10X26", area: 7.61, weight: 26, depth: 10.33, width: 5.77 },
+            { shape: "W12X14", area: 4.16, weight: 14, depth: 11.91, width: 3.97 },
+            { shape: "W12X16", area: 4.71, weight: 16, depth: 12.00, width: 3.99 },
+            { shape: "W12X19", area: 5.57, weight: 19, depth: 12.16, width: 4.01 },
+            { shape: "W12X22", area: 6.48, weight: 22, depth: 12.31, width: 4.03 },
+            { shape: "W12X26", area: 7.65, weight: 26, depth: 12.22, width: 6.49 },
+            { shape: "W12X30", area: 8.79, weight: 30, depth: 12.34, width: 6.52 },
+            { shape: "W14X22", area: 6.49, weight: 22, depth: 13.74, width: 5.00 },
+            { shape: "W14X26", area: 7.69, weight: 26, depth: 13.91, width: 5.03 },
+            { shape: "W14X30", area: 8.85, weight: 30, depth: 13.84, width: 6.73 },
+            { shape: "W14X34", area: 10.0, weight: 34, depth: 13.98, width: 6.75 },
+            { shape: "W16X26", area: 7.68, weight: 26, depth: 15.69, width: 5.50 },
+            { shape: "W16X31", area: 9.12, weight: 31, depth: 15.88, width: 5.53 },
+            { shape: "W16X36", area: 10.6, weight: 36, depth: 15.86, width: 6.99 },
+            { shape: "W16X40", area: 11.8, weight: 40, depth: 16.01, width: 7.00 },
+            { shape: "W18X35", area: 10.3, weight: 35, depth: 17.70, width: 6.00 },
+            { shape: "W18X40", area: 11.8, weight: 40, depth: 17.90, width: 6.02 },
+            { shape: "W18X46", area: 13.5, weight: 46, depth: 17.99, width: 7.50 },
+            { shape: "W18X50", area: 14.7, weight: 50, depth: 18.06, width: 7.50 },
+            { shape: "W21X44", area: 13.0, weight: 44, depth: 20.66, width: 6.50 },
+            { shape: "W21X50", area: 14.7, weight: 50, depth: 20.83, width: 6.53 },
+            { shape: "W21X57", area: 16.7, weight: 57, depth: 21.06, width: 6.56 },
+            { shape: "W21X62", area: 18.3, weight: 62, depth: 20.99, width: 8.24 },
+            { shape: "W24X55", area: 16.2, weight: 55, depth: 23.57, width: 7.01 },
+            { shape: "W24X62", area: 18.2, weight: 62, depth: 23.74, width: 7.04 },
+            { shape: "W24X68", area: 20.1, weight: 68, depth: 23.73, width: 8.97 },
+            { shape: "W24X76", area: 22.4, weight: 76, depth: 23.92, width: 8.99 }
+        ];
+    } catch (error) {
+        console.error("Error reading Excel file:", error);
+        return null;
+    }
+}
+
+// Get steel properties based on ASTM specification
+function getSteelProperties(astmSpec) {
+    const steelProperties = {
+        "A36": { Fy: 36, Fu: 58 },
+        "A572Gr.42": { Fy: 42, Fu: 60 },
+        "A572Gr.50": { Fy: 50, Fu: 65 },
+        "A572Gr.55": { Fy: 55, Fu: 70 },
+        "A572Gr.60": { Fy: 60, Fu: 75 },
+        "A572Gr.65": { Fy: 65, Fu: 80 },
+        "A588Gr.42": { Fy: 42, Fu: 63 },
+        "A588Gr.46": { Fy: 46, Fu: 67 },
+        "A588Gr.50": { Fy: 50, Fu: 70 },
+        "A687": { Fy: 50, Fu: 70 },
+        "A992": { Fy: 50, Fu: 65 }
+    };
+    
+    return steelProperties[astmSpec] || { Fy: 36, Fu: 58 }; // Default to A36 if not found
+}
+
+// Calculate shear lag factor U using the provided logic
+function calculateU(caseId, xbar, length, bf, d) {
+    switch (parseInt(caseId)) {
+        case 1: return 1.0;
+        case 2: 
+            const case2Value = 1 - (xbar / length);
+            return case2Value;
+        case 7: 
+            const case2ForComp = 1 - (xbar / length);
+            return Math.max(bf / d >= 2 / 3 ? 0.9 : 0.8, case2ForComp);
+        case 8: return 0.8;
+        default: return 1.0;
+    }
+}
+
+// Calculate required area
+function calculateRequiredArea(deadLoad, liveLoad, designMethod, astmSpec, shearLagCase, length, dHole, numHoles, width, depth) {
+    // Get steel properties
+    const { Fy, Fu } = getSteelProperties(astmSpec);
+    
+    // Calculate design load
+    let designLoad;
+    if (designMethod === 'LRFD') {
+        designLoad = 1.2 * deadLoad + 1.6 * liveLoad;
+    } else { // ASD
+        designLoad = deadLoad + liveLoad;
+    }
+    
+    // Update load combination display
+    document.getElementById('LRFDdesignComb').textContent = (1.2 * deadLoad + 1.6 * liveLoad).toFixed(2) + " kips";
+    document.getElementById('ASDdesignComb').textContent = (deadLoad + liveLoad).toFixed(2) + " kips";
+    
+    // Calculate x-bar (estimation for typical W shapes)
+    // This would ideally come from section properties, but we'll estimate for now
+    const xbar = width / 4; // Simplified estimation
+    
+    // Get shear lag factor using the provided function
+    const U = calculateU(shearLagCase, xbar, length, width, depth);
+    
+    // Display the calculated U factor
+    const uFactorElement = document.getElementById('uFactor');
+    if (uFactorElement) {
+        uFactorElement.textContent = U.toFixed(3);
+    }
+    
+    // Calculate required area for yielding
+    let requiredAreaYielding;
+    
+    if (designMethod === 'LRFD') {
+        // φ = 0.9 for yielding
+        requiredAreaYielding = designLoad / (0.9 * Fy);
+        const yieldElement = document.getElementById('LRFDYielding');
+        if (yieldElement) {
+            yieldElement.textContent = requiredAreaYielding.toFixed(2) + " in²";
+        }
+    } else { // ASD
+        // Ω = 1.67 for yielding
+        requiredAreaYielding = designLoad * 1.67 / Fy;
+        const yieldElement = document.getElementById('ASDYielding');
+        if (yieldElement) {
+            yieldElement.textContent = requiredAreaYielding.toFixed(2) + " in²";
+        }
+    }
+    
+    // Calculate net area considering bolt holes
+    const netAreaReduction = numHoles * dHole * 0.125; // For typical bolt holes: hole diameter * plate thickness * number of holes
+    
+    // Calculate required area for fracture
+    let requiredAreaFracture;
+    
+    if (designMethod === 'LRFD') {
+        // φ = 0.75 for fracture
+        requiredAreaFracture = designLoad / (0.75 * Fu * U);
+        const fractureElement = document.getElementById('LRFDFracture');
+        if (fractureElement) {
+            fractureElement.textContent = requiredAreaFracture.toFixed(2) + " in²";
+        }
+    } else { // ASD
+        // Ω = 2.0 for fracture
+        requiredAreaFracture = designLoad * 2.0 / (Fu * U);
+        const fractureElement = document.getElementById('ASDFracture');
+        if (fractureElement) {
+            fractureElement.textContent = requiredAreaFracture.toFixed(2) + " in²";
+        }
+    }
+    
+    // Determine controlling area and color-code the results
+    const controllingArea = Math.max(requiredAreaYielding, requiredAreaFracture);
+    
+    // Color code the governing case
+    if (designMethod === 'LRFD') {
+        const yieldElement = document.getElementById('LRFDYielding');
+        const fractureElement = document.getElementById('LRFDFracture');
+        
+        if (yieldElement && fractureElement) {
+            if (requiredAreaYielding >= requiredAreaFracture) {
+                yieldElement.style.color = 'red';  // Yielding governs
+                fractureElement.style.color = 'green';
+            } else {
+                yieldElement.style.color = 'green';
+                fractureElement.style.color = 'red';  // Fracture governs
+            }
+        }
+    } else { // ASD
+        const yieldElement = document.getElementById('ASDYielding');
+        const fractureElement = document.getElementById('ASDFracture');
+        
+        if (yieldElement && fractureElement) {
+            if (requiredAreaYielding >= requiredAreaFracture) {
+                yieldElement.style.color = 'red';  // Yielding governs
+                fractureElement.style.color = 'green';
+            } else {
+                yieldElement.style.color = 'green';
+                fractureElement.style.color = 'red';  // Fracture governs
+            }
+        }
+    }
+    
+    // Update the controlling required area display
+    const controllingElement = document.querySelector('.controlR');
+    if (controllingElement) {
+        controllingElement.textContent = controllingArea.toFixed(2) + " in²";
+        controllingElement.style.color = 'red'; // Highlight the controlling value
+    }
+    
+    return controllingArea;
+}
+
+// Select appropriate W shapes based on required area
+async function selectWShapes(requiredArea) {
+    try {
+        // Read W shapes data from Excel file
+        const wShapes = await readExcelFile('./ASTMSPEC.xlsx');
+        
+        if (!wShapes || wShapes.length === 0) {
+            console.error("No W shapes data available");
+            return;
+        }
+        
+        // Filter shapes that have sufficient area
+        const suitableShapes = wShapes.filter(shape => shape.area >= requiredArea);
+        
+        // Sort by area (most economical first - closest to required area)
+        suitableShapes.sort((a, b) => a.area - b.area);
+        
+        // Take the top 4 shapes or fewer if not enough available
+        const recommendedShapes = suitableShapes.slice(0, 4);
+        
+        // Display recommended shapes
+        recommendedShapes.forEach((shape, index) => {
+            const rank = index + 1;
+            document.getElementById(`rank${rank}`).textContent = rank;
+            document.getElementById(`Shape${rank}`).textContent = shape.shape;
+            document.getElementById(`AreaG${rank}`).textContent = shape.area.toFixed(2);
+            document.getElementById(`CD${rank}`).textContent = (shape.area / requiredArea).toFixed(2);
+            document.getElementById(`Weight${rank}`).textContent = shape.weight;
+            document.getElementById(`Depth${rank}`).textContent = shape.depth.toFixed(2);
+            document.getElementById(`Width${rank}`).textContent = shape.width.toFixed(2);
+        });
+        
+        // Clear any unused rows
+        for (let i = recommendedShapes.length + 1; i <= 4; i++) {
+            document.getElementById(`rank${i}`).textContent = "";
+            document.getElementById(`Shape${i}`).textContent = "";
+            document.getElementById(`AreaG${i}`).textContent = "";
+            document.getElementById(`CD${i}`).textContent = "";
+            document.getElementById(`Weight${i}`).textContent = "";
+            document.getElementById(`Depth${i}`).textContent = "";
+            document.getElementById(`Width${i}`).textContent = "";
+        }
+    } catch (error) {
+        console.error("Error selecting W shapes:", error);
+    }
+}
+
+// Main function to run the design
+async function designTensionMember() {
+    // Get input values
+    const designMethod = document.getElementById('designMethod').value;
+    const astmSpec = document.getElementById('ASpecD').value;
+    const shearLagCase = document.getElementById('ulagCase').value;
+    const deadLoad = parseFloat(document.getElementById('Dload').value) || 0;
+    const liveLoad = parseFloat(document.getElementById('Lload').value) || 0;
+    const length = parseFloat(document.getElementById('LenghtD').value) || 0;
+    const dHole = parseFloat(document.getElementById('dholeD').value) || 0;
+    const numHoles = parseInt(document.querySelector('.nholeD').value) || 0;
+    
+    // Default width and depth values (would ideally be determined from the selected shape)
+    const width = 6.0; // Default flange width
+    const depth = 12.0; // Default section depth
+    
+    // Calculate required area with the updated parameters
+    const requiredArea = calculateRequiredArea(
+        deadLoad, 
+        liveLoad, 
+        designMethod, 
+        astmSpec, 
+        shearLagCase, 
+        length, 
+        dHole, 
+        numHoles,
+        width,
+        depth
+    );
+    
+    // Select and display appropriate W shapes
+    await selectWShapes(requiredArea);
+}
+
+// Add event listener for the design button
+document.addEventListener('DOMContentLoaded', function() {
+    const designButton = document.getElementById('design');
+    if (designButton) {
+        designButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            designTensionMember();
+        });
+    } else {
+        console.error("Design button not found");
+    }
+});
+
+
+
     </script>
 </body>
 </html>

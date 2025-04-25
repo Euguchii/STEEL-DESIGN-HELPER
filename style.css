@@ -1,11 +1,14 @@
 
 
 body{
-    background-color:rgb(255, 255, 255);
-    height: 4000px;
-    
+    background-color:rgb(236, 230, 230);
+
+    line-height: 1.6;
+    margin: 0;
+    padding: 100px;
 
 }
+
 
 
 
@@ -69,24 +72,25 @@ header{
 }
 
 
-.AnalysisAxialTen{
-    background-color: rgb(255, 255, 255);
-    height: 100em;
+
+   
+   
     
 
-}
 
 .AxielT{
-
+    background-color: white;
+   padding: 20px;
     text-align: center;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     
 }
 
 .AxialTen{
+
     padding: 10px;    
     height: 740px;
-    width: 400px;
+
    
 }
 
@@ -131,7 +135,7 @@ input::-webkit-inner-spin-button {
     height: 740px;
     background-color: hsl(24, 100%, 71%, 20%);
     border-top-right-radius: 20px;
-    box-shadow: 5px 0px  black ;
+
     border: 1px solid black;
     
     
@@ -284,8 +288,8 @@ input{
     }
 
 .DesignAxialTen{
-    background-color: #ffffff;
-    
+    padding: 10px;
+  
 }
 
 .AxialD{
@@ -295,11 +299,12 @@ input{
 
 .DesignT{
  
-    background-color: #b4ff92ec;
+    background-color: #d5fac4ec;
     padding: 10px;
     border: 1px solid black;
    text-align: center;
-   position-anchor: relative;
+   
+
 
    
 
@@ -308,19 +313,22 @@ input{
 }
 .Design{
     
-    background-color: #fc779e;
-    border-radius: 10px;
-    margin-top: 30px;
-    margin-left: 400px;
+    background-color: #fff0f5;
+    border-radius: 1px;
+    margin-top: px;
+    margin-left: 0px;
+    height: 30px;
 }
 
 .DesignTenData{
+    
     display: flex;
     flex-direction: row;
     padding: 10px;
 }
 
 .DesignTRes{
+    
     
     display: flex;
     flex-direction: row;
@@ -332,6 +340,7 @@ input{
 }
 
 .DTR{
+    
     margin: auto;
     margin-top: 60px;
    background-color: #faae4acc;
@@ -344,12 +353,96 @@ input{
 }
 
 .DesignCon{
-    width: 1000px;
-    height: 200px;
-    background-color: rgb(255, 163, 163);
-   margin: auto;
-
     
+    height: 200px;
+    background-color: rgb(255, 255, 255);
+     margin: auto;
+   text-align: center;
+}
 
+.DesignTRes{
+   
+    margin: auto;
+    padding: 100px;
+    display: inline;
+    align-items: center;
+    
     
 }
+
+.DesignCalcT{
+    margin: auto;
+    padding: 10px;
+}
+
+h1{
+    text-align: center;
+    
+}
+
+
+.AxialTenionmember{
+  
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin: auto;
+    height: 2700px;
+    background-color: #f9f9f9;
+    
+
+}
+
+
+.recommended-shapes {
+    margin-top: 20px;
+}
+.shape-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.shape-card.best {
+    border-left: 5px solid #27ae60;
+}
+.shape-card h3 {
+    margin-top: 0;
+    color: #a5bbd1;
+}
+.shape-properties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.property {
+    margin-bottom: 5px;
+}
+.property span {
+    font-weight: bold;
+}
+table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+table, th, td {
+    border-style: solid;
+    border-width: 5px;
+    border-color: #BCBCBC;
+    word-wrap: break-word;
+    border: 1px solid #ddd;
+}
+th, td {
+    padding: 12px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+}
+.shape-rank-1 { background-color: #e8f5e9; }
+.shape-rank-2 { background-color: #f5f5f5; }
+.shape-rank-3 { background-color: #ffffff; }
+.shape-rank-4 { background-color: #ffebee; }
