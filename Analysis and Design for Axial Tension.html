@@ -72,13 +72,23 @@
                     <label>Dimension:</label>
                     <input type="text" id="dimA" placeholder="12X45" required>
 
+                    <div class="blockstag-column">
+                        <div id="blockShearInputs" style="display:none;">
+                            <label>Agv:</label><input type="number" id="Agv" placeholder="in²" step="0.001"><br>
+                            <label>Anv:</label><input type="number" id="Anv" placeholder="in²" step="0.001"><br>
+                            <label>Ant:</label><input type="number" id="Ant" placeholder="in²" step="0.001">
+                        </div>
+                    </div>
+
                     <h2>CHOOSE ONE OPTION ONLY</h2>
                     <label><input type="radio" name="designOption" value="none" checked> No Block Shear or Stagger</label><br>
                     <label><input type="radio" name="designOption" value="block"> Include Block Shear Only</label><br>
                     <label><input type="radio" name="designOption" value="stagger"> Include Staggered Holes Only</label><br>
 
                     <input type="button" class="Calculate" value="Calculate">
+
                 </form>
+                
             </div>
 
             <div class="AxialTenR" id="Result">
@@ -100,13 +110,7 @@
         </div>
 
         <div id="shearDiv" class="BLOCKSTAGGER" style="display:none;">
-            <div class="blockstag-column">
-                <div id="blockShearInputs" style="display:none;">
-                    <label>Agv:</label><input type="number" id="Agv" placeholder="in²" step="0.001"><br>
-                    <label>Anv:</label><input type="number" id="Anv" placeholder="in²" step="0.001"><br>
-                    <label>Ant:</label><input type="number" id="Ant" placeholder="in²" step="0.001">
-                </div>
-            </div>
+            
 
             <div id="column-inputs">
                 <h3>Remove Specific Hole</h3>
@@ -147,12 +151,13 @@
     </div>
     <div class="DesignAxialTen">
         <div class="AxialD">
-            <h1 >Design of Tension Member</h1>
+            <h1 style="text-align: center;">Design of Tension Member</h1>
         </div>
         <div class="DesignT">
             <div class="DesignTenData">
+                <div>
                 <form action="">
-                    <label><h2>ASTM SPECIFICATION</H2></label>
+                    <label>ASTM Specification</label>
                     <select id="ASpecD" name="ASTM SPECIFICATION">
                         <option value="A36">A36</option>
                         <option value="A572Gr.42">A572 Gr. 42</option>
@@ -165,15 +170,40 @@
                         <option value="A588Gr.50">A588 Gr. 50</option>
                         <option value="A687">A687</option>
                         <option value="A992">A992</option>
+                       
                     </select>
+                </div>
+                <div>
+                    Shear Lag:
+                    <select id="ulagCase"> 
+                        <option value="1">Case 1</option>
+                        <option value="2">Case 2</option>
+                        <option value="7">Case 7</option>
+                        <option value="8">Case 8</option>
+                    </select>
+                 </div>
+                 <div>
+
                     <label for="DeadDload">Dead Load:</label>
                     <input id="Dload" type="number" placeholder="kips">
+                </div>
+                <div>
                     <label for="DeadDload">Live Load:</label>
                     <input id="Lload" type="number" placeholder="kips">
-                    <label for="DeadDload">Length</label>
-                    <input id="LenghtD" type="number" placeholder="ft">
-                    <label for="dholeD"></label>
-                    <
+                 </div>
+                 <div>
+                    <label for="DeadDload">Length:</label>
+                    
+                    <input id="LenghtD" type="number" placeholder="ft.">
+                </div>
+                    <div>
+
+                    <label for="dholeD"  >Diameter  of Bolts:</label>
+                    <input id="dholeD" typ="numebr" placeholder="in.">
+                    </div>  
+                    <button class="Design" id="design">DESIGN</button>
+
+                    
                     
                     
                     
@@ -188,10 +218,146 @@
 
 
         </div>
-            
+        <div class="DesignTRes">
+            <div class="DTR">LOAD COMBINATIONS </div>
+            <div class="DTR">YIELDING IN GROSS SECTION AREA </div>
+            <div class="DTR" > FRACTURE IN EFFECTIVE NET AREA</div>
+            <div class="DTR"> SLENDERNESS</div>
+        </div>
+        <br>
+        <div class="DesignCon">
+            FINAL DESIGN: 
+        </div>
        
     
     <script>
+    
+    // Add a loading state
+let dataLoaded = false;
+
+function loadExcelData() {
+    console.log("Loading Excel data...");
+    dataLoaded = false;
+    
+    // Show loading indicator
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.id = 'loading-indicator';
+    loadingIndicator.innerHTML = 'Loading steel section data...';
+    loadingIndicator.style.position = 'fixed';
+    loadingIndicator.style.top = '10px';
+    loadingIndicator.style.right = '10px';
+    loadingIndicator.style.padding = '5px 10px';
+    loadingIndicator.style.backgroundColor = '#ffe0e0';
+    loadingIndicator.style.border = '1px solid #ffcccc';
+    loadingIndicator.style.borderRadius = '3px';
+    loadingIndicator.style.zIndex = '1000';
+    document.body.appendChild(loadingIndicator);
+    
+    fetch('ASTMSPEC.xlsx')
+        .then(res => res.arrayBuffer())
+        .then(data => {
+            const workbook = XLSX.read(data, { type: 'array' });
+            const shapeSheet = workbook.Sheets[workbook.SheetNames[1]];
+            const shapeRows = XLSX.utils.sheet_to_json(shapeSheet);
+
+            console.log("Excel data loaded, processing", shapeRows.length, "rows");
+            
+            shapeRows.forEach(row => {
+                if (row["AISC_Manual_Label"]) {
+                    const label = row["AISC_Manual_Label"].trim().toUpperCase().replace(/\s/g, '');
+                    steelData[label] = {
+                        A: parseFloat(row.A),
+                        tw: parseFloat(row.tw),
+                        d: parseFloat(row.d),
+                        bf: parseFloat(row.bf)
+                    };
+                }
+            });
+            
+            console.log("Steel data loaded:", Object.keys(steelData).length, "sections");
+            dataLoaded = true;
+            
+            // Remove loading indicator
+            document.getElementById('loading-indicator').remove();
+        })
+        .catch(error => {
+            console.error("Error loading Excel data:", error);
+            // Fallback to some default data
+            steelData["W12X45"] = { A: 13.2, tw: 0.335, d: 12.1, bf: 8.05 };
+            
+            // Update loading indicator
+            document.getElementById('loading-indicator').innerHTML = 'Failed to load data. Using defaults.';
+            document.getElementById('loading-indicator').style.backgroundColor = '#ffcccc';
+            
+            setTimeout(() => {
+                document.getElementById('loading-indicator').remove();
+            }, 3000);
+            
+            dataLoaded = true;
+        });
+}
+
+
+        // Add this function to debug the steel data loading
+function debugSteelData(sectionKey) {
+    console.log("Looking for section: " + sectionKey);
+    console.log("Available steel data keys:", Object.keys(steelData));
+    console.log("Found section data:", steelData[sectionKey]);
+    
+    // Check if we have any keys that are similar
+    const similarKeys = Object.keys(steelData).filter(key => 
+        key.includes(sectionKey.replace('W', '')) || 
+        sectionKey.includes(key.replace('W', ''))
+    );
+    
+    if (similarKeys.length > 0) {
+        console.log("Similar keys found:", similarKeys);
+    }
+    
+    return steelData[sectionKey];
+}
+
+// Modify the section retrieval in calculateZigzagNetArea and other functions
+function getSectionData() {
+    const shape = document.getElementById('shapeA').value.toUpperCase();
+    const dim = document.getElementById('dimA').value.toUpperCase().replace(/\s/g, '');
+    const sectionKey = shape + dim;
+    
+    console.log("Attempting to get section data for:", sectionKey);
+    
+    const section = steelData[sectionKey];
+    
+    // If not found, try with different formatting
+    if (!section) {
+        console.log("Section not found, trying alternative formats...");
+        // Try alternative formats
+        const altKey1 = shape + dim.replace('X', 'x');
+        const altKey2 = shape + 'X' + dim.replace('X', '');
+        
+        if (steelData[altKey1]) {
+            console.log("Found with format:", altKey1);
+            return steelData[altKey1];
+        } else if (steelData[altKey2]) {
+            console.log("Found with format:", altKey2);
+            return steelData[altKey2];
+        }
+        
+        // Log all available keys for debugging
+        console.log("Available keys:", Object.keys(steelData).join(", "));
+        console.log("Using default values");
+        
+        // Return default values if not found
+        return { 
+            A: 13.2, 
+            tw: 0.335, 
+            d: 12.1, 
+            bf: 8.05 
+        };
+    }
+    
+    console.log("Section found:", section);
+    return section;
+}
 
         // Add this function to create the interactive drawing area
 function createInteractiveDrawingArea() {
@@ -381,7 +547,9 @@ document.head.appendChild(styleElement);
         createInteractiveDrawingArea();
     }
 }
-        function getHolePattern() {
+
+
+function getHolePattern() {
     const nholeC = parseInt(document.getElementById('nholeC').value);
     const nholeR = parseInt(document.getElementById('nholeR').value);
     const pattern = [];
@@ -397,38 +565,10 @@ document.head.appendChild(styleElement);
             }
         }
     }
-    
-    return pattern;
+      return pattern;
 }
 
-        // ASTM spec data loading
-        function loadExcelData() {
-            fetch('ASTMSPEC.xlsx')
-                .then(res => res.arrayBuffer())
-                .then(data => {
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const shapeSheet = workbook.Sheets[workbook.SheetNames[1]];
-                    const shapeRows = XLSX.utils.sheet_to_json(shapeSheet);
-
-                    shapeRows.forEach(row => {
-                        if (row["AISC_Manual_Label"]) {
-                            const label = row["AISC_Manual_Label"].trim().toUpperCase().replace(/\s/g, '');
-                            steelData[label] = {
-                                A: parseFloat(row.A),
-                                tw: parseFloat(row.tw),
-                                d: parseFloat(row.d),
-                                bf: parseFloat(row.bf)
-                            };
-                        }
-                    });
-                })
-                .catch(error => {
-                    console.error("Error loading Excel data:", error);
-                    // Fallback to some default data
-                    steelData["W12X45"] = { A: 13.2, tw: 0.335, d: 12.1, bf: 8.05 };
-                });
-        }
-
+        
         // Get form input values
         function getInputValues() {
             return {
@@ -932,38 +1072,24 @@ function findAllPathsRowBased(holePattern, startRow, startCol, maxCols, maxRows)
 
 
 // First, let's modify the calculateStandardNetArea function to find critical rows instead of columns
-function calculateStandardNetArea(Ag, holePattern, holeDia, tw) {
+function calculateStandardNetArea(Ag, holeDia, totalHoles, tw) {
     const d_hole = holeDia + 1/8; // Add 1/8" for standard hole
-    const nholeC = holePattern.length; // rows
-    const nholeR = holePattern[0].length; // columns
     
-    // Count holes in each column
-    const holesPerColumn = new Array(nholeR).fill(0);
-    
-    for (let col = 0; col < nholeR; col++) {
-        for (let row = 0; row < nholeC; row++) {
-            if (holePattern[row][col] === 1) {
-                holesPerColumn[col]++;
-            }
-        }
-    }
-    
-    // Find column with maximum number of holes
-    const maxHolesColumn = Math.max(...holesPerColumn);
-    const criticalColumn = holesPerColumn.indexOf(maxHolesColumn);
-    
-    // Calculate net area based on the critical column
-    const holeLoss = maxHolesColumn * d_hole * tw;
+    // Calculate net area by subtracting hole area from gross area
+    const holeLoss = totalHoles * d_hole * tw;
     const netArea = Ag - holeLoss;
     
     return {
         netArea: netArea,
-        criticalColumn: criticalColumn + 1, // +1 for 1-based indexing in UI
-        holesInCriticalColumn: maxHolesColumn
+        holesCount: totalHoles
     };
 }
-   
-function performCalculations() {
+
+   function performCalculations() {
+    if (!dataLoaded) {
+        alert("Steel section data is still loading. Please wait a moment and try again.");
+        return;
+    }
     const inputValues = getInputValues();
     
     // Validate inputs
@@ -1088,27 +1214,28 @@ function performCalculations() {
         
         document.getElementById('AE').textContent = An.toFixed(3) + " in² (Block shear)";
         
-    } else {
-        // Simple calculation with holes - find critical column
-        const tw = section.tw;
-        const holePattern = getHolePattern();
-        
-        // Use function to calculate standard net area
-        const standardAreaResult = calculateStandardNetArea(
-            Ag,
-            holePattern,
-            inputValues.dhole,
-            tw
-        );
-        
-        An = standardAreaResult.netArea;  // This is the net area (An)
-
-        Ae = An * U;  // The effective net area (Ae) applies the shear lag factor
-        
-        // Show detailed information about NET AREA
-        document.getElementById('AE').textContent = 
-            `${An.toFixed(3)} in² (Critical through column ${standardAreaResult.criticalColumn})`;
-    }
+    } 
+    
+    else {
+    // Simple calculation with holes - just count total holes in a column
+    const tw = section.tw;
+    const nholeC = parseInt(document.getElementById('nholeC').value);
+    
+    // Use function to calculate standard net area
+    const standardAreaResult = calculateStandardNetArea(
+        Ag,
+        inputValues.dhole,
+        nholeC, // Just pass the number of holes in a column
+        tw
+    );
+    
+    An = standardAreaResult.netArea;  // This is the net area (An)
+    Ae = An * U;  // The effective net area (Ae) applies the shear lag factor
+    
+    // Show detailed information about NET AREA
+    document.getElementById('AE').textContent = 
+        `${An.toFixed(3)} in² (${standardAreaResult.holesCount} holes in column)`;
+}
     
     // Calculate yielding strength (uses gross area)
     const Py = material.Fy * Ag;
