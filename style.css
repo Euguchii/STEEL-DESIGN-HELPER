@@ -82,7 +82,10 @@ header{
 
 }
 
-
+.AnalysisAxialTen{
+    position: relative;
+    
+}
 
    
    
@@ -108,7 +111,10 @@ header{
 .AxialTenR{
     padding: 10px;    
     height: 550px;
-    width: 1000em;
+    left: 600px;
+    width: 600px;
+    display: inline-block;
+    position: absolute;
     font-weight: bold;
     overflow: hidden;
     
@@ -124,9 +130,9 @@ header{
 
 
 #ASTMSPEC{
-    background-color: #039aff;
+    background-color: lab(89.06% -3.33 -16.64);
     border: 1px solid black;
-    border-top-left-radius: 30px ;
+    border-radius: 10px;
     left:10px;
     
 }
@@ -137,10 +143,7 @@ header{
 #Result{
     
     height: 740px;
-    background-color: hsl(24, 100%, 71%, 20%);
-    border-top-right-radius: 20px;
 
-    border: 1px solid black;
     
     
 }
@@ -155,16 +158,27 @@ header{
     
     
 }
+
+
+
 .Calculate{
   margin-left: 280px;
   margin-top: 5px;
-  box-shadow: 2px 2px;
-  background-color: rgb(32, 30, 30)E;
+  background-color: rgb(215, 228, 253);
+  width: 100px;
+  border-radius: 0;
+  height: 40px;
   font-size: large;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  color:rgb(38, 48, 48)e;
+  
 }
 
+.Calculate a:hover{
+   
+    background-color: rgb(98, 148, 241);
+  
+    
+  }
 
 input{
    border-radius: 10px;
@@ -173,11 +187,11 @@ input{
 
 .RESULT{
     
-    background-color: #ffffff;
+    background-color: hsl(0, 0%, 100%);
     width: 400px;
     height: 80px;
     border-radius: 10px;
-    box-shadow: 3PX 4PX 5px #000000;
+    box-shadow: 0PX 0PX 5px #000000;
     padding-left: 30px;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     display: inline-block;
@@ -198,8 +212,8 @@ input{
     padding: 10px;
     margin-left: 100px;
     margin-right: 100px;
-    background-color: #ff5084;
-    box-shadow: 5px 0px  rgb(0, 0, 0);
+    background-color: #ffffff;
+
   
 
 }
@@ -221,6 +235,8 @@ input{
 
 
 
+
+
 .blockstag-column {
     margin: 10px;
     display: flex;
@@ -232,10 +248,10 @@ input{
   #column-inputs {
         display: none;
         margin-top: 20px;
-        background-color: #5c2a3b;
+        background-color: #e2ffd2;
         padding: 20px;
         border-radius: 8px;
-        color: white;
+        color: rgb(0, 0, 0);
         font-family: Arial, sans-serif;
     }
 
@@ -261,7 +277,7 @@ input{
         padding: 6px 10px;
         font-size: 14px;
         border-radius: 4px;
-        border: 1px solid #ccc;
+        border: 1px solid #15f800;
         width: 100%;
         box-sizing: border-box;
     }
@@ -273,7 +289,7 @@ input{
 
     .restore-btn {
         background-color: #4CAF50;
-        color: white;
+        color: rgb(24, 24, 24);
         font-weight: bold;
     }
 
@@ -305,8 +321,9 @@ input{
  
     background-color: #d5fac4ec;
     padding: 10px;
+    border-radius: 10PX;
     border: 1px solid black;
-   text-align: center;
+
    
 
 
@@ -316,24 +333,26 @@ input{
     
 }
 .Design{
-    
-    background-color: #fff0f5;
+
+    display: inline-block;
+    position: absolute;
+    background-color: #8cc6f3;
     border-radius: 1px;
-    margin-top: px;
+    margin-top: 10px;
     margin-left: 0px;
-    height: 30px;
+    height: 40px;
+    border: 1px solid black;
+    left: 1800px;
 }
 
 .DesignTenData{
     
     display: flex;
     flex-direction: row;
-    padding: 10px;
+
 }
 
 .DesignTRes{
-    
-    
     display: flex;
     flex-direction: row;
   
@@ -357,17 +376,16 @@ input{
 }
 
 .DesignCon{
-    
-    height: 1000px;
+
     background-color: rgb(255, 255, 255);
      margin: auto;
+    position: absolute;
    text-align: center;
 }
 
 .DesignTRes{
-   
+    background-color: white;
     margin: auto;
-    padding: 100px;
     display: inline;
     align-items: center;
     
@@ -390,6 +408,7 @@ h1{
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
     padding: 20px;
     margin: auto;
+    position: relative;
     height: 2700px;
     background-color: #ffffff;
     
@@ -436,15 +455,13 @@ table, th, td {
     border-style: solid;
     border-width: 5px;
     word-wrap: break-word;
-    border: 1px solid #ddd;
+    border: 1px solid #000000;
 }
 th, td {
     padding: 12px;
-    text-align: left;
+    text-align: center;
 }
-th {
-    background-color: #f2f2f2;
-}
+
 .shape-rank-1 { background-color: #e8f5e9; }
 .shape-rank-2 { background-color: #f5f5f5; }
 .shape-rank-3 { background-color: #ffffff; }
@@ -471,7 +488,7 @@ th {
 }
 
 .ANALYSISINPUT{
-    background-color: #ffffff;
+    background-color: lab(89.06% -3.33 -16.64);
     border: 1px solid black;
     padding: 20px;
     margin: auto;
@@ -495,7 +512,7 @@ th {
 .INTERACTIVECOLUMN{
     width:700px;
     height: 700px;
-    border: 1px solid black;
+    right: 250px;
     position: relative;
     display: inline-block;
 
@@ -617,10 +634,10 @@ th {
 
 /* Input form styling improvements */
 .ANALYSISINPUT {
-    background-color: #f8f9fa;
+    background-color: lab(89.06% -3.33 -16.64);
     padding: 15px;
     border-radius: 5px;
-    border: 1px solid #ddd;
+    border: 1px solid #0f0f0f;
 }
 
 .ANALYSISINPUT h3 {
@@ -835,7 +852,7 @@ th {
 .ResultCalcC{
     width: 1500px;
     
-    border: 1px solid black;
+
     display:flex;
     margin: auto;
     flex-direction: column;
@@ -883,7 +900,7 @@ th {
     display: flex;
   
     height: 400px;
-    border: 1px solid black;
+
 
     
 
@@ -896,17 +913,29 @@ th {
    display: inline-block;
    
     height: 400px;
-    border: 1px solid black;
+ 
     align-items: center;
+   
     
     
 
     
-    
+
 }
 
+.TableR1 Th{
+    background-color: #badcf3;
+}
+
+.TableR1 Td{
+    padding:50px;
+    
+   
+}
+
+
 .ResultofallCD{
-    border: 1px solid black;
+
     margin: auto;
     height: 2000px;
    
@@ -928,8 +957,9 @@ th {
     border: 1px solid black;
     display: inline-block;
     padding: 100px;
-    position: relative;
-    bottom: 300px;
+    position:absolute;
+
+    
 
 
 
@@ -938,12 +968,14 @@ th {
     
 }
 
+.AnalysisForBending{
+    height: 1000px;
+}
+
 
 .AnalyzeBending{
-    background-color: white;
     box-shadow: 0px 1px 1px 0.1em black;
-    position: relative;
-    top: 70px;
+  
     left: 250px;
    
 }
@@ -954,20 +986,26 @@ th {
 }
 
 .tableABending{
-    border: 1px solid black;
+  
     height: 500px;
     width: 720px;
-    left: 160px;
-    position: relative;
-    
+    top: 400px;
+    position: absolute;  
     display: inline-block;
 
 
 }
 
 .ResultAnalysisBending{
-    border: 1px solid black ;
-    height: 700px;
+
+
+    height: 680px;
+    left: 900px;
+    width: 800px;
+    display:inline-block;
+    position: absolute;
+  
+    
     
 }
 
@@ -981,4 +1019,108 @@ th {
 
 .tableABending{
     text-align: justify;
+}
+
+.AnalysisForBending {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+    position: relative;
+}
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+.InputForAnalysisBending {
+    background-color: #b6e4ff;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+.InputForAnalysisBending div {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+.InputForAnalysisBending label {
+    width: 180px;
+    font-weight: bold;
+    color: #333;
+}
+.InputForAnalysisBending input, .InputForAnalysisBending select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex-grow: 1;
+    font-size: 16px;
+}
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    display: block;
+    margin: 10px 0;
+    transition: background-color 0.3s;
+}
+button.AnalyzeBending:hover {
+    background-color: #2980b9;
+}
+
+
+#errorMessage {
+    color: #e74c3c;
+    font-weight: bold;
+    margin: 10px 0;
+}
+.results-container {
+    margin-top: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+}
+.results-container h3 {
+    color: #2c3e50;
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+.results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.limits-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 5px;
+    color: white;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba;
+
+}
+
+.InputForBendingDesign{
+    background-color: #d5fac4ec;
+    justify-content: center;
+    display: flex;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid black;
 }

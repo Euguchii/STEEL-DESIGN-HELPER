@@ -402,7 +402,9 @@
                     <thead>
                         <tr>
                             <th id="CompShape">W-SHAPE</th>
-                            <th id="pupa">Pu/Pa</th>
+                            <th id="pupa">Table 3-6 (continued)
+                                Maximum Total 
+                               Uniform Load</th>
                             <th id="Weight">W</th>
                             <th id="rxry">rx/ry</th>
                             <th id="Best">Best</th>
@@ -449,7 +451,7 @@
 
                 
             </div>
-            <div id="Result123" >
+            <div class="    " >
                 
             </div>
 
@@ -731,8 +733,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     ).join('')}
                     
                     <!-- Column height label -->
-                    <text x="${width/2 + 40}" y="${columnLength * yScale / 2}" 
-                          transform="rotate(270, ${width/2 + 40}, ${columnLength * yScale / 2})"
+                    <text x="${40}" y="${columnLength * yScale / 2}" 
+                          transform="rotate(360, ${width/2 + 40}, ${columnLength * yScale / 2})"
                           text-anchor="middle" dominant-baseline="middle" font-size="12">
                         ${columnLength}' Column Length
                     </text>
@@ -835,8 +837,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     ${renderSupport(width/2, columnLength * yScale, botSupport, "bottom")}
                     
                     <!-- Full column length label -->
-                    <text x="${width/2 + 40}" y="${columnLength * yScale / 2}" 
-                          transform="rotate(270, ${width/2 + 40}, ${columnLength * yScale / 2})"
+                    <text x="${32}" y="${columnLength * yScale / 2}" 
+                          transform="rotate(360, ${width/2 + 40}, ${columnLength * yScale / 2})"
                           text-anchor="middle" dominant-baseline="middle" font-size="12">
                         ${columnLength}' Column Length
                     </text>
@@ -2050,8 +2052,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 document.addEventListener("DOMContentLoaded", function() {
     // Add containers for both visualizations after the page loads
-    const graphicalColumnContainer = document.createElement('div');
-    graphicalColumnContainer.className = 'GraphicalColumn';
+    const graphicalColumnContainer = document.querySelector('.GraphicalColumn');
+   
     
     graphicalColumnContainer.innerHTML = `
         <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
@@ -2073,14 +2075,6 @@ document.addEventListener("DOMContentLoaded", function() {
         </div>
     `;
     
-    // Find where to insert the GraphicalColumn div
-    const designButtonc = document.getElementById("DesignC");
-    if (designButtonc && designButtonc.parentNode) {
-        designButtonc.parentNode.parentNode.insertBefore(graphicalColumnContainer, designButton.parentNode.nextSibling);
-    } else {
-        // Fallback: just append to body
-        document.body.appendChild(graphicalColumnContainer);
-    }
 
     // Get all the input elements we need to monitor
     const lengthInput = document.getElementById("LenghtDC");
@@ -2123,7 +2117,7 @@ document.addEventListener("DOMContentLoaded", function() {
     ];
 
     // Design button
-    const designButton = document.getElementById("DesignC");
+    
 
     // Initial drawing
     drawBeamColumns();
@@ -2157,8 +2151,8 @@ document.addEventListener("DOMContentLoaded", function() {
         if (lateralSupportTypes[i].free) lateralSupportTypes[i].free.addEventListener("change", drawBeamColumns);
     }
     
-    if (designButton) {
-        designButton.addEventListener("click", drawBeamColumns);
+    if (designButtonc) {
+        designButtonc.addEventListener("click", drawBeamColumns);
     }
 
     function drawBeamColumns() {
@@ -2250,8 +2244,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     ).join('')}
                     
                     <!-- Column height label -->
-                    <text x="${width/2 + 40}" y="${columnLength * yScale / 2}" 
-                          transform="rotate(270, ${width/2 + 40}, ${columnLength * yScale / 2})"
+                    <text x="${width/3  }" y="${columnLength * yScale / 2}" 
+                          transform="rotate(360, ${width/2 + 40}, ${columnLength * yScale / 2})"
                           text-anchor="middle" dominant-baseline="middle" font-size="12">
                         ${columnLength}' Column Length
                     </text>
@@ -2356,8 +2350,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     ${renderSupport(width/2, columnLength * yScale, botSupport, "bottom")}
                     
                     <!-- Full column length label -->
-                    <text x="${width/2 + 40}" y="${columnLength * yScale / 2}" 
-                          transform="rotate(270, ${width/2 + 40}, ${columnLength * yScale / 2})"
+                    <text x="${width/3 }" y="${columnLength * yScale / 2}" 
+                          transform="rotate(360, ${width/2 + 40}, ${columnLength * yScale / 2})"
                           text-anchor="middle" dominant-baseline="middle" font-size="12">
                         ${columnLength}' Column Length
                     </text>
@@ -2480,768 +2474,401 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
-
-function calculateLoadCombinations(deadLoad, liveLoad, designMethod, astmSpec) {
-  // Initialize results object
-  const results = {
-    designMethod: designMethod,
-    astmSpecification: astmSpec,
-    inputs: {
-      deadLoad: deadLoad,
-      liveLoad: liveLoad
-    },
-    loadCombinations: [],
-    governingLoad: null,
-    yieldStrength: getYieldStrength(astmSpec)
-  };
-  
-  // Calculate load combinations based on design method
-  if (designMethod === "LRFD") {
-    // LRFD Load Combinations per ASCE 7
-    results.loadCombinations = [
-      { name: "1.4D", value: 1.4 * deadLoad, formula: "1.4 × " + deadLoad + " = " + (1.4 * deadLoad).toFixed(2) + " kips" },
-      { name: "1.2D + 1.6L", value: 1.2 * deadLoad + 1.6 * liveLoad, formula: "1.2 × " + deadLoad + " + 1.6 × " + liveLoad + " = " + (1.2 * deadLoad + 1.6 * liveLoad).toFixed(2) + " kips" },
-      { name: "1.2D", value: 1.2 * deadLoad, formula: "1.2 × " + deadLoad + " = " + (1.2 * deadLoad).toFixed(2) + " kips" },
-      { name: "0.9D", value: 0.9 * deadLoad, formula: "0.9 × " + deadLoad + " = " + (0.9 * deadLoad).toFixed(2) + " kips" }
-    ];
-  } else { // ASD
-    // ASD Load Combinations per ASCE 7
-    results.loadCombinations = [
-      { name: "D", value: deadLoad, formula: deadLoad + " kips" },
-      { name: "D + L", value: deadLoad + liveLoad, formula: deadLoad + " + " + liveLoad + " = " + (deadLoad + liveLoad).toFixed(2) + " kips" },
-      { name: "0.6D", value: 0.6 * deadLoad, formula: "0.6 × " + deadLoad + " = " + (0.6 * deadLoad).toFixed(2) + " kips" }
-    ];
-  }
-  
-  // Find governing load combination (maximum value)
-  results.governingLoad = results.loadCombinations.reduce((max, combo) => 
-    combo.value > max.value ? combo : max, results.loadCombinations[0]);
-  
-  return results;
-}
-
-/**
- * Get yield strength based on ASTM specification
- * @param {string} astmSpec - ASTM specification
- * @return {number} - Yield strength in ksi
- */
-function getYieldStrength(astmSpec) {
-  const yieldStrengths = {
-    "A36": 36,
-    "A572Gr.42": 42,
-    "A572Gr.50": 50,
-    "A572Gr.55": 55,
-    "A572Gr.60": 60,
-    "A572Gr.65": 65,
-    "A588Gr.42": 42,
-    "A588Gr.46": 46,
-    "A588Gr.50": 50,
-    "A687": 50,
-    "A992": 50
-  };
-  
-  return yieldStrengths[astmSpec] || 36; // Default to 36 ksi if not found
-}
-
-// Example usage with the inputs from the form
-function processDesignInputs() {
-  // Get input values
-  const deadLoad = parseFloat(document.getElementById("DeadLoad").value) || 0;
-  const liveLoad = parseFloat(document.getElementById("LiveLoad").value) || 0;
-  const designMethod = document.getElementById("designMethod").value;
-  const astmSpec = document.getElementById("ASTMinputC").value;
-  
-  // Calculate load combinations
-  const results = calculateLoadCombinations(deadLoad, liveLoad, designMethod, astmSpec);
-  
-  // Display results
-  console.log("Load Combination Results:", results);
-  return results;
-}
-
-// Add event listener to the Design button
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById("DesignC").addEventListener("click", function() {
-    const results = processDesignInputs();
-    displayResults(results);
-  });
+// Column Load Capacity Calculator - Fixed Version
+document.addEventListener("DOMContentLoaded", function() {
+    // Initialize the application with error handling
+    initializeColumnCalculator();
 });
 
-// Function to display results on the page
-function displayResults(results) {
-  // Create a results div if it doesn't exist
-  let resultsDiv = document.getElementById("loadCombinationResults");
-  if (!resultsDiv) {
-    resultsDiv = document.createElement("div");
-    resultsDiv.id = "loadCombinationResults";
-    document.querySelector(".INPUTCOMPRESS").after(resultsDiv);
-  }
-  
-  // Format the results
-  let html = `
-    <h3>Load Combination Results</h3>
-    <p><strong>Design Method:</strong> ${results.designMethod}</p>
-    <p><strong>ASTM Specification:</strong> ${results.astmSpecification} (Fy = ${results.yieldStrength} ksi)</p>
-    <h4>Load Combinations:</h4>
-    <ul>
-  `;
-  
-  results.loadCombinations.forEach(combo => {
-    html += `<li>${combo.name}: ${combo.formula}</li>`;
-  });
-  
-  html += `
-    </ul>
-    <p><strong>Governing Load Combination:</strong> ${results.governingLoad.name} = ${results.governingLoad.value.toFixed(2)} kips</p>
-  `;
-  
-  resultsDiv.innerHTML = html;
-}
-
-
-// Compression Member Design Calculator
-document.addEventListener('DOMContentLoaded', function() {
-    // Hide support sections initially
-    document.getElementById('support1C').style.display = 'none';
-    document.getElementById('support2C').style.display = 'none';
-    document.getElementById('support3C').style.display = 'none';
-    
-    // Show/hide support inputs based on selection
-    document.getElementById('supportC').addEventListener('change', function() {
-        document.getElementById('SupportC').style.display = 'block';
-    });
-    
-    document.getElementById('NosupportC').addEventListener('change', function() {
-        document.getElementById('SupportC').style.display = 'none';
-        document.getElementById('support1C').style.display = 'none';
-        document.getElementById('support2C').style.display = 'none';
-        document.getElementById('support3C').style.display = 'none';
-    });
-    
-    // Handle number of supports
-    document.getElementById('supprtamountC').addEventListener('change', function() {
-        const supportCount = parseInt(this.value) || 0;
+// Main initialization function
+function initializeColumnCalculator() {
+    try {
+        console.log("Initializing Column Load Capacity Calculator...");
         
-        document.getElementById('support1C').style.display = supportCount >= 1 ? 'block' : 'none';
-        document.getElementById('support2C').style.display = supportCount >= 2 ? 'block' : 'none';
-        document.getElementById('support3C').style.display = supportCount >= 3 ? 'block' : 'none';
-    });
+        // Get references to input elements with error checking
+        const designButton = getRequiredElement("DesignC", "Design button");
+        const astmSelect = getRequiredElement("ASTMinputC", "ASTM specification selector");
+        const designMethodSelect = getRequiredElement("designMethod", "Design method selector");
+        const deadLoadInput = getRequiredElement("DeadLoad", "Dead load input");
+        const liveLoadInput = getRequiredElement("LiveLoad", "Live load input");
+        const lengthInput = getRequiredElement("LenghtDC", "Column length input");
+        
+        // Get references to support options
+        const topFixed = document.getElementById("topfixedC");
+        const topPinned = document.getElementById("toppinnedC");
+        const topFree = document.getElementById("topfreeC");
+        const botFixed = document.getElementById("botfixedC");
+        const botPinned = document.getElementById("botpinnedC");
+        const botFree = document.getElementById("botfreeC");
+        const noSupport = document.getElementById("NosupportC");
+        const withSupport = document.getElementById("supportC");
+        const supportAmountInput = document.getElementById("supprtamountC");
+        
+        // Get references to lateral support options
+        const lateralSupportTypes = [
+            {
+                fixed: document.getElementById("fixed1C"),
+                pinned: document.getElementById("pinned1C"),
+                free: document.getElementById("Free1C"),
+                location: document.getElementById("location1C")
+            },
+            {
+                fixed: document.getElementById("fixed2C"),
+                pinned: document.getElementById("pinned2C"),
+                free: document.getElementById("Free2C"),
+                location: document.getElementById("location2C")
+            },
+            {
+                fixed: document.getElementById("fixed3C"),
+                pinned: document.getElementById("pinned3C"),
+                free: document.getElementById("Free3C"),
+                location: document.getElementById("location3C")
+            }
+        ];
+        
+        // Set up event listeners
+        setupEventListeners(designButton, noSupport, withSupport);
+        
+        console.log("Column Calculator initialized successfully");
+    } catch (error) {
+        console.error("Error initializing Column Calculator:", error);
+        displayErrorMessage("Failed to initialize the column calculator. Please check console for details.");
+    }
+}
+
+// Helper function to get required DOM elements
+function getRequiredElement(id, description) {
+    const element = document.getElementById(id);
+    if (!element) {
+        throw new Error(`Required ${description} (ID: ${id}) not found in document`);
+    }
+    return element;
+}
+
+// Function to set up event listeners
+function setupEventListeners(designButton, noSupport, withSupport) {
+    // Add event listener to design button
+    if (designButton) {
+        designButton.addEventListener("click", performDesign);
+        console.log("Design button event listener attached");
+    } else {
+        console.warn("Design button not found, calculation functionality will be limited");
+    }
     
-    // Handle design button click
-    document.getElementById('DesignC').addEventListener('click', performDesign);
-});
+    // Add event listeners to support radio buttons
+    if (noSupport) {
+        noSupport.addEventListener("change", handleSupportVisibilityC);
+    }
+    if (withSupport) {
+        withSupport.addEventListener("change", handleSupportVisibilityC);
+    }
+    
+    // Call support visibility handler to set initial state
+    handleSupportVisibilityC();
+}
 
-// ASTM Specification data (simplified for demo)
-const astmSpecData = {
-    'A36': { Fy: 36, Fu: 58 },
-    'A572Gr.42': { Fy: 42, Fu: 60 },
-    'A572Gr.50': { Fy: 50, Fu: 65 },
-    'A572Gr.55': { Fy: 55, Fu: 70 },
-    'A572Gr.60': { Fy: 60, Fu: 75 },
-    'A572Gr.65': { Fy: 65, Fu: 80 },
-    'A588Gr.42': { Fy: 42, Fu: 63 },
-    'A588Gr.46': { Fy: 46, Fu: 67 },
-    'A588Gr.50': { Fy: 50, Fu: 70 },
-    'A687': { Fy: 50, Fu: 70 },
-    'A992': { Fy: 50, Fu: 65 }
-};
+// Display error message to user
+function displayErrorMessage(message) {
+    // Create error message element
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "error-message";
+    errorDiv.style.color = "red";
+    errorDiv.style.padding = "10px";
+    errorDiv.style.marginBottom = "10px";
+    errorDiv.style.backgroundColor = "#ffeeee";
+    errorDiv.style.border = "1px solid red";
+    errorDiv.style.borderRadius = "5px";
+    errorDiv.textContent = message;
+    
+    // Find a good place to display it
+    const resultDiv = document.querySelector(".Result123");
+    if (resultDiv) {
+        resultDiv.prepend(errorDiv);
+    } else {
+        // If result div not found, insert at beginning of body
+        const body = document.querySelector("body");
+        if (body && body.firstChild) {
+            body.insertBefore(errorDiv, body.firstChild);
+        }
+    }
+}
 
-// Sample W-shape section properties (simplified)
-const wShapeSections = {
-    'W14': [
-        { name: 'W14×730', weight: 730, area: 215, rx: 9.27, ry: 5.94, Pn_ASD: [], Pn_LRFD: [] },
-        { name: 'W14×550', weight: 550, area: 162, rx: 8.67, ry: 5.55, Pn_ASD: [], Pn_LRFD: [] },
-        { name: 'W14×455', weight: 455, area: 134, rx: 8.27, ry: 5.32, Pn_ASD: [], Pn_LRFD: [] }
+// Handle lateral support visibility
+function handleSupportVisibilityC() {
+    try {
+        const supportCDiv = document.getElementById("SupportC");
+        const withSupport = document.getElementById("supportC");
+        
+        if (supportCDiv) {
+            if (withSupport && withSupport.checked) {
+                supportCDiv.style.display = "block";
+            } else {
+                supportCDiv.style.display = "none";
+            }
+        } else {
+            console.warn("Support div container not found");
+        }
+    } catch (error) {
+        console.error("Error handling support visibility:", error);
+    }
+}
+
+// Database of W-shapes
+const wShapeDatabase = {
+    "W14": [
+        ["W14X730", 730, 215, 22.4, 1.88, 17.9, 3.07, 4, 1.5, 7.5, 9.80, 5.81, 1830, 838, 1550, 546, 6.29, 16.2, 2590, 98800, 205, 7720, 545, 1.88, 273, 633, 5500, 3700],
+        ["W14X605", 605, 178, 21.6, 1.56, 17.4, 2.59, 3.5, 1.5, 7.5, 9.43, 5.64, 1460, 675, 1240, 441, 6.10, 16.4, 1470, 73400, 169, 6220, 437, 1.56, 212, 483, 4600, 3100],
+        ["W14X500", 500, 147, 20.7, 1.31, 16.9, 2.19, 3, 1.5, 7.5, 9.09, 5.49, 1170, 545, 991, 356, 5.94, 16.3, 887, 56000, 142, 4960, 351, 1.31, 169, 379, 3800, 2500],
+        ["W14X398", 398, 117, 19.7, 1.06, 16.5, 1.77, 2.5, 1.5, 7.5, 8.75, 5.38, 901, 431, 763, 279, 5.82, 16.2, 456, 42000, 116, 3820, 269, 1.06, 134, 297, 3000, 2000],
+        ["W14X283", 283, 83.3, 18.0, 0.938, 15.9, 1.56, 2.25, 1, 6, 8.22, 5.16, 613, 302, 515, 195, 5.55, 14.9, 184, 26200, 84.7, 2570, 196, 0.938, 92.5, 194, 2100, 1400],
+        ["W14X211", 211, 62.0, 16.5, 0.75, 15.6, 1.31, 2, 1, 6, 7.83, 5.06, 445, 227, 373, 146, 5.43, 13.9, 91.7, 18000, 65.1, 1870, 146, 0.75, 69.1, 144, 1600, 1050]
     ],
-    'W12': [
-        { name: 'W12×336', weight: 336, area: 98.8, rx: 7.16, ry: 4.49, Pn_ASD: [], Pn_LRFD: [] },
-        { name: 'W12×230', weight: 230, area: 67.7, rx: 6.58, ry: 4.11, Pn_ASD: [], Pn_LRFD: [] },
-        { name: 'W12×152', weight: 152, area: 44.7, rx: 6.10, ry: 3.78, Pn_ASD: [], Pn_LRFD: [] }
+    "W12": [
+        ["W12X336", 336, 98.8, 16.8, 1.09, 13.4, 1.94, 2.5, 1, 5.5, 7.17, 4.22, 674, 291, 564, 187, 4.64, 12.9, 175, 14600, 75.8, 2250, 187, 1.09, 93.7, 245, 2500, 1700],
+        ["W12X279", 279, 82.0, 16.1, 0.938, 13.1, 1.66, 2.25, 1, 5.5, 6.98, 4.14, 543, 237, 454, 152, 4.54, 12.8, 110, 11500, 65.2, 1810, 156, 0.938, 75.9, 197, 2100, 1400],
+        ["W12X230", 230, 67.7, 15.4, 0.812, 12.8, 1.44, 2, 1, 5.5, 6.83, 4.08, 435, 193, 362, 124, 4.47, 12.5, 68.0, 8950, 55.4, 1450, 125, 0.812, 62.1, 159, 1700, 1150],
+        ["W12X190", 190, 55.8, 14.7, 0.75, 12.5, 1.25, 1.75, 0.75, 5.5, 6.65, 4.01, 348, 157, 289, 101, 4.36, 12.2, 42.4, 6780, 47.3, 1160, 101, 0.75, 50.5, 128, 1400, 950],
+        ["W12X152", 152, 44.7, 14.0, 0.625, 12.2, 1.06, 1.5, 0.75, 5.5, 6.49, 3.95, 275, 125, 229, 80.7, 4.28, 11.9, 24.5, 5260, 39.7, 914, 80.6, 0.625, 40.3, 102, 1150, 750],
+        ["W12X120", 120, 35.3, 13.4, 0.55, 12.0, 0.9, 1.25, 0.75, 5.5, 6.41, 3.9, 214, 99.3, 177, 63.8, 4.21, 11.6, 15.1, 4000, 32.8, 710, 63.7, 0.55, 31.9, 80.4, 900, 600]
     ],
-    'W10': [
-        { name: 'W10×112', weight: 112, area: 32.9, rx: 4.94, ry: 3.20, Pn_ASD: [], Pn_LRFD: [] },
-        { name: 'W10×88', weight: 88, area: 25.9, rx: 4.66, ry: 3.02, Pn_ASD: [], Pn_LRFD: [] },
-        { name: 'W10×54', weight: 54, area: 15.8, rx: 4.32, ry: 2.54, Pn_ASD: [], Pn_LRFD: [] }
+    "W10": [
+        ["W10X112", 112, 33.0, 11.4, 0.755, 10.4, 1.25, 1.75, 0.75, 5.5, 4.98, 3.03, 170, 78.9, 146, 60.0, 3.43, 8.89, 11.5, 1660, 28.3, 583, 60.0, 0.755, 30.0, 66.5, 850, 550],
+        ["W10X100", 100, 29.4, 11.1, 0.68, 10.3, 1.12, 1.5, 0.75, 5.5, 4.91, 3.01, 150, 77.7, 129, 53.1, 3.39, 8.86, 8.36, 1450, 28.9, 518, 53.0, 0.68, 26.5, 58.6, 750, 500],
+        ["W10X88", 88, 25.9, 10.8, 0.605, 10.1, 0.99, 1.25, 0.75, 5.5, 4.85, 2.99, 131, 68.0, 112, 46.3, 3.36, 8.83, 5.95, 1260, 26.1, 449, 46.3, 0.605, 23.2, 51.0, 650, 450],
+        ["W10X77", 77, 22.6, 10.6, 0.53, 10.1, 0.87, 1.25, 0.75, 5.5, 4.83, 2.98, 114, 59.6, 97.7, 40.5, 3.35, 8.86, 4.06, 1100, 23.2, 391, 40.5, 0.53, 20.3, 44.4, 600, 400],
+        ["W10X68", 68, 20.0, 10.4, 0.47, 10.0, 0.77, 1, 0.75, 5.5, 4.82, 2.97, 101, 52.6, 85.9, 35.7, 3.33, 8.86, 2.87, 970, 20.7, 345, 35.7, 0.47, 17.9, 39.0, 500, 350],
+        ["W10X60", 60, 17.6, 10.2, 0.42, 10.0, 0.68, 1, 0.75, 5.5, 4.82, 2.97, 88.7, 46.4, 75.7, 31.3, 3.32, 8.84, 2.00, 844, 18.5, 303, 31.3, 0.42, 15.7, 34.2, 450, 300]
     ],
-    'W8': [
-        { name: 'W8×67', weight: 67, area: 19.7, rx: 3.61, ry: 2.55, Pn_ASD: [], Pn_LRFD: [] },
-        { name: 'W8×48', weight: 48, area: 14.1, rx: 3.45, ry: 2.21, Pn_ASD: [], Pn_LRFD: [] },
-        { name: 'W8×31', weight: 31, area: 9.13, rx: 3.21, ry: 1.85, Pn_ASD: [], Pn_LRFD: [] }
+    "W8": [
+        ["W8X67", 67, 19.7, 9.0, 0.57, 8.28, 0.935, 1.25, 0.75, 4.5, 3.81, 2.14, 82.8, 39.6, 70.4, 26.7, 2.48, 7.13, 3.71, 386, 17.3, 282, 26.7, 0.57, 13.3, 30.6, 500, 350],
+        ["W8X58", 58, 17.1, 8.75, 0.51, 8.22, 0.81, 1, 0.75, 4.5, 3.76, 2.12, 70.7, 33.8, 60.0, 22.8, 2.45, 7.13, 2.45, 325, 15.1, 240, 22.8, 0.51, 11.4, 26.0, 450, 300],
+        ["W8X48", 48, 14.1, 8.5, 0.4, 8.11, 0.685, 1, 0.75, 4.5, 3.74, 2.11, 58.1, 27.9, 49.0, 18.7, 2.43, 7.13, 1.41, 269, 12.5, 196, 18.7, 0.4, 9.38, 21.4, 350, 250],
+        ["W8X40", 40, 11.7, 8.25, 0.36, 8.07, 0.56, 0.75, 0.75, 4.5, 3.7, 2.08, 47.3, 22.5, 39.8, 15.2, 2.39, 7.13, 0.794, 213, 10.5, 159, 15.2, 0.36, 7.59, 17.4, 300, 200],
+        ["W8X35", 35, 10.3, 8.12, 0.31, 8.02, 0.495, 0.75, 0.75, 4.5, 3.69, 2.08, 41.3, 19.7, 34.7, 13.3, 2.38, 7.13, 0.536, 185, 9.27, 139, 13.3, 0.31, 6.66, 15.2, 250, 170],
+        ["W8X31", 31, 9.13, 8.0, 0.285, 8.0, 0.435, 0.75, 0.75, 4.5, 3.67, 2.08, 36.1, 17.3, 30.4, 11.6, 2.37, 7.13, 0.363, 160, 8.21, 122, 11.6, 0.285, 5.83, 13.2, 230, 150]
     ]
 };
 
-// Based on AISC tables for compression members (simplified)
-// Pre-calculated values for different KL/r ratios
-function getDesignStrengthFromKLratio(section, astmSpec, KLratio, designMethod) {
-    // For simplicity, using a formula-based approach rather than lookup tables
-    // In a real implementation, you would use the actual AISC tables or formulas
-    
-    const Fy = astmSpecData[astmSpec].Fy;
-    const E = 29000; // ksi
-    
-    // Calculate critical stress based on Euler buckling formula with AISC modifications
-    let Fcr;
-    
-    if (KLratio <= 4.71 * Math.sqrt(E / Fy)) {
-        // Inelastic buckling
-        const Fe = Math.pow(Math.PI, 2) * E / Math.pow(KLratio, 2);
-        Fcr = Math.pow(0.658, Fy/Fe) * Fy;
-    } else {
-        // Elastic buckling
-        Fcr = 0.877 * Math.pow(Math.PI, 2) * E / Math.pow(KLratio, 2);
-    }
-    
-    // Calculate nominal strength
-    const Pn = section.area * Fcr;
-    
-    // Apply safety factors based on design method
-    if (designMethod === 'LRFD') {
-        return 0.9 * Pn; // LRFD resistance factor
-    } else {
-        return Pn / 1.67; // ASD safety factor
-    }
-}
-
-// Function to calculate effective length factor (K) based on end conditions
-function calculateK(topCondition, botCondition) {
-    if ((topCondition === 'fixed' && botCondition === 'fixed')) {
-        return 0.65; // Fixed-Fixed
-    } else if ((topCondition === 'fixed' && botCondition === 'pinned') || 
-               (topCondition === 'pinned' && botCondition === 'fixed')) {
-        return 0.8; // Fixed-Pinned
-    } else if (topCondition === 'pinned' && botCondition === 'pinned') {
-        return 1.0; // Pinned-Pinned
-    } else if ((topCondition === 'fixed' && botCondition === 'free') || 
-               (topCondition === 'free' && botCondition === 'fixed')) {
-        return 2.0; // Fixed-Free
-    } else {
-        return 1.2; // Default/Other cases
-    }
-}
-
-// Function to get end conditions
-function getEndCondition(prefix) {
-    if (document.getElementById(prefix + 'fixedC').checked) {
-        return 'fixed';
-    } else if (document.getElementById(prefix + 'pinnedC').checked) {
-        return 'pinned';
-    } else if (document.getElementById(prefix + 'freeC').checked) {
-        return 'free';
-    } else {
-        return 'unknown';
-    }
-}
-
-// Function to get support conditions
-function getSupportCondition(prefix) {
-    if (document.getElementById(prefix + 'pinnedC').checked) {
-        return 'pinned';
-    } else if (document.getElementById(prefix + 'fixed').checked) {
-        return 'fixed';
-    } else if (document.getElementById(prefix + 'free').checked) {
-        return 'free';
-    } else {
-        return 'unknown';
-    }
-}
+// ASTM Steel specification properties
+const astmSpecs = {
+    "A36": { Fy: 36, Fu: 58, E: 29000 },
+    "A572Gr.42": { Fy: 42, Fu: 60, E: 29000 },
+    "A572Gr.50": { Fy: 50, Fu: 65, E: 29000 },
+    "A572Gr.55": { Fy: 55, Fu: 70, E: 29000 },
+    "A572Gr.60": { Fy: 60, Fu: 75, E: 29000 },
+    "A572Gr.65": { Fy: 65, Fu: 80, E: 29000 },
+    "A588Gr.42": { Fy: 42, Fu: 63, E: 29000 },
+    "A588Gr.46": { Fy: 46, Fu: 67, E: 29000 },
+    "A588Gr.50": { Fy: 50, Fu: 70, E: 29000 },
+    "A687": { Fy: 50, Fu: 70, E: 29000 },
+    "A992": { Fy: 50, Fu: 65, E: 29000 }
+};
 
 // Main design function
 function performDesign() {
-    // Get inputs
-    const astmSpec = document.getElementById('ASTMinputC').value;
-    const designMethod = document.getElementById('designMethod').value;
-    const deadLoad = parseFloat(document.getElementById('DeadLoad').value) || 0;
-    const liveLoad = parseFloat(document.getElementById('LiveLoad').value) || 0;
-    const memberLength = parseFloat(document.getElementById('LenghtDC').value) || 0;
-    
-    // End conditions
-    const topCondition = getEndCondition('top');
-    const botCondition = getEndCondition('bot');
-    
-    // Calculate KL values
-    const KxLengthFactor = calculateK(topCondition, botCondition);
-    const KxL = KxLengthFactor * memberLength;
-    
-    // Initialize KyL values
-    let KyL = KxL; // Default to same as KxL
-    
-    // Check if lateral supports exist
-    const hasLateralSupport = document.getElementById('supportC').checked;
-    
-    // Calculate effective lengths with lateral supports
-    if (hasLateralSupport) {
-        const supports = parseInt(document.getElementById('supprtamountC').value) || 0;
+    try {
+        console.log("Performing column design calculation...");
         
-        // Calculate unbraced lengths
-        const supportLocations = [];
-        for (let i = 1; i <= supports; i++) {
-            const location = parseFloat(document.getElementById('location' + i + 'C').value) || 0;
-            if (location > 0 && location < memberLength) {
-                supportLocations.push(location);
+        // Get required DOM elements
+        const astmSelect = getRequiredElement("ASTMinputC", "ASTM specification selector");
+        const designMethodSelect = getRequiredElement("designMethod", "Design method selector");
+        const deadLoadInput = getRequiredElement("DeadLoad", "Dead load input");
+        const liveLoadInput = getRequiredElement("LiveLoad", "Live load input");
+        const lengthInput = getRequiredElement("LenghtDC", "Column length input");
+        
+        // Get input values
+        const astmSpec = astmSelect.value;
+        const designMethod = designMethodSelect.value;
+        const deadLoad = parseFloat(deadLoadInput.value) || 0;
+        const liveLoad = parseFloat(liveLoadInput.value) || 0;
+        const columnLength = parseFloat(lengthInput.value) || 0;
+        
+        // Check if inputs are valid
+        if (columnLength <= 0) {
+            throw new Error("Column length must be greater than zero");
+        }
+        
+        // Get end support conditions
+        const topFixed = document.getElementById("topfixedC");
+        const topPinned = document.getElementById("toppinnedC");
+        const topFree = document.getElementById("topfreeC");
+        const botFixed = document.getElementById("botfixedC");
+        const botPinned = document.getElementById("botpinnedC");
+        const botFree = document.getElementById("botfreeC");
+        
+        const topSupportType = topFixed && topFixed.checked ? "fixed" : 
+                              topPinned && topPinned.checked ? "pinned" : "free";
+        const botSupportType = botFixed && botFixed.checked ? "fixed" : 
+                              botPinned && botPinned.checked ? "pinned" : "free";
+        
+        // Get lateral support information
+        const noSupport = document.getElementById("NosupportC");
+        const withSupport = document.getElementById("supportC");
+        const supportAmountInput = document.getElementById("supprtamountC");
+        
+        const hasLateralSupports = withSupport && withSupport.checked;
+        const supportCount = hasLateralSupports ? parseInt(supportAmountInput.value) || 0 : 0;
+        
+        // Get lateral support locations and types
+        const lateralSupports = [];
+        if (hasLateralSupports) {
+            for (let i = 0; i < supportCount && i < 3; i++) {
+                const fixedElement = document.getElementById(`fixed${i+1}C`);
+                const pinnedElement = document.getElementById(`pinned${i+1}C`);
+                const locationElement = document.getElementById(`location${i+1}C`);
+                
+                if (locationElement) {
+                    const location = parseFloat(locationElement.value) || 0;
+                    const type = fixedElement && fixedElement.checked ? "fixed" :
+                                pinnedElement && pinnedElement.checked ? "pinned" : "free";
+                    
+                    if (location > 0 && location < columnLength) {
+                        lateralSupports.push({
+                            position: location,
+                            type: type
+                        });
+                    }
+                }
             }
         }
         
-        // Sort support locations
-        supportLocations.sort((a, b) => a - b);
+        // Sort lateral supports by position
+        lateralSupports.sort((a, b) => a.position - b.position);
         
-        // Calculate maximum unbraced length
-        let maxUnbracedLength = 0;
-        let prevLocation = 0;
+        // Calculate effective length factors
+        const { Kx, Ky, segmentsY } = calculateEffectiveLengthFactors(
+            columnLength, 
+            topSupportType, 
+            botSupportType, 
+            lateralSupports
+        );
         
-        for (const location of supportLocations) {
-            const unbracedLength = location - prevLocation;
-            maxUnbracedLength = Math.max(maxUnbracedLength, unbracedLength);
-            prevLocation = location;
-        }
+        // Calculate effective lengths
+        const Klx = Kx * columnLength * 12; // Convert to inches
+        const Kly = Ky * columnLength * 12; // Convert to inches
         
-        // Final segment
-        const finalUnbracedLength = memberLength - prevLocation;
-        maxUnbracedLength = Math.max(maxUnbracedLength, finalUnbracedLength);
+        // Determine governing effective length
+        const governingKl = Math.max(Klx, Kly);
+        const isYGoverning = Kly >= Klx;
         
-        // Apply K factor to max unbraced length
-        KyL = KxLengthFactor * maxUnbracedLength;
-    }
-    
-    // Use KLy as effective length if lateral supports exist
-    const KLeff = hasLateralSupport ? KyL : KxL;
-    
-    // Calculate design load
-    let designLoad;
-    if (designMethod === 'LRFD') {
-        designLoad = 1.2 * deadLoad + 1.6 * liveLoad;
-    } else { // ASD
-        designLoad = deadLoad + liveLoad;
-    }
-    
-    // Display results in the primary table
-    document.getElementById('L1').textContent = memberLength.toFixed(2);
-    document.getElementById('K1').textContent = KxLengthFactor.toFixed(2);
-    
-    if (hasLateralSupport) {
-        document.getElementById('L2').textContent = (KyL / KxLengthFactor).toFixed(2);
-        document.getElementById('K2').textContent = KxLengthFactor.toFixed(2);
-        document.getElementById('G2').textContent = KyL < KxL ? 'Yes' : 'No';
-    }
-    
-    // Calculate KL/r values
-    document.getElementById('K/L1').textContent = KxL.toFixed(2);
-    if (hasLateralSupport) {
-        document.getElementById('K/L2').textContent = KyL.toFixed(2);
-    }
-    
-    // Mark governing case
-    document.getElementById('G1').textContent = !hasLateralSupport || KxL >= KyL ? 'Yes' : 'No';
-    
-    // Populate the table with calculated values for each W shape
-    const wShapeSizes = ['W14', 'W12', 'W10', 'W8'];
-    const results = [];
-    
-    for (let i = 0; i < wShapeSizes.length; i++) {
-        const shapeType = wShapeSizes[i];
-        const bestShape = findBestSection(shapeType, KLeff, designLoad, astmSpec, designMethod);
+        // Calculate required capacity
+        const totalLoad = calculateTotalLoad(deadLoad, liveLoad, designMethod);
         
-        if (bestShape) {
-            results.push(bestShape);
-            
-            // Update results table - initial placeholder values
-            document.getElementById(shapeType).textContent = bestShape.name;
-            document.getElementById('Weight' + (i+1)).textContent = bestShape.weight.toFixed(1);
-            document.getElementById('rxry' + (i+1)).textContent = (bestShape.rx / bestShape.ry).toFixed(2);
-            
-            // Will be updated in showFinalResults with proper values
-        }
+        // Find suitable W-shapes
+        const suitableShapes = findSuitableShapes(
+            governingKl, 
+            totalLoad, 
+            designMethod, 
+            wShapeDatabase,
+            astmSpec
+        );
+        
+        // Display results
+        displayResults(
+            suitableShapes, 
+            Klx, 
+            Kly, 
+            isYGoverning, 
+            totalLoad, 
+            astmSpec, 
+            designMethod, 
+            segmentsY
+        );
+        
+        console.log("Design calculation completed successfully");
+    } catch (error) {
+        console.error("Error in design calculation:", error);
+        displayErrorMessage(`Design calculation error: ${error.message}`);
     }
-    
-    // Show the final results with detailed calculations
-    showFinalResults(results, designLoad, KLeff, astmSpec, designMethod);
 }
 
-// Function to find the best section
-function findBestSection(shapeType, KLeff, designLoad, astmSpec, designMethod) {
-    const sections = wShapeSections[shapeType];
-    let bestSection = null;
-    let minWeight = Infinity;
+// Calculate effective length factors based on support conditions
+function calculateEffectiveLengthFactors(length, topSupport, botSupport, lateralSupports) {
+    // Default K factors for different end conditions
+    const endConditionFactors = {
+        'fixed-fixed': 0.5,
+        'fixed-pinned': 0.7,
+        'fixed-free': 2.0,
+        'pinned-pinned': 1.0,
+        'pinned-fixed': 0.7,
+        'pinned-free': 2.0,
+        'free-fixed': 2.0,
+        'free-pinned': 2.0,
+        'free-free': 10.0 // Effectively unstable
+    };
     
-    for (const section of sections) {
-        // Calculate the KL/r ratio
-        const KLrRatio = KLeff / section.ry; // Using ry as it's typically the governing radius of gyration
+    // For X-axis: we only consider end supports
+    const endConditionX = `${topSupport}-${botSupport}`;
+    const Kx = endConditionFactors[endConditionX] || 1.0; // Default to 1.0 if condition not found
+    
+    // For Y-axis: consider both end supports and lateral bracing
+    let Ky = Kx; // Start with the same factor as X-axis
+    
+    // If we have lateral supports, we need to consider their effect
+    const segmentsY = [];
+    
+    if (lateralSupports.length > 0) {
+        // Create segments based on supports
+        let startPoint = 0;
+        let previousType = topSupport;
         
-        // Get design strength
-        const designStrength = getDesignStrengthFromKLratio(section, astmSpec, KLrRatio, designMethod);
+        // Process each lateral support
+        for (const support of lateralSupports) {
+            const segmentLength = support.position - startPoint;
+            const endCondition = `${previousType}-${support.type}`;
+            const segmentK = endConditionFactors[endCondition] || 1.0;
+            
+            segmentsY.push({
+                startPoint: startPoint,
+                endPoint: support.position,
+                length: segmentLength,
+                K: segmentK
+            });
+            
+            startPoint = support.position;
+            previousType = support.type;
+        }
         
-        // Calculate capacity ratio
-        const capacityRatio = designLoad / designStrength;
+        // Add final segment to bottom
+        const finalSegmentLength = length - startPoint;
+        const finalEndCondition = `${previousType}-${botSupport}`;
+        const finalSegmentK = endConditionFactors[finalEndCondition] || 1.0;
         
-        // Create extended section object with calculated properties
-        const extendedSection = {
-            ...section,
-            capacityRatio,
-            KFactor: calculateK(getEndCondition('top'), getEndCondition('bot')),
-            designStrength,
-            isBestOption: false
-        };
+        segmentsY.push({
+            startPoint: startPoint,
+            endPoint: length,
+            length: finalSegmentLength,
+            K: finalSegmentK
+        });
         
-        // Check if this section works
-        if (capacityRatio <= 1.0 && section.weight < minWeight) {
-            minWeight = section.weight;
-            bestSection = extendedSection;
-        } else if (!bestSection) {
-            // If no valid section found, still return the best one we have
-            if (!bestSection || capacityRatio < bestSection.capacityRatio) {
-                bestSection = extendedSection;
+        // Find the maximum effective length factor among segments
+        let maxSegmentKL = 0;
+        for (const segment of segmentsY) {
+            const segmentKL = segment.K * segment.length;
+            if (segmentKL > maxSegmentKL) {
+                maxSegmentKL = segmentKL;
             }
         }
+        
+        // Calculate the overall effective length factor for Y-axis
+        Ky = maxSegmentKL / length;
     }
     
-    return bestSection;
+    return { Kx, Ky, segmentsY };
 }
-// Function to show final results
-function showFinalResults(results, designLoad, KLeff, astmSpec, designMethod) {
-    // Sort results by weight
-    results.sort((a, b) => a.weight - b.weight);
-    
-    // Assign ranks to all options that meet criteria
-    let validResults = results.filter(r => r.capacityRatio <= 1.0);
-    validResults.forEach((result, index) => {
-        result.rank = index + 1;
-    });
-    
-    // Mark the best option (rank 1)
-    const bestOption = validResults.length > 0 ? validResults[0] : null;
-    
-    // Get load combination results to include in the output
-    const deadLoad = parseFloat(document.getElementById("DeadLoad").value) || 0;
-    const liveLoad = parseFloat(document.getElementById("LiveLoad").value) || 0;
-    const loadResults = calculateLoadCombinations(deadLoad, liveLoad, designMethod, astmSpec);
-    
-    // Make sure we're targeting the correct result div
-    const resultDiv = document.getElementById('Result123');
-    if (!resultDiv) {
-        console.error("Result123 div not found in the document");
-        return;
-    }
-    
-    // Update result tables first
-    for (let i = 0; i < results.length; i++) {
-        const result = results[i];
-        const bestElement = document.getElementById('Best' + (i+1));
-        const pupaElement = document.getElementById('pupa' + (i+1));
-        
-        if (bestElement) {
-            if (result.rank) {
-                bestElement.textContent = `Rank ${result.rank}`;
-            } else {
-                bestElement.textContent = 'N/A';
-            }
-        }
-        
-        if (pupaElement) {
-            // Pu/Pa should be the maximum ultimate load, not a ratio
-            pupaElement.textContent = result.designStrength.toFixed(1) + ' kips';
-        }
-    }
-    
-    // Create load combinations HTML section
-    let loadCombinationsHTML = `
-        <h3>Load Combinations Analysis</h3>
-        <p><strong>Design Method:</strong> ${loadResults.designMethod}</p>
-        <p><strong>ASTM Specification:</strong> ${loadResults.astmSpecification} (Fy = ${loadResults.yieldStrength} ksi)</p>
-        <h4>Load Combinations:</h4>
-        <ul>
-    `;
-    
-    loadResults.loadCombinations.forEach(combo => {
-        loadCombinationsHTML += `<li>${combo.name}: ${combo.formula}</li>`;
-    });
-    
-    loadCombinationsHTML += `
-        </ul>
-        <p><strong>Governing Load Combination:</strong> ${loadResults.governingLoad.name} = ${loadResults.governingLoad.value.toFixed(2)} kips</p>
-    `;
-    
-    if (bestOption) {
-        // Get ASTM properties
-        const Fy = astmSpecData[astmSpec].Fy;
-        const Fu = astmSpecData[astmSpec].Fu;
-        const E = 29000; // ksi
-        
-        // Calculate critical KL/r
-        const criticalKLr = KLeff / bestOption.ry;
-        
-        // Calculate Euler buckling stress
-        const Fe = Math.pow(Math.PI, 2) * E / Math.pow(criticalKLr, 2);
-        
-        // Calculate critical stress Fcr
-        let Fcr;
-        if (criticalKLr <= 4.71 * Math.sqrt(E / Fy)) {
-            // Inelastic buckling
-            Fcr = Math.pow(0.658, Fy/Fe) * Fy;
-        } else {
-            // Elastic buckling
-            Fcr = 0.877 * Math.pow(Math.PI, 2) * E / Math.pow(criticalKLr, 2);
-        }
-        
-        // Determine if section is compact
-        // Note: This is simplified - actual compactness check requires flange and web properties
-        const isCompact = criticalKLr < 3.76 * Math.sqrt(E / Fy);
-        
-        // Calculate design strength
-        const nominalStrength = bestOption.area * Fcr;
-        const designStrength = designMethod === 'LRFD' ? 
-            0.9 * nominalStrength : 
-            nominalStrength / 1.67;
-        
-        resultDiv.innerHTML = `
-            <h2>Detailed Design Calculations</h2>
-            
-            ${loadCombinationsHTML}
-            
-            <h3>1. Input Parameters</h3>
-            <ul>
-                <li>ASTM Specification: ${astmSpec} (Fy = ${Fy} ksi, Fu = ${Fu} ksi)</li>
-                <li>Design Method: ${designMethod}</li>
-                <li>Design Load: ${designLoad.toFixed(2)} kips</li>
-                <li>Column Length: ${KLeff / bestOption.KFactor} ft</li>
-                <li>Effective Length Factor (K): ${bestOption.KFactor}</li>
-                <li>Effective Length (KL): ${KLeff.toFixed(2)} ft</li>
-            </ul>
-            
-            <h3>2. Best Section Properties</h3>
-            <ul>
-                <li>Selected Section: <strong>${bestOption.name}</strong> (Rank 1)</li>
-                <li>Section Weight: ${bestOption.weight} lb/ft</li>
-                <li>Cross-sectional Area: ${bestOption.area} in²</li>
-                <li>Radius of Gyration: rx = ${bestOption.rx} in, ry = ${bestOption.ry} in</li>
-                <li>rx/ry Ratio: ${(bestOption.rx / bestOption.ry).toFixed(2)}</li>
-                <li>Compactness Status: ${isCompact ? "Compact Section" : "Non-compact Section"}</li>
-            </ul>
-            
-            <h3>3. Strength Calculation</h3>
-            <p><strong>Critical KL/r:</strong> ${criticalKLr.toFixed(2)}</p>
-            
-            <p><strong>Euler Buckling Stress Formula:</strong></p>
-            <div>Fe = π²E/(KL/r)² = π² × ${E}/(${criticalKLr.toFixed(2)})² = ${Fe.toFixed(2)} ksi</div>
-            
-            <p><strong>Critical Stress (Fcr) Formula:</strong></p>
-            ${criticalKLr <= 4.71 * Math.sqrt(E / Fy) ? 
-                `<div>For KL/r ≤ 4.71√(E/Fy) = ${(4.71 * Math.sqrt(E / Fy)).toFixed(2)} (Inelastic Buckling):</div>
-                <div>Fcr = 0.658^(Fy/Fe) × Fy = 0.658^(${Fy}/${Fe.toFixed(2)}) × ${Fy} = ${Fcr.toFixed(2)} ksi</div>` :
-                `<div>For KL/r > 4.71√(E/Fy) = ${(4.71 * Math.sqrt(E / Fy)).toFixed(2)} (Elastic Buckling):</div>
-                <div>Fcr = 0.877 × Fe = 0.877 × ${Fe.toFixed(2)} = ${Fcr.toFixed(2)} ksi</div>`
-            }
-            
-            <p><strong>Nominal Compressive Strength:</strong></p>
-            <div>Pn = Fcr × A = ${Fcr.toFixed(2)} ksi × ${bestOption.area} in² = ${nominalStrength.toFixed(2)} kips</div>
-            
-            <p><strong>Design Compressive Strength (${designMethod}):</strong></p>
-            ${designMethod === 'LRFD' ? 
-                `<div>φPn = 0.9 × ${nominalStrength.toFixed(2)} = ${designStrength.toFixed(2)} kips</div>` :
-                `<div>Pn/Ω = ${nominalStrength.toFixed(2)}/1.67 = ${designStrength.toFixed(2)} kips</div>`
-            }
-            
-            <h3>4. Design Check</h3>
-            <p><strong>Design Load:</strong> ${designLoad.toFixed(2)} kips</p>
-            <p><strong>Design Strength:</strong> ${designStrength.toFixed(2)} kips</p>
-            <p><strong>D.C. Ratio:</strong> ${(designLoad / designStrength).toFixed(3)} ${(designLoad / designStrength) <= 1.0 ? "≤ 1.0 ✓" : "> 1.0 ✗"}</p>
-            
-            <h3>5. Final Result</h3>
-            <p>Status: <span style="color: ${(designLoad / designStrength) <= 1.0 ? "green" : "red"}; font-weight: bold;">
-            ${(designLoad / designStrength) <= 1.0 ? "SAFE" : "NOT SAFE"}</span></p>
-            
-            <h3>6. Comparative Results (All Sections)</h3>
-            <table border="1" style="border-collapse: collapse; width: 100%;">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Shape</th>
-                        <th>Weight (lb/ft)</th>
-                        <th>Design Strength (kips)</th>
-                        <th>D.C. Ratio</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${results.map(r => `
-                        <tr ${r.rank === 1 ? 'style="background-color: #e6ffe6;"' : ''}>
-                            <td>${r.rank || 'N/A'}</td>
-                            <td>${r.name}</td>
-                            <td>${r.weight}</td>
-                            <td>${r.designStrength.toFixed(1)}</td>
-                            <td>${(designLoad / r.designStrength).toFixed(3)}</td>
-                            <td style="color: ${(designLoad / r.designStrength) <= 1.0 ? 'green' : 'red'}; font-weight: bold;">
-                                ${(designLoad / r.designStrength) <= 1.0 ? 'SAFE' : 'NOT SAFE'}
-                            </td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
+
+// Calculate total load based on design method
+function calculateTotalLoad(deadLoad, liveLoad, designMethod) {
+    if (designMethod === "LRFD") {
+        // LRFD load combinations
+        return 1.2 * deadLoad + 1.6 * liveLoad;
     } else {
-        resultDiv.innerHTML = `
-            <h2>Design Results</h2>
-            
-            ${loadCombinationsHTML}
-            
-            <p>No suitable section found for the given loads and constraints.</p>
-            
-            <h3>1. Input Parameters</h3>
-            <ul>
-                <li>Design Method: ${designMethod}</li>
-                <li>Design Load: ${designLoad.toFixed(2)} kips</li>
-                <li>Effective Length (KL): ${KLeff.toFixed(2)} ft</li>
-            </ul>
-            
-            <h3>2. Analysis</h3>
-            <p>All evaluated sections fail to provide adequate strength for the given design load.</p>
-            <p>Consider the following options:</p>
-            <ul>
-                <li>Reduce the applied loads</li>
-                <li>Provide additional lateral support to reduce effective length</li>
-                <li>Consider different end conditions</li>
-                <li>Use a different steel grade with higher strength</li>
-                <li>Consider using built-up sections or other section types</li>
-            </ul>
-            
-            <h3>3. Comparative Results (All Sections)</h3>
-            <table border="1" style="border-collapse: collapse; width: 100%;">
-                <thead>
-                    <tr>
-                        <th>Shape</th>
-                        <th>Weight (lb/ft)</th>
-                        <th>Design Strength (kips)</th>
-                        <th>D.C. Ratio</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${results.map(r => `
-                        <tr>
-                            <td>${r.name}</td>
-                            <td>${r.weight}</td>
-                            <td>${r.designStrength.toFixed(1)}</td>
-                            <td>${(designLoad / r.designStrength).toFixed(3)}</td>
-                            <td style="color: red; font-weight: bold;">NOT SAFE</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-    }
-    
-    // No need to keep the separate loadCombinationResults div now that we've integrated it
-    const oldResultsDiv = document.getElementById("loadCombinationResults");
-    if (oldResultsDiv) {
-        oldResultsDiv.remove();
+        // ASD load combinations
+        return deadLoad + liveLoad;
     }
 }
 
-// Main design function
-function performDesign() {
-    // Get inputs
-    const astmSpec = document.getElementById('ASTMinputC').value;
-    const designMethod = document.getElementById('designMethod').value;
-    const deadLoad = parseFloat(document.getElementById('DeadLoad').value) || 0;
-    const liveLoad = parseFloat(document.getElementById('LiveLoad').value) || 0;
-    const memberLength = parseFloat(document.getElementById('LenghtDC').value) || 0;
-    
-    // End conditions
-    const topCondition = getEndCondition('top');
-    const botCondition = getEndCondition('bot');
-    
-    // Calculate KL values
-    const KxLengthFactor = calculateK(topCondition, botCondition);
-    const KxL = KxLengthFactor * memberLength;
-    
-    // Initialize KyL values
-    let KyL = KxL; // Default to same as KxL
-    
-    // Check if lateral supports exist
-    const hasLateralSupport = document.getElementById('supportC').checked;
-    
-    // Calculate effective lengths with lateral supports
-    if (hasLateralSupport) {
-        const supports = parseInt(document.getElementById('supprtamountC').value) || 0;
-        
-        // Calculate unbraced lengths
-        const supportLocations = [];
-        for (let i = 1; i <= supports; i++) {
-            const location = parseFloat(document.getElementById('location' + i + 'C').value) || 0;
-            if (location > 0 && location < memberLength) {
-                supportLocations.push(location);
-            }
-        }
-        
-        // Sort support locations
-        supportLocations.sort((a, b) => a - b);
-        
-        // Calculate maximum unbraced length
-        let maxUnbracedLength = 0;
-        let prevLocation = 0;
-        
-        for (const location of supportLocations) {
-            const unbracedLength = location - prevLocation;
-            maxUnbracedLength = Math.max(maxUnbracedLength, unbracedLength);
-            prevLocation = location;
-        }
-        
-        // Final segment
-        const finalUnbracedLength = memberLength - prevLocation;
-        maxUnbracedLength = Math.max(maxUnbracedLength, finalUnbracedLength);
-        
-        // Apply K factor to max unbraced length
-        KyL = KxLengthFactor * maxUnbracedLength;
-    }
-    
-    // Use KLy as effective length if lateral supports exist
-    const KLeff = hasLateralSupport ? KyL : KxL;
-    
-    // Calculate design load based on load combinations calculated in calculateLoadCombinations
-    const loadCombinationResults = calculateLoadCombinations(deadLoad, liveLoad, designMethod, astmSpec);
-    const designLoad = loadCombinationResults.governingLoad.value;
-    
-    // Display results in the primary table
-    document.getElementById('L1').textContent = memberLength.toFixed(2);
-    document.getElementById('K1').textContent = KxLengthFactor.toFixed(2);
-    
-    if (hasLateralSupport) {
-        document.getElementById('L2').textContent = (KyL / KxLengthFactor).toFixed(2);
-        document.getElementById('K2').textContent = KxLengthFactor.toFixed(2);
-        document.getElementById('G2').textContent = KyL < KxL ? 'Yes' : 'No';
-    }
-    
-    // Calculate KL/r values
-    document.getElementById('K/L1').textContent = KxL.toFixed(2);
-    if (hasLateralSupport) {
-        document.getElementById('K/L2').textContent = KyL.toFixed(2);
-    }
-    
-    // Mark governing case
-    document.getElementById('G1').textContent = !hasLateralSupport || KxL >= KyL ? 'Yes' : 'No';
-    
-    // Populate the table with calculated values for each W shape
-    const wShapeSizes = ['W14', 'W12', 'W10', 'W8'];
-    const results = [];
-    
-    for (let i = 0; i < wShapeSizes.length; i++) {
-        const shapeType = wShapeSizes[i];
-        const bestShape = findBestSection(shapeType, KLeff, designLoad, astmSpec, designMethod);
-        
-        if (bestShape) {
-            results.push(bestShape);
-            
-            // Update results table - initial placeholder values
-            document.getElementById(shapeType).textContent = bestShape.name;
-            document.getElementById('Weight' + (i+1)).textContent = bestShape.weight.toFixed(1);
-            document.getElementById('rxry' + (i+1)).textContent = (bestShape.rx / bestShape.ry).toFixed(2);
-            
-            // Will be updated in showFinalResults with proper values
-        }
-    }
-    
-    // Show the final results with detailed calculations
-    showFinalResults(results, designLoad, KLeff, astmSpec, designMethod);
-}
-    
+
 </script>
 
 </body>
