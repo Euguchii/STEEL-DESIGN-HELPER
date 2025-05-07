@@ -20,9 +20,941 @@
             <a class="con" id="2" href="Analysis and Design for Axial Compression.html">|Analysis and Design for Axial Compression|</a>
             <a class="con" id="active" class="active" href="Analysis and Design of Members for Bending.html">|Analysis and Design of Members for Bending|</a>
             <a class="con" id="4" href="Shear Strength of Structural Member.html">|Shear Strength of Structural Member|</a>
-            
         </div>
     </nav>
+
+<div class="FINALCONTAINER">
+      <div class="AnalysisForBending">
+          <div style="display: inline;">
+              <h1>ANALYSIS OF BENDING MEMBERS</h1> 
+          </div>
+          <div class="InputForAnalysisBending">
+              <h3></h3>
+              <div>
+                  <label>W-SHAPE</label>
+                  <input id="Wshape" placeholder="W12x44" type="text">
+                  
+              </div>
+              <div>
+                  <label>ASTM Specification</label>
+                  <select name="ASTMinput" id="ASTMinput">
+                      <option value="A36">A36</option>
+                      <option value="A572Gr.42">A572 Gr. 42</option>
+                      <option value="A572Gr.50">A572 Gr. 50</option>
+                      <option value="A572Gr.55">A572 Gr. 55</option>
+                      <option value="A572Gr.60">A572 Gr. 60</option>
+                      <option value="A572Gr.65">A572 Gr. 65</option>
+                      <option value="A588Gr.42">A588 Gr. 42</option>
+                      <option value="A588Gr.46">A588 Gr. 46</option>
+                      <option value="A588Gr.50">A588 Gr. 50</option>
+                      <option value="A687">A687</option>
+                      <option value="A992">A992</option>
+                  </select>
+              </div>
+              <div>
+                  <label></label>
+              </div>
+              <button class="AnalyzeBending" id="AnalyzeBending">Analyze</button>
+              
+          </div>
+          <div class="tableABending">
+              <table>
+                  <thead id="THB">
+                      <tr>
+                          <th>DESIGN METHOD</th>
+                          <th> Ultimate Moment/ Applied Moment<br>(Mu/Ma)</th>
+                      </tr>
+                  </thead>
+                  <tbody id="TBB">
+                      <tr>
+                          <td>LRFD</td>
+                          <td id="Mu"></td>
+                      </tr>
+                      <tr>
+                          <td>ASD</td>
+                          <td id="Ma"></td>
+
+                      </tr>
+                  </tbody>
+              </table>
+
+          </div>
+          <div class="ResultAnalysisBending">
+              
+          </div>
+          
+          
+
+      </div>
+    <div class="DesignForBending">
+        <div style="display: inline;">
+            <h1>DESIGN FOR BENDING MEMBERS</h1> 
+        </div>
+
+        <div class="InputForBendingDesign">
+            <div>
+                <label>ASTM Specification</label>
+                <select  id="ASTMinputBending">
+                    <option value="A36">A36</option>
+                    <option value="A572Gr.42">A572 Gr. 42</option>
+                    <option value="A572Gr.50">A572 Gr. 50</option>
+                    <option value="A572Gr.55">A572 Gr. 55</option>
+                    <option value="A572Gr.60">A572 Gr. 60</option>
+                    <option value="A572Gr.65">A572 Gr. 65</option>
+                    <option value="A588Gr.42">A588 Gr. 42</option>
+                    <option value="A588Gr.46">A588 Gr. 46</option>
+                    <option value="A588Gr.50">A588 Gr. 50</option>
+                    <option value="A687">A687</option>
+                    <option value="A992">A992</option>
+                </select>
+            </div>
+            <div>
+                <label>Design Method</label>
+                <select id="DesignMethod">
+                    <option value="LRFD">LRFD</option>
+                    <option value="ASD">ASD</option>
+                </select>
+            </div>
+            <div>
+                <label>DeadLoad:</label>
+                <input id="DeadLoad" size="10" placeholder="kips">
+                <label>Liveload:</label>
+                <input  id="LiveLoad" size="10" placeholder="kips">
+                <label>Lenght:</label>
+                <input id="LenghtDC" size="10" placeholder="ft">
+            </div>
+            <button id="DesignBending">Design</button>
+
+           
+        </div>
+        
+    </div>
+   
+</div>
+
+<script>
+// Global variables for data storage
+let steelSpecs = [];
+let sectionData = {};
+let dataLoaded = false;
+
+// Initialize the application when the document is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("Initializing Bending Analysis application");
+    
+    // Set up event listeners
+    setupEventListeners();
+    
+    // Try to load the data from Excel file
+    loadExcelData()
+        .then(() => {
+            console.log("Excel data loaded successfully");
+            dataLoaded = true;
+            updateShapeOptions();
+            updateSteelOptions();
+        })
+        .catch(error => {
+            console.warn("Failed to load Excel data:", error);
+            console.log("Using hardcoded data instead");
+            useHardcodedData();
+            dataLoaded = true;
+            updateShapeOptions();
+            updateSteelOptions();
+        });
+});
+
+// Function to set up event listeners
+function setupEventListeners() {
+    // Add event listener to Analyze button
+    const analyzeButton = document.querySelector('button.AnalyzeBending');
+    if (analyzeButton) {
+        analyzeButton.addEventListener('click', analyzeBending);
+        console.log("Analyze button listener attached");
+    } else {
+        console.error("Analyze button not found");
+    }
+    
+    // Add event listener for W-shape input to validate and auto-complete
+    const wShapeInput = document.getElementById('Wshape');
+    if (wShapeInput) {
+        wShapeInput.addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+    }
+}
+
+
+// Modified function to load Excel data using fetch API
+async function loadExcelData() {
+    try {
+        console.log("Attempting to load Excel data...");
+        
+        // Use fetch API to load the Excel file as a blob
+        const response = await fetch('ASTMSPEC.xlsx', {
+            method: 'GET',
+            mode: 'cors', // Try with cors mode
+            cache: 'no-cache'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Failed to fetch Excel file: ${response.status}`);
+        }
+        
+        // Get the file as an ArrayBuffer
+        const arrayBuffer = await response.arrayBuffer();
+        const data = new Uint8Array(arrayBuffer);
+        
+        // Parse with SheetJS
+        const workbook = XLSX.read(data, { type: 'array' });
+        
+        // Load steel specifications from the first sheet
+        const steelSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rawSteelSpecs = XLSX.utils.sheet_to_json(steelSheet);
+        
+        // Validate steel specs data
+        steelSpecs = rawSteelSpecs.filter(spec => 
+            spec.Steel_name && 
+            typeof spec.Fy === 'number' && 
+            typeof spec.Fu === 'number'
+        );
+        
+        if (steelSpecs.length === 0) {
+            console.error("No valid steel specifications found in the Excel file");
+            console.log("Raw steel specs data:", rawSteelSpecs);
+            useHardcodedData();
+        } else {
+            console.log(`Successfully loaded ${steelSpecs.length} steel specifications`);
+            steelSpecs.slice(0, 5).forEach(spec => 
+                console.log(`Steel: ${spec.Steel_name}, Fy: ${spec.Fy}, Fu: ${spec.Fu}`)
+            );
+        }
+        
+        // Load section data from the second sheet
+        const sectionSheet = workbook.Sheets[workbook.SheetNames[1]];
+        const sectionsArray = XLSX.utils.sheet_to_json(sectionSheet);
+        
+        // Convert array to object with section names as keys
+        sectionData = {};
+        sectionsArray.forEach(section => {
+            if (section.AISC_Manual_Label) {
+                sectionData[section.AISC_Manual_Label] = section;
+            }
+        });
+        
+        console.log(`Loaded ${Object.keys(sectionData).length} sections`);
+        
+        // Update UI with loaded data
+        updateShapeOptions();
+        updateSteelOptions();
+        
+        return true;
+    } catch (error) {
+        console.error("Error loading Excel data:", error);
+        // Use hardcoded data as fallback
+        useHardcodedData();
+        
+        // Update UI with fallback data
+        updateShapeOptions();
+        updateSteelOptions();
+        
+        return false;
+    }
+}
+
+
+// Modify useHardcodedData to ensure data is accessible in all scopes
+function useHardcodedData() {
+    // Default steel specifications
+    const hardcodedSteelSpecs = [
+        { Steel_name: "A36", Fy: 36, Fu: 58 },
+        { Steel_name: "A572Gr.42", Fy: 42, Fu: 60 },
+        { Steel_name: "A572Gr.50", Fy: 50, Fu: 65 },
+        { Steel_name: "A572Gr.55", Fy: 55, Fu: 70 },
+        { Steel_name: "A572Gr.60", Fy: 60, Fu: 75 },
+        { Steel_name: "A572Gr.65", Fy: 65, Fu: 80 },
+        { Steel_name: "A588Gr.42", Fy: 42, Fu: 63 },
+        { Steel_name: "A588Gr.46", Fy: 46, Fu: 67 },
+        { Steel_name: "A588Gr.50", Fy: 50, Fu: 70 },
+        { Steel_name: "A687", Fy: 50, Fu: 70 },
+        { Steel_name: "A992", Fy: 50, Fu: 65 }
+    ];
+    
+    // Common W shapes with their properties
+    const hardcodedSectionData = {
+        "W12X45": { 
+            A: 13.2, tw: 0.335, d: 12.1, bf: 8.05, Zx: 88.6, Sx: 78.0, 
+            "bf/2tf": 8.5, "h/tw": 29.9, Kc: 0.707, AISC_Manual_Label: "W12X45" 
+        },
+        "W10X33": { 
+            A: 9.71, tw: 0.29, d: 9.73, bf: 5.77, Zx: 42.1, Sx: 36.6, 
+            "bf/2tf": 9.15, "h/tw": 27.9, Kc: 0.707, AISC_Manual_Label: "W10X33" 
+        },
+        "W8X24": { 
+            A: 7.08, tw: 0.25, d: 7.93, bf: 6.5, Zx: 23.2, Sx: 20.9, 
+            "bf/2tf": 10.8, "h/tw": 26.0, Kc: 0.707, AISC_Manual_Label: "W8X24" 
+        },
+        "W14X53": {
+            A: 15.6, tw: 0.37, d: 13.9, bf: 8.06, Zx: 115, Sx: 102, 
+            "bf/2tf": 7.33, "h/tw": 32.3, Kc: 0.760, AISC_Manual_Label: "W14X53"
+        },
+        "W16X40": {
+            A: 11.8, tw: 0.305, d: 16.0, bf: 7.0, Zx: 92.0, Sx: 81.0, 
+            "bf/2tf": 9.2, "h/tw": 46.2, Kc: 0.738, AISC_Manual_Label: "W16X40"
+        },
+        "W18X35": {
+            A: 10.3, tw: 0.30, d: 17.7, bf: 6.0, Zx: 83.3, Sx: 72.7, 
+            "bf/2tf": 7.5, "h/tw": 53.0, Kc: 0.724, AISC_Manual_Label: "W18X35"
+        },
+        "W21X44": {
+            A: 13.0, tw: 0.35, d: 20.7, bf: 6.5, Zx: 126, Sx: 110, 
+            "bf/2tf": 6.8, "h/tw": 54.0, Kc: 0.714, AISC_Manual_Label: "W21X44"
+        },
+        "W24X55": {
+            A: 16.2, tw: 0.395, d: 23.6, bf: 7.0, Zx: 177, Sx: 154, 
+            "bf/2tf": 7.2, "h/tw": 54.6, Kc: 0.701, AISC_Manual_Label: "W24X55"
+        }
+    };
+    
+    // Set the data in both global and window scopes to ensure access
+    window.steelSpecs = hardcodedSteelSpecs;
+    window.sectionData = hardcodedSectionData;
+    steelSpecs = hardcodedSteelSpecs;
+    sectionData = hardcodedSectionData;
+    
+    console.log("Using hardcoded data with", Object.keys(hardcodedSectionData).length, "sections");
+}
+
+// Function to update the shape selection options based on loaded data
+function updateShapeOptions() {
+    const wShapeInput = document.getElementById('Wshape');
+    if (!wShapeInput) {
+        console.error("Missing 'Wshape' input element");
+        return;
+    }
+    
+    // Create a datalist for W shapes
+    let datalist = document.getElementById('shape-options');
+    if (!datalist) {
+        datalist = document.createElement('datalist');
+        datalist.id = 'shape-options';
+        document.body.appendChild(datalist);
+        
+        // Connect the input to the datalist
+        wShapeInput.setAttribute('list', 'shape-options');
+    }
+    
+    // Clear and populate datalist
+    datalist.innerHTML = '';
+    
+    Object.keys(sectionData).forEach(key => {
+        const option = document.createElement('option');
+        option.value = key;
+        datalist.appendChild(option);
+    });
+}
+
+// Function to update steel specification options
+function updateSteelOptions() {
+    const steelSelect = document.getElementById('ASTMinput');
+    if (!steelSelect) {
+        console.error("Missing 'ASTMinput' select element");
+        return;
+    }
+    
+    // Store the currently selected value before clearing
+    const currentSelection = steelSelect.value;
+    
+    // Clear existing options
+    steelSelect.innerHTML = '';
+    
+    // Add new options
+    if (steelSpecs && steelSpecs.length > 0) {
+        console.log("Adding steel specs:", steelSpecs.length);
+        
+        steelSpecs.forEach((spec, index) => {
+            if (spec.Steel_name) {
+                const option = document.createElement('option');
+                const steelValue = spec.Steel_name.replace(/\s/g, '');
+                option.value = steelValue;
+                option.textContent = spec.Steel_name;
+                steelSelect.appendChild(option);
+                
+                // Debug
+                console.log(`Added steel option: ${steelValue} (${spec.Fy}, ${spec.Fu})`);
+            }
+        });
+        
+        // Restore the previous selection if it exists in the new options
+        if (currentSelection) {
+            // Check if the option exists in the new list
+            for (let i = 0; i < steelSelect.options.length; i++) {
+                if (steelSelect.options[i].value === currentSelection) {
+                    steelSelect.value = currentSelection;
+                    break;
+                }
+            }
+        }
+    } else {
+        console.warn("No steel specifications found, using defaults");
+        
+        // If no specs were added, add defaults
+        const defaults = [
+            { value: "A36", text: "A36" },
+            { value: "A572Gr.50", text: "A572 Gr. 50" },
+            { value: "A992", text: "A992" }
+        ];
+        
+        defaults.forEach(def => {
+            const option = document.createElement('option');
+            option.value = def.value;
+            option.textContent = def.text;
+            steelSelect.appendChild(option);
+        });
+    }
+}
+
+// Function to load data from Excel file using SheetJS
+async function loadExcelData() {
+    try {
+        // Try to fetch the Excel file
+        const response = await fetch('ASTMSPEC.xlsx');
+        if (!response.ok) {
+            throw new Error(`Failed to fetch Excel file: ${response.status}`);
+        }
+        
+        const arrayBuffer = await response.arrayBuffer();
+        const data = new Uint8Array(arrayBuffer);
+        
+        // Parse the Excel file using SheetJS
+        const workbook = XLSX.read(data, { type: 'array' });
+        
+        // Load steel specifications from the first sheet
+        const steelSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rawSteelSpecs = XLSX.utils.sheet_to_json(steelSheet);
+        
+        // Validate and clean the steel specs data
+        steelSpecs = rawSteelSpecs.filter(spec => 
+            spec.Steel_name && 
+            typeof spec.Fy === 'number' && 
+            typeof spec.Fu === 'number'
+        );
+        
+        if (steelSpecs.length === 0) {
+            console.error("No valid steel specifications found in the Excel file");
+            // Log the raw data to help debug
+            console.log("Raw steel specs data:", rawSteelSpecs);
+            useHardcodedData();
+        } else {
+            console.log(`Successfully loaded ${steelSpecs.length} steel specifications`);
+            // Log the first few entries to help debug
+            steelSpecs.slice(0, 5).forEach(spec => 
+                console.log(`Steel: ${spec.Steel_name}, Fy: ${spec.Fy}, Fu: ${spec.Fu}`)
+            );
+        }
+        
+        // Load section data from the second sheet
+        const sectionSheet = workbook.Sheets[workbook.SheetNames[1]];
+        const sectionsArray = XLSX.utils.sheet_to_json(sectionSheet);
+        
+        // Convert array to object with section names as keys
+        sectionData = {};
+        sectionsArray.forEach(section => {
+            if (section.AISC_Manual_Label) {
+                sectionData[section.AISC_Manual_Label] = section;
+            }
+        });
+        
+        console.log(`Loaded ${steelSpecs.length} steel specifications and ${Object.keys(sectionData).length} sections`);
+        
+        // Update UI with the loaded data
+        updateShapeOptions();
+        updateSteelOptions();
+        
+        return true;
+        
+    } catch (error) {
+        console.error("Error loading Excel data:", error);
+        // Use hardcoded data as fallback
+        useHardcodedData();
+        
+        // Update UI with fallback data
+        updateShapeOptions();
+        updateSteelOptions();
+        
+        throw error;
+    }
+}
+
+function initialize() {
+    console.log("Initializing application...");
+    
+    // Initialize data structures using only local variables
+    dataLoaded = false;
+    steelSpecs = [];
+    sectionData = {};
+    
+    // Add SheetJS library
+    addExcelLibrary()
+        .then(() => {
+            // Once SheetJS is loaded, try to load Excel data
+            return loadExcelData();
+        })
+        .then((success) => {
+            dataLoaded = true;
+            console.log("Data loading complete, success:", success);
+            
+            if (success) {
+                showNotification('success', 'Data loaded successfully!');
+            } else {
+                showNotification('warning', 'Using default values, Excel data could not be loaded.');
+            }
+        })
+        .catch(err => {
+            dataLoaded = true; // Still mark as loaded since we use fallback data
+            console.error("Setup error:", err);
+            showNotification('error', 'Error in setup. Using default values.');
+            
+            // Ensure we still have data to work with
+            useHardcodedData();
+            updateShapeOptions();
+            updateSteelOptions();
+        });
+    
+    // Set up event listeners
+    setupEventListeners();
+}
+
+
+// Start initialization when DOM is fully loaded
+document.addEventListener('DOMContentLoaded', initialize);
+
+// Helper function to ensure an element exists
+function ensureElementExists(id, tagName, parent) {
+    let element = document.getElementById(id);
+    if (!element) {
+        element = document.createElement(tagName);
+        element.id = id;
+        parent.appendChild(element);
+    }
+    return element;
+}
+
+
+    
+// Modified analyzeBending function to fix data access issues
+function analyzeBending() {
+    console.log("Analyze button clicked");
+    
+    // Create error message and results container elements if they don't exist
+    const errorMessage = ensureElementExists('errorMessage', 'div', document.querySelector('.ResultAnalysisBending') || document.body);
+    errorMessage.style.color = 'red';
+    errorMessage.style.marginTop = '10px';
+    
+    const resultsContainer = ensureElementExists('resultsContainer', 'div', document.querySelector('.ResultAnalysisBending') || document.body);
+    
+    const wShapeInput = document.getElementById('Wshape');
+    const steelSelect = document.getElementById('ASTMinput');
+    
+    if (!wShapeInput || !steelSelect) {
+        errorMessage.textContent = 'Required input elements not found';
+        return;
+    }
+    
+    const wShape = wShapeInput.value;
+    const selectedASTM = steelSelect.value;
+    
+    // Clear previous results and errors
+    errorMessage.textContent = '';
+    resultsContainer.innerHTML = '';
+    
+    // Clear previous table results
+    const muElement = document.getElementById('Mu');
+    const maElement = document.getElementById('Ma');
+    if (muElement) muElement.textContent = '';
+    if (maElement) maElement.textContent = '';
+    
+    if (!wShape) {
+        errorMessage.textContent = 'Please enter a W-shape';
+        return;
+    }
+    
+    // Check if data is loaded
+    if (!dataLoaded) {
+        errorMessage.textContent = 'Data is still loading. Please wait...';
+        return;
+    }
+    
+    // Find section properties
+    const formattedWShape = wShape.trim().toUpperCase().replace(/\s/g, '');
+    console.log("Looking for section:", formattedWShape);
+    console.log("Available sections:", Object.keys(sectionData).length);
+    
+    const section = sectionData[formattedWShape];
+    
+    if (!section) {
+        errorMessage.textContent = `Section ${wShape} not found in database`;
+        return;
+    }
+    
+    console.log("Section found:", section);
+    
+    // Find steel properties
+    console.log("Selected ASTM:", selectedASTM);
+    console.log("Available steel specs:", steelSpecs.map(s => s.Steel_name));
+    
+    // Find steel properties with more flexible matching
+    const steel = steelSpecs.find(item => {
+        if (!item.Steel_name) return false;
+        
+        // Try different matching methods
+        const cleanSelectedASTM = selectedASTM.replace(/\s/g, '').toUpperCase();
+        const cleanItemName = item.Steel_name.replace(/\s/g, '').toUpperCase();
+        
+        return cleanItemName === cleanSelectedASTM;
+    });
+    
+    // If not found with flexible matching, fallback to hardcoded values for common types
+    let Fy, Fu;
+    
+    if (steel) {
+        console.log("Steel found:", steel);
+        Fy = steel.Fy;
+        Fu = steel.Fu;
+    } else {
+        console.warn(`Steel specification ${selectedASTM} not found, using fallback values`);
+        
+        // Fallback values for common steel types
+        if (selectedASTM.includes('A36')) {
+            Fy = 36;
+            Fu = 58;
+        } else if (selectedASTM.includes('A572') && selectedASTM.includes('50')) {
+            Fy = 50;
+            Fu = 65;
+        } else if (selectedASTM.includes('A992')) {
+            Fy = 50;
+            Fu = 65;
+        } else {
+            // Default values if no match
+            errorMessage.textContent = `Steel specification ${selectedASTM} not found in database`;
+            return;
+        }
+    }
+    
+    console.log(`Using steel properties: Fy = ${Fy}, Fu = ${Fu}`);
+    
+    // Rest of the function remains the same...
+    // Extract required values
+    const bf_2tf = section["bf/2tf"]; // Flange slenderness ratio
+    const h_tw = section["h/tw"];    // Web slenderness ratio
+    const Zx = section.Zx;         // Plastic section modulus
+    const Sx = section.Sx;         // Elastic section modulus
+    const Kc = section.Kc || 0.707; // Web coefficient (default to 0.707 if not provided)
+    
+    // Check section classification
+    // Compact section limits for flanges and web (AISC Table B4.1b)
+    const lambdaPf = 0.38 * Math.sqrt(29000 / Fy); // Flange
+    const lambdaPw = 3.76 * Math.sqrt(29000 / Fy); // Web
+    
+    // Non-compact section limits
+    const lambdaRf = 1.0 * Math.sqrt(29000 / Fy);  // Flange
+    const lambdaRw = 5.70 * Math.sqrt(29000 / Fy); // Web
+    
+    let sectionClass = "";
+    let flangeClass = "";
+    let webClass = "";
+    
+    // Determine flange classification
+    if (bf_2tf <= lambdaPf) {
+        flangeClass = "Compact";
+    } else if (bf_2tf <= lambdaRf) {
+        flangeClass = "Non-compact";
+    } else {
+        flangeClass = "Slender";
+    }
+    
+    // Determine web classification
+    if (h_tw <= lambdaPw) {
+        webClass = "Compact";
+    } else if (h_tw <= lambdaRw) {
+        webClass = "Non-compact";
+    } else {
+        webClass = "Slender";
+    }
+    
+    // Overall section classification (controls)
+    if (flangeClass === "Slender" || webClass === "Slender") {
+        sectionClass = "Slender";
+    } else if (flangeClass === "Non-compact" || webClass === "Non-compact") {
+        sectionClass = "Non-compact";
+    } else {
+        sectionClass = "Compact";
+    }
+    
+    // Calculate nominal moment capacity (Mn)
+    let Mn = 0;
+    
+    // For compact sections
+    if (sectionClass === "Compact") {
+        // Plastic moment capacity
+        Mn = Zx * Fy;
+    }
+    // For non-compact sections
+    else if (sectionClass === "Non-compact") {
+        // Interpolate between plastic moment and yield moment
+        if (flangeClass === "Non-compact") {
+            const Mp = Zx * Fy;
+            const My = Sx * Fy;
+            Mn = Mp - (Mp - My) * ((bf_2tf - lambdaPf) / (lambdaRf - lambdaPf));
+        } else {
+            const Mp = Zx * Fy;
+            const My = Sx * Fy;
+            Mn = Mp - (Mp - My) * ((h_tw - lambdaPw) / (lambdaRw - lambdaPw));
+        }
+    }
+    // For slender sections
+    else {
+        // Conservative approach - yield moment
+        Mn = Sx * Fy;
+    }
+    
+    // Convert to kip-ft (from kip-in)
+    Mn = Mn / 12;
+    
+    // Calculate design strengths
+    const phi = 0.9; // LRFD resistance factor for flexure
+    const omega = 1.67; // ASD safety factor for flexure
+    const LRFDMoment = phi * Mn;
+    const ASDMoment = Mn / omega;
+    
+    console.log("Analysis complete, displaying results");
+    
+    // Update table results
+    if (muElement) muElement.textContent = LRFDMoment.toFixed(2) + " kip-ft";
+    if (maElement) maElement.textContent = ASDMoment.toFixed(2) + " kip-ft";
+    
+    // Create results object
+    const results = {
+        section: wShape,
+        steelSpec: selectedASTM,
+        Fy,
+        Fu,
+        flangeRatio: bf_2tf,
+        webRatio: h_tw,
+        flangeClass,
+        webClass,
+        sectionClass,
+        Zx,
+        Sx,
+        Mn,
+        LRFDMoment,
+        ASDMoment
+    };
+    
+    // Display detailed results
+    displayResults(results);
+    
+    // Show success notification
+    showNotification('success', 'Analysis completed successfully!');
+}
+
+// Function to display the results
+function displayResults(results) {
+    const resultsContainer = document.getElementById('resultsContainer');
+    if (!resultsContainer) {
+        console.error("Missing 'resultsContainer' element");
+        return;
+    }
+    
+    // Create detailed results HTML
+    let html = `
+        <div class="results-container" style="margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px;">
+            <h3 style="margin-top: 0;">Analysis Results</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div>
+                    <p><strong>Section:</strong> ${results.section}</p>
+                    <p><strong>Steel Specification:</strong> ${results.steelSpec}</p>
+                    <p><strong>Yield Strength (Fy):</strong> ${results.Fy} ksi</p>
+                    <p><strong>Ultimate Strength (Fu):</strong> ${results.Fu} ksi</p>
+                    <p><strong>Section Classification:</strong> ${results.sectionClass}</p>
+                </div>
+                <div>
+                    <p><strong>Flange Ratio (bf/2tf):</strong> ${results.flangeRatio.toFixed(2)}</p>
+                    <p><strong>Flange Classification:</strong> ${results.flangeClass}</p>
+                    <p><strong>Web Ratio (h/tw):</strong> ${results.webRatio.toFixed(2)}</p>
+                    <p><strong>Web Classification:</strong> ${results.webClass}</p>
+                    <p><strong>Nominal Moment (Mn):</strong> ${results.Mn.toFixed(2)} kip-ft</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h4>Design Strength</h4>
+                <p><strong>LRFD Design Strength (φMn):</strong> ${results.LRFDMoment.toFixed(2)} kip-ft &nbsp; (φ = 0.9)</p>
+                <p><strong>ASD Design Strength (Mn/Ω):</strong> ${results.ASDMoment.toFixed(2)} kip-ft &nbsp; (Ω = 1.67)</p>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h4>AISC Classification Limits</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 10px; margin-top: 10px;">
+                    <div style="font-weight: bold;">Element</div>
+                    <div style="font-weight: bold;">Actual Ratio</div>
+                    <div style="font-weight: bold;">Limit Ratios</div>
+                    
+                    <div>Flange (bf/2tf)</div>
+                    <div>${results.flangeRatio.toFixed(2)}</div>
+                    <div>
+                        λp = ${(0.38 * Math.sqrt(29000 / results.Fy)).toFixed(2)}, 
+                        λr = ${(1.0 * Math.sqrt(29000 / results.Fy)).toFixed(2)}
+                    </div>
+                    
+                    <div>Web (h/tw)</div>
+                    <div>${results.webRatio.toFixed(2)}</div>
+                    <div>
+                        λp = ${(3.76 * Math.sqrt(29000 / results.Fy)).toFixed(2)}, 
+                        λr = ${(5.70 * Math.sqrt(29000 / results.Fy)).toFixed(2)}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    resultsContainer.innerHTML = html;
+}
+
+// Function to show notifications
+function showNotification(type, message) {
+    // Create notification element if it doesn't exist
+    let notificationElement = document.getElementById('notification');
+    if (!notificationElement) {
+        notificationElement = document.createElement('div');
+        notificationElement.id = 'notification';
+        notificationElement.style.position = 'fixed';
+        notificationElement.style.top = '20px';
+        notificationElement.style.right = '20px';
+        notificationElement.style.padding = '15px 20px';
+        notificationElement.style.borderRadius = '5px';
+        notificationElement.style.zIndex = '1000';
+        notificationElement.style.transition = 'opacity 0.3s ease';
+        document.body.appendChild(notificationElement);
+    }
+    
+    // Set notification content and style
+    notificationElement.className = `notification notification-${type}`;
+    notificationElement.textContent = message;
+    
+    if (type === 'success') {
+        notificationElement.style.backgroundColor = '#4CAF50';
+        notificationElement.style.color = 'white';
+    } else if (type === 'error') {
+        notificationElement.style.backgroundColor = '#f44336';
+        notificationElement.style.color = 'white';
+    } else {
+        notificationElement.style.backgroundColor = '#2196F3';
+        notificationElement.style.color = 'white';
+    }
+    
+    notificationElement.style.display = 'block';
+    notificationElement.style.opacity = '1';
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        notificationElement.style.opacity = '0';
+        setTimeout(() => {
+            notificationElement.style.display = 'none';
+        }, 300);
+    }, 3000);
+}
+
+// Add the SheetJS library to handle Excel files
+function addExcelLibrary() {
+    return new Promise((resolve, reject) => {
+        if (window.XLSX) {
+            resolve();
+            return;
+        }
+        
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+        script.integrity = 'sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==';
+        script.crossOrigin = 'anonymous';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+
+// Add necessary CSS
+function addStyles() {
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+        .notification {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .notification-success {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .notification-error {
+            background-color: #f44336;
+            color: white;
+        }
+        .results-container {
+            background-color: #f9f9f9;
+        }
+        .tableABending table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .tableABending th, .tableABending td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .tableABending th {
+            background-color: #f2f2f2;
+        }
+        .InputForAnalysisBending {
+            margin-bottom: 20px;
+        }
+        .InputForAnalysisBending div {
+            margin-bottom: 10px;
+        }
+        .InputForAnalysisBending label {
+            display: inline-block;
+            width: 150px;
+        }
+        .InputForAnalysisBending input, .InputForAnalysisBending select {
+            padding: 5px;
+            width: 200px;
+        }
+        button.AnalyzeBending {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button.AnalyzeBending:hover {
+            background-color: #45a049;
+        }
+    `;
+    document.head.appendChild(styleElement);
+}
+
+// Load SheetJS and add styles when the page loads
+addExcelLibrary()
+    .then(() => {
+        console.log("SheetJS library loaded");
+    })
+    .catch(error => {
+        console.error("Failed to load SheetJS library:", error);
+    });
+
+addStyles();
+  
+
+</script>
     
 </body>
 </html>

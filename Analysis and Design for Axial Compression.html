@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Principle of Steel  Design</title>
     <link rel="stylesheet" href="style.css">
-    
+   
 </head>
 <body>
     <header>
         <div class="header"><b>STEEL DESIGN HELPER</b></div>
     </header>
-    
 
     <nav class="navbar">
         <div class="ADcon">
@@ -20,12 +19,3230 @@
             <a class="con" class="active" id="active" href="Analysis and Design for Axial Compression.html">|Analysis and Design for Axial Compression|</a>
             <a class="con" id="3" href="Analysis and Design of Members for Bending.html">|Analysis and Design of Members for Bending|</a>
             <a class="con" id="4" href="Shear Strength of Structural Member.html">|Shear Strength of Structural Member|</a>
-            
-        </div>
-    </nav>
+             </div>
+            </nav>
 
-    <div class>
+<div class="FINALCONTAINER">
+    <div class="HeaderforCompression">
+        <H1 style="display: block;">
+            ANALYSIS FOR COMPRESSION MEMBER
+        </H1>
         
     </div>
+    <div class="COMPRESSIONA">
+        <div class="CalcComp">
+            <div class="ANALYSISINPUT">
+                <H3>STEEL CHARACTERISTIC</H3>
+                <div id="ASTM">
+                    <label id="ASTMI">ASTM  Specification:</label>
+                    <select name="ASTMinput" id="ASTMinput">
+                        <option value="A36">A36</option>
+                        <option value="A572Gr.42">A572 Gr. 42</option>
+                        <option value="A572Gr.50">A572 Gr. 50</option>
+                        <option value="A572Gr.55">A572 Gr. 55</option>
+                        <option value="A572Gr.60">A572 Gr. 60</option>
+                        <option value="A572Gr.65">A572 Gr. 65</option>
+                        <option value="A588Gr.42">A588 Gr. 42</option>
+                        <option value="A588Gr.46">A588 Gr. 46</option>
+                        <option value="A588Gr.50">A588 Gr. 50</option>
+                        <option value="A687">A687</option>
+                        <option value="A992">A992</option>
+                    </select>
+                    
+
+                    
+
+                </div>
+                <div id="DataInputs">
+                    <label>Shape:</label>
+                            <select id="shapeA">
+                                <option value="W">W</option>
+                            </select>
+                            <label>Dimension:</label>
+                            <input type="text" id="dimA" placeholder="12X45" required size="10">
+                </div>
+                <div>
+                    <label for="lenght">Lenght:</label>
+                    <input id="Lenght" size="10" placeholder="ft">
+                </div>
+                <div>
+                    <h3>TOP-BOT END</h3>
+                    <div>
+                        <label><B>TOP</B></label><br>
+                    <label>Fixed:</label>
+                    <input type="radio" name="top" id="topfixed"><br>
+                    <label>Pinned:</label>
+                    <input type="radio" name="top" id="toppinned"><br>
+                    <label>Free:</label>
+                    <input type="radio" name="top" id="topfree"><br>
+                    </div>
+                    <div>
+                        <label><B>BOT</B></label><br>
+                    <label>Fixed:</label>
+                    <input type="radio" name="bot" id="botfixed"><br>
+                    <label>Pinned:</label>
+                    <input type="radio" name="bot" id="botpinned"><br>
+                    <label>Free:</label>
+                    <input type="radio" name="bot" id="botfree"><br>
+                    </div>
+                </div>
+
+                <div>
+                <H3>LATERAL SUPPORTS OPTION</H3>
+                <label for="load">No Support</label>
+                    <input type="radio" name="pinned" id="Nosupport">
+                    <label for="load">With Lateral Support</label>
+                    <input type="radio" name="pinned" id="support">
+                    
+                </div>
+                <div id="SupportA" class="SupportA" style="display: none;">
+                    <h3>Lateral Support</h3>
+                    <label>Amount of supports:</label>
+                    <input type="number" id="supprtamount" placeholder="0" size="1" max="3" min="0" step="1">
+
+                    <div id="support1">
+                    <p><b>Support 1</b></p>
+                        <label for="load">Pinned:</label>
+                        <input type="radio" name="Support1" id="pinned1">
+                        <label for="load">Fixed:</label>
+                        <input type="radio" name="Support1" id="fixed1">
+                        <label for="load">Free:</label>
+                        <input type="radio" name="Support1" id="Free1"><br>
+                        <label>location of support:</label>
+                        <input type="numner" id="location1" placeholder="ft" size="1" >
+                    </div>
+                    <div id="support2">
+                        <p><b>Support 2</b></p>
+                        <label for="load">Pinned:</label>
+                        <input type="radio" name="Support2" id="pinned2">
+                        <label for="load">Fixed:</label>
+                        <input type="radio" name="Support2" id="fixed2">
+                        <label for="load">Free:</label>
+                        <input type="radio" name="Support2" id="Free2"><br>
+                        <label>location of support:</label>
+                        <input type="numner" id="location2" placeholder="ft" size="1" >
+                    </div>
+                    <div id="support3">
+                        <p><b>Support 3</b></p>
+                        <label for="load">Pinned:</label>
+                        <input type="radio" name="Support3" id="pinned3">
+                        <label for="load">Fixed:</label>
+                        <input type="radio" name="Support3" id="fixed3">
+                        <label for="load">Free:</label>
+                        <input type="radio" name="Support3" id="Free3"><br>
+                        <label>location of support:</label>
+                        <input type="numner" id="location3" placeholder="ft" size="1" >
+            
+                    </div>
+                    
+                
+                    
+                    
+                        
+                </div>
+                <button id="calculate" class="AnalyzeC">Analyze</button>
+            </div>
+            <div class="INTERACTIVECOLUMN"> 
+                    
+            </div>
+        </div>
+        <div class="RESULTSCOMPRESSION">
+            <div class="TableR">
+                <h3></h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Element</th>
+                            <th>Lenght</th>
+                            <th>K</th>
+                            <th>r</th>
+                            <th>K/Lr</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="X">
+                            <td>X</td>
+                            <td id="topL"></td>
+                            <td id="topK"></td>
+                            <td id="topr"></td>
+                            <td id="topKLr"></td>
+                        </tr>
+                        <tr id="Y">
+                            <td>Y</td>
+                            <td id="botL"></td>
+                            <td id="botK"></td>
+                            <td id="botr"></td>
+                            <td id="botKLr"></td>
+                        </tr> 
+                        <tr id="y1">
+                            <td>Y1</td>
+                            <td id="sup1L"></td>
+                            <td id="sup1K"></td>
+                            <td id="sup1r"></td>
+                            <td id="sup1KLr"></td>
+                        </tr>
+                        <tr id="y2">
+                            <td>Y2</td>
+                            <td id="sup2L"></td>
+                            <td id="sup2K"></td>
+                            <td id="sup2r"></td>
+                            <td id="sup2KLr"></td>
+                        </tr>
+                        <tr id="y3">
+                            <td>Y3</td>
+                            <td id="sup3L"></td>
+                            <td id="sup3K"></td>
+                            <td id="sup3r"></td>
+                            <td id="sup3KLr"></td> 
+                        </tr>
+                        <tr id="y4">
+                            <td>Y4</td>
+                            <td id="sup4L"></td>
+                            <td id="sup4K"></td>
+                            <td id="sup4r"></td>
+                            <td id="sup4KLr"></td>
+                        </tr>
+                        <tr id="y5">
+                            <td>Y5</td>
+                            <td id="sup5L"></td>
+                            <td id="sup5K"></td>
+                            <td id="sup5r"></td>
+                            <td id="sup5KLr"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                
+            </div>
+
+            <div id="ResultComp">
+                
+
+            </div>
+            <div id="AISCCURVE">
+                
+            </div>
+        
+        </div>
+    </div>
+    <div class="DESIGNCOMPRESS">
+        <div>
+            <H1>DESIGN FOR COMPRESSION MEMBER</H1>
+        </div>
+        <div class="INPUTCOMPRESS">
+            <div>
+                <label id="ASTMC">ASTM  Specification:</label>
+                    <select name="ASTMinputC" id="ASTMinputC">
+                        <option value="A36">A36</option>
+                        <option value="A572Gr.42">A572 Gr. 42</option>
+                        <option value="A572Gr.50">A572 Gr. 50</option>
+                        <option value="A572Gr.55">A572 Gr. 55</option>
+                        <option value="A572Gr.60">A572 Gr. 60</option>
+                        <option value="A572Gr.65">A572 Gr. 65</option>
+                        <option value="A588Gr.42">A588 Gr. 42</option>
+                        <option value="A588Gr.46">A588 Gr. 46</option>
+                        <option value="A588Gr.50">A588 Gr. 50</option>
+                        <option value="A687">A687</option>
+                        <option value="A992">A992</option>
+                    </select>    
+            </div>
+            <div class="DesignMethod">
+                <label for="designMethod">Design Method:</label>
+                <select id="designMethod">
+                    <option value="LRFD">LRFD</option>
+                    <option value="ASD">ASD</option>
+                </select>
+            </div>
+            <div>
+                <label>DeadLoad:</label>
+                <input id="DeadLoad" size="10" placeholder="kips">
+                <label>Liveload:</label>
+                <input  id="LiveLoad" size="10" placeholder="kips">
+                <label>Lenght:</label>
+                <input id="LenghtDC" size="10" placeholder="ft">
+            </div>
+             <button id="DesignC" class="DesignC">Design</button>
+
+        </div> 
+        <div class="LateralSupportC">
+            <div class="TOPBOT">
+                
+                    <h3>TOP-BOT END</h3>
+                        <div>
+                            <label><B>TOP</B></label><br>
+                        <label>Fixed:</label>
+                        <input type="radio" name="top" id="topfixedC"><br>
+                        <label>Pinned:</label>
+                        <input type="radio" name="top" id="toppinnedC"><br>
+                        <label>Free:</label>
+                        <input type="radio" name="top" id="topfreeC"><br>
+                        </div>
+                        <div>
+                            <label><B>BOT</B></label><br>
+                        <label>Fixed:</label>
+                        <input type="radio" name="bot" id="botfixedC"><br>
+                        <label>Pinned:</label>
+                        <input type="radio" name="bot" id="botpinnedC"><br>
+                        <label>Free:</label>
+                        <input type="radio" name="bot" id="botfreeC"><br>
+                        </div>
+                    
+             
+                <h3>Lateral Support</h3>
+                <label>No support:</label>
+                <input id="NosupportC" type="radio" name="pinnedC">
+                <label>With Lateral Support:</label>
+                <input id="supportC" type="radio" name="pinnedC">
+                <div id="SupportC" style="display: none;">
+                    <label>Amount of supports:</label>
+                    <input type="number" id="supprtamountC" placeholder="0" size="1" max="3" min="0" step="1">
+                    </div>
+                         <div id="support1C">
+                        <p><b>Support 1</b></p>
+                        <label for="load">Pinned:</label>
+                        <input type="radio" name="Support1C" id="pinned1C">
+                        <label for="load">Fixed:</label>
+                        <input type="radio" name="Support1C" id="fixed1C">
+                        <label for="load">Free:</label>
+                        <input type="radio" name="Support1C" id="Free1C"><br>
+                        <label>location of support:</label>
+                        <input type="numner" id="location1C" placeholder="ft" size="1" >
+                         </div>
+                          <div id="support2C">
+                        <p><b>Support 2</b></p>
+                        <label for="load">Pinned:</label>
+                        <input type="radio" name="Support2C" id="pinned2C">
+                        <label for="load">Fixed:</label>
+                        <input type="radio" name="Support2C" id="fixed2C">
+                        <label for="load">Free:</label>
+                        <input type="radio" name="Support2C" id="Free2C"><br>
+                        <label>location of support:</label>
+                        <input type="numner" id="location2C" placeholder="ft" size="1" >
+                            </div>
+                            <div id="support3C">
+                        <p><b>Support 3</b></p>
+                        <label for="load">Pinned:</label>
+                        <input type="radio" name="Support3C" id="pinned3C">
+                        <label for="load">Fixed:</label>
+                        <input type="radio" name="Support3C" id="fixed3C">
+                        <label for="load">Free:</label>
+                        <input type="radio" name="Support3C" id="Free3C"><br>
+                        <label>location of support:</label>
+                        <input type="numner" id="location3C" placeholder="" size="1" >
+                    </div>
+
+
+            </div>
+            <div class="ResultCalcC">
+
+                <div class="GraphicalColumn">
+                    
+                    
+                    
+                    
+                </div>
+                
+
+               
+                
+            </div>
+            
+            
+        </div>  
+        <div class="ResultofallCD">
+            <div class="TableR">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ELement</th>
+                            <th>Length</th>
+                            <th>K</th>
+                            <th>K/L</th>
+                            <th>Governing</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>X</td>
+                            <td id="L1"></td>
+                            <td id="K1"> </td>
+                            <td dir="K/L1"></td>
+                            <td id="G1"></td>
+                        </tr>
+                        <tr>
+                            <td>Y</td>
+                            <td id="L2"></td>
+                            <td id="K2"> </td>
+                            <td dir="K/L2"></td>
+                            <td id="G2"></td>
+                        </tr>
+                        <tr>
+                            <td>Y1</td>
+                            <td id="L3"></td>
+                            <td id="K3"> </td>
+                            <td dir="K/L3"></td>
+                            <td id="G3"></td>
+                        </tr>
+                        <tr>
+                            <td>Y2</td>
+                            <td id="L4"></td>
+                            <td id="K4"> </td>
+                            <td dir="K/L4"></td>
+                            <td id="G4"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                
+
+                
+            </div>
+            <div class="TableR1">
+                <table>
+                    <thead>
+                        <tr>
+                            <th id="CompShape">W-SHAPE</th>
+                            <th id="pupa">Pu/Pa</th>
+                            <th id="Weight">W</th>
+                            <th id="rxry">rx/ry</th>
+                            <th id="Best">Best</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="W14"></td>
+                            <td id="pupa1"></td>
+                            <td id="Weight1"></td>
+                            <td id="rxry1"></td>
+                            <td id="Best1"></td>
+                            
+                            
+                        </tr>
+                        <tr>
+                            <td id="W12"></td>
+                            <td id="pupa2"></td>
+                            <td id="Weight2"></td>
+                            <td id="rxry2"></td>
+                            <td id="Best2"></td>
+
+                          
+                        </tr>
+                        <tr>
+                            <td id="W10"></td>
+                            <td id="pupa3"></td>
+                            <td id="Weight3"></td>
+                            <td id="rxry3"></td>
+                            <td id="Best3"></td>
+                          
+                        </tr>
+                        <tr>
+                            <td id="W8"></td>
+                            <td id="pupa4"></td>
+                            <td id="Weight4"></td>
+                            <td id="rxry4"></td>
+                            <td id="Best4"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                
+
+                
+            </div>
+            <div id="Result123" >
+                
+            </div>
+
+        </div>
+     </div>
+
+
+        
+        
+ 
+        
+    
+
+    
+</div>
+
+
+
+
+<script>
+// Function to handle the visibility of the SupportA container
+function handleSupportVisibility() {
+  // Get the radio buttons and the SupportA container
+  const supportRadio = document.getElementById('support');
+  const noSupportRadio = document.getElementById('Nosupport');
+  const supportContainer = document.getElementById('SupportA');
+  
+  // Show the SupportA container if the support radio is checked
+  if (supportRadio.checked) {
+    supportContainer.style.display = 'block';
+  }
+  // Hide the SupportA container if the Nosupport radio is checked
+  else if (noSupportRadio.checked) {
+    supportContainer.style.display = 'none';
+  }
+}
+
+// Add event listeners to both radio buttons
+document.getElementById('support').addEventListener('change', handleSupportVisibility);
+document.getElementById('Nosupport').addEventListener('change', handleSupportVisibility);
+
+// Run the function once when the page loads to set the initial state
+document.addEventListener('DOMContentLoaded', function() {
+  // Check the initial state of the radio buttons and set visibility accordingly
+  handleSupportVisibility();
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Get references to DOM elements
+    const noSupportRadio = document.getElementById("Nosupport");
+    const withSupportRadio = document.getElementById("support");
+    const supportADiv = document.getElementById("SupportA");
+    const supportAmountInput = document.getElementById("supprtamount");
+    const support1Div = document.getElementById("support1");
+    const support2Div = document.getElementById("support2");
+    const support3Div = document.getElementById("support3");
+
+    // Initially hide all support divs
+    support1Div.style.display = "none";
+    support2Div.style.display = "none";
+    support3Div.style.display = "none";
+
+    // Show/hide SupportA div based on radio button selection
+    noSupportRadio.addEventListener("change", function() {
+        if (this.checked) {
+            supportADiv.style.display = "none";
+        }
+    });
+
+    withSupportRadio.addEventListener("change", function() {
+        if (this.checked) {
+            supportADiv.style.display = "block";
+            // When support is initially shown, update which support divs are visible
+            updateSupportDivs();
+        }
+    });
+
+    // Listen for changes to the support amount input
+    supportAmountInput.addEventListener("input", updateSupportDivs);
+
+    function updateSupportDivs() {
+        const amount = parseInt(supportAmountInput.value) || 0;
+        
+        // Show/hide support divs based on amount
+        support1Div.style.display = amount >= 1 ? "block" : "none";
+        support2Div.style.display = amount >= 2 ? "block" : "none";
+        support3Div.style.display = amount >= 3 ? "block" : "none";
+    }
+
+    // Initialize state based on initial values
+    if (withSupportRadio.checked) {
+        supportADiv.style.display = "block";
+        updateSupportDivs();
+    } else {
+        supportADiv.style.display = "none";
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Add containers for both visualizations after the "INTERACTIVECOLUMN" div
+    const interactiveColumn = document.querySelector(".INTERACTIVECOLUMN");
+    interactiveColumn.innerHTML = `
+        <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
+            <!-- Y-axis visualization (with lateral supports) -->
+            <div class="visualization-container" style="flex: 1; min-width: 300px; height: 500px; border: 1px solid #ccc; position: relative; overflow: hidden;">
+                <h3 style="text-align: center; margin: 5px 0;">Y-Axis Visualization (Lateral Supports)</h3>
+                <div id="beam-visualization-y" style="width: 100%; height: 450px; position: relative;">
+                    <!-- SVG will be inserted here -->
+                </div>
+            </div>
+            
+            <!-- X-axis visualization (without lateral supports) -->
+            <div class="visualization-container" style="flex: 1; min-width: 300px; height: 500px; border: 1px solid #ccc; position: relative; overflow: hidden;">
+                <h3 style="text-align: center; margin: 5px 0;">X-Axis Visualization (Full Length)</h3>
+                <div id="beam-visualization-x" style="width: 100%; height: 450px; position: relative;">
+                    <!-- SVG will be inserted here -->
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Get all the input elements we need to monitor
+    const lengthInput = document.getElementById("Lenght");
+    const supportRadio = document.getElementById("support");
+    const noSupportRadio = document.getElementById("Nosupport");
+    const supportAmountInput = document.getElementById("supprtamount");
+    const locationInputs = [
+        document.getElementById("location1"),
+        document.getElementById("location2"),
+        document.getElementById("location3")
+    ];
+    
+    // Top support options
+    const topFixed = document.getElementById("topfixed");
+    const topPinned = document.getElementById("toppinned");
+    const topFree = document.getElementById("topfree");
+    
+    // Bottom support options
+    const botFixed = document.getElementById("botfixed");
+    const botPinned = document.getElementById("botpinned");
+    const botFree = document.getElementById("botfree");
+    
+    // Lateral support options
+    const lateralSupportTypes = [
+        {
+            pinned: document.getElementById("pinned1"),
+            fixed: document.getElementById("fixed1"),
+            free: document.getElementById("Free1")
+        },
+        {
+            pinned: document.getElementById("pinned2"),
+            fixed: document.getElementById("fixed2"),
+            free: document.getElementById("Free2")
+        },
+        {
+            pinned: document.getElementById("pinned3"),
+            fixed: document.getElementById("fixed3"),
+            free: document.getElementById("Free3")
+        }
+    ];
+
+    // Analyze button
+    const analyzeButton = document.getElementById("calculate");
+
+    // Initial drawing
+    drawBeamColumns();
+
+    // Add event listeners to all inputs that should trigger a redraw
+    lengthInput.addEventListener("input", drawBeamColumns);
+    supportRadio.addEventListener("change", drawBeamColumns);
+    noSupportRadio.addEventListener("change", drawBeamColumns);
+    supportAmountInput.addEventListener("input", drawBeamColumns);
+    
+    for (let i = 0; i < locationInputs.length; i++) {
+        locationInputs[i].addEventListener("input", drawBeamColumns);
+    }
+    
+    // Top support options
+    topFixed.addEventListener("change", drawBeamColumns);
+    topPinned.addEventListener("change", drawBeamColumns);
+    topFree.addEventListener("change", drawBeamColumns);
+    
+    // Bottom support options
+    botFixed.addEventListener("change", drawBeamColumns);
+    botPinned.addEventListener("change", drawBeamColumns);
+    botFree.addEventListener("change", drawBeamColumns);
+    
+    // Lateral support options
+    for (let i = 0; i < lateralSupportTypes.length; i++) {
+        lateralSupportTypes[i].pinned.addEventListener("change", drawBeamColumns);
+        lateralSupportTypes[i].fixed.addEventListener("change", drawBeamColumns);
+        lateralSupportTypes[i].free.addEventListener("change", drawBeamColumns);
+    }
+    
+    analyzeButton.addEventListener("click", drawBeamColumns);
+
+    function drawBeamColumns() {
+        // Draw both visualizations
+        drawYAxisBeam();
+        drawXAxisBeam();
+    }
+
+    function drawYAxisBeam() {
+        const beamVisualization = document.getElementById("beam-visualization-y");
+        if (!beamVisualization) return;
+
+        // Get the current values from the form
+        const columnLength = parseFloat(lengthInput.value) || 16; // Default to 16 if not specified
+        const hasLateralSupports = supportRadio.checked;
+        const supportCount = hasLateralSupports ? parseInt(supportAmountInput.value) || 0 : 0;
+        
+        // Get support locations and sort them by position
+        const supportLocations = [];
+        if (hasLateralSupports) {
+            for (let i = 0; i < supportCount && i < 3; i++) {
+                const location = parseFloat(locationInputs[i].value) || 0;
+                if (location > 0 && location < columnLength) {
+                    supportLocations.push({
+                        position: location,
+                        type: lateralSupportTypes[i].fixed.checked ? "fixed" :
+                              lateralSupportTypes[i].pinned.checked ? "pinned" : "free",
+                        index: i + 1
+                    });
+                }
+            }
+        }
+        
+        // Sort support locations by position
+        supportLocations.sort((a, b) => a.position - b.position);
+        
+        // Get end supports
+        const topSupport = topFixed.checked ? "fixed" : topPinned.checked ? "pinned" : "free";
+        const botSupport = botFixed.checked ? "fixed" : botPinned.checked ? "pinned" : "free";
+
+        // Calculate dimensions
+        const svgWidth = beamVisualization.clientWidth;
+        const svgHeight = beamVisualization.clientHeight;
+        const margin = { top: 20, right: 40, bottom: 40, left: 60 };
+        const width = svgWidth - margin.left - margin.right;
+        const height = svgHeight - margin.top - margin.bottom;
+        
+        // Scale factors
+        const yScale = height / columnLength;
+        
+        // Determine segment points (top, all supports, bottom)
+        const segmentPoints = [0, ...supportLocations.map(s => s.position), columnLength];
+        
+        // Create the SVG
+        const svg = `
+            <svg width="${svgWidth}" height="${svgHeight}">
+                <g transform="translate(${margin.left}, ${margin.top})">
+                    <!-- Column shaft (W-shape) showing front and side view -->
+                    <!-- Front view (Y-axis) -->
+                    <path d="M ${width/2-15} 0 
+                             L ${width/2-15} ${columnLength * yScale}
+                             M ${width/2+15} 0
+                             L ${width/2+15} ${columnLength * yScale}
+                             M ${width/2-25} 0
+                             L ${width/2+25} 0
+                             M ${width/2-25} ${columnLength * yScale}
+                             L ${width/2+25} ${columnLength * yScale}"
+                          stroke="black" stroke-width="2" fill="none" />
+                    
+                    <!-- "Y" label below the beam -->
+                    <text x="${width/2}" y="${columnLength * yScale + 35}" 
+                          text-anchor="middle" font-size="16" font-weight="bold">
+                        Y
+                    </text>
+                    
+                    <!-- Top support -->
+                    ${renderSupport(width/2, 0, topSupport, "top")}
+                    
+                    <!-- Bottom support -->
+                    ${renderSupport(width/2, columnLength * yScale, botSupport, "bottom")}
+                    
+                    <!-- Lateral supports -->
+                    ${supportLocations.map(support => 
+                        renderLateralSupport(width/2, support.position * yScale, support.type)
+                    ).join('')}
+                    
+                    <!-- Column height label -->
+                    <text x="${width/2 + 40}" y="${columnLength * yScale / 2}" 
+                          transform="rotate(270, ${width/2 + 40}, ${columnLength * yScale / 2})"
+                          text-anchor="middle" dominant-baseline="middle" font-size="12">
+                        ${columnLength}' Column Length
+                    </text>
+                    
+                    <!-- Support location labels -->
+                    ${supportLocations.map((support) => `
+                        <text x="${width/2 - 40}" y="${support.position * yScale}"
+                              text-anchor="end" dominant-baseline="middle" font-size="12">
+                            Support ${support.index}: ${support.position}'
+                        </text>
+                    `).join('')}
+                    
+                    <!-- Segment labels (y1, y2, etc.) -->
+                    ${segmentPoints.slice(0, -1).map((startPoint, i) => {
+                        const endPoint = segmentPoints[i + 1];
+                        const segmentLength = endPoint - startPoint;
+                        const midPoint = (startPoint + endPoint) / 2;
+                        
+                        return `
+                            <!-- y${i+1} segment label -->
+                            <text x="${width/2 + 30}" y="${(startPoint + (segmentLength/2)) * yScale}"
+                                  text-anchor="start" dominant-baseline="middle" font-size="14" fill="blue" font-weight="bold">
+                                y${i+1} = ${segmentLength.toFixed(2)}'
+                            </text>
+                            
+                            <!-- Segment marker lines -->
+                            <line x1="${width/2 + 15}" y1="${startPoint * yScale}" 
+                                  x2="${width/2 + 25}" y2="${startPoint * yScale}"
+                                  stroke="blue" stroke-width="1" />
+                            <line x1="${width/2 + 15}" y1="${endPoint * yScale}" 
+                                  x2="${width/2 + 25}" y2="${endPoint * yScale}"
+                                  stroke="blue" stroke-width="1" />
+                            
+                            <!-- Connecting line for segment -->
+                            <line x1="${width/2 + 25}" y1="${startPoint * yScale}" 
+                                  x2="${width/2 + 25}" y2="${endPoint * yScale}"
+                                  stroke="blue" stroke-width="1" stroke-dasharray="4,2" />
+                        `;
+                    }).join('')}
+                </g>
+            </svg>
+        `;
+        
+        beamVisualization.innerHTML = svg;
+    }
+    
+    function drawXAxisBeam() {
+        const beamVisualization = document.getElementById("beam-visualization-x");
+        if (!beamVisualization) return;
+
+        // Get the current values from the form
+        const columnLength = parseFloat(lengthInput.value) || 16; // Default to 16 if not specified
+        
+        // Get end supports
+        const topSupport = topFixed.checked ? "fixed" : topPinned.checked ? "pinned" : "free";
+        const botSupport = botFixed.checked ? "fixed" : botPinned.checked ? "pinned" : "free";
+
+        // Calculate dimensions
+        const svgWidth = beamVisualization.clientWidth;
+        const svgHeight = beamVisualization.clientHeight;
+        const margin = { top: 20, right: 40, bottom: 40, left: 60 };
+        const width = svgWidth - margin.left - margin.right;
+        const height = svgHeight - margin.top - margin.bottom;
+        
+        // Scale factors
+        const yScale = height / columnLength;
+        
+        // Create the SVG - showing the beam from the side (X-axis view)
+        const svg = `
+            <svg width="${svgWidth}" height="${svgHeight}">
+                <g transform="translate(${margin.left}, ${margin.top})">
+                    <!-- Column shaft (W-shape) - side view (X-axis) -->
+                    <path d="M ${width/2-25} 0 
+                             L ${width/2-25} ${columnLength * yScale}
+                             M ${width/2+25} 0
+                             L ${width/2+25} ${columnLength * yScale}
+                             M ${width/2-25} 0
+                             L ${width/2+25} 0
+                             M ${width/2-25} ${columnLength * yScale}
+                             L ${width/2+25} ${columnLength * yScale}"
+                          stroke="black" stroke-width="2" fill="none" />
+                          
+                    <!-- Web of the W-shape (showing flange depth) -->
+                    <path d="M ${width/2-10} 0 
+                             L ${width/2-10} ${columnLength * yScale}
+                             M ${width/2+10} 0
+                             L ${width/2+10} ${columnLength * yScale}"
+                          stroke="black" stroke-width="2" fill="none" />
+                    
+                    <!-- "X" label below the beam -->
+                    <text x="${width/2}" y="${columnLength * yScale + 35}" 
+                          text-anchor="middle" font-size="16" font-weight="bold">
+                        X
+                    </text>
+                    
+                    <!-- Top support -->
+                    ${renderSupport(width/2, 0, topSupport, "top")}
+                    
+                    <!-- Bottom support -->
+                    ${renderSupport(width/2, columnLength * yScale, botSupport, "bottom")}
+                    
+                    <!-- Full column length label -->
+                    <text x="${width/2 + 40}" y="${columnLength * yScale / 2}" 
+                          transform="rotate(270, ${width/2 + 40}, ${columnLength * yScale / 2})"
+                          text-anchor="middle" dominant-baseline="middle" font-size="12">
+                        ${columnLength}' Column Length
+                    </text>
+                    
+                    <!-- Main segment label for X-axis view -->
+                    <text x="${width/2 + 30}" y="${columnLength * yScale / 2}"
+                          text-anchor="start" dominant-baseline="middle" font-size="14" fill="blue" font-weight="bold">
+                        y1 = ${columnLength.toFixed(2)}'
+                    </text>
+                    
+                    <!-- Segment marker lines -->
+                    <line x1="${width/2 + 25}" y1="0" 
+                          x2="${width/2 + 35}" y2="0"
+                          stroke="blue" stroke-width="1" />
+                    <line x1="${width/2 + 25}" y1="${columnLength * yScale}" 
+                          x2="${width/2 + 35}" y2="${columnLength * yScale}"
+                          stroke="blue" stroke-width="1" />
+                    
+                    <!-- Connecting line for segment -->
+                    <line x1="${width/2 + 35}" y1="0" 
+                          x2="${width/2 + 35}" y2="${columnLength * yScale}"
+                          stroke="blue" stroke-width="1" stroke-dasharray="4,2" />
+                </g>
+            </svg>
+        `;
+        
+        beamVisualization.innerHTML = svg;
+    }
+    
+    function renderSupport(x, y, type, position) {
+        if (type === "fixed") {
+            // Fixed support (triangle with hatching)
+            const direction = position === "top" ? -1 : 1;
+            return `
+                <path d="M ${x-30} ${y + (direction * 10)} 
+                         L ${x+30} ${y + (direction * 10)}
+                         L ${x} ${y}"
+                      stroke="black" stroke-width="2" fill="none" />
+                <!-- Hatching lines for fixed support -->
+                ${Array.from({length: 7}, (_, i) => 
+                    `<line x1="${x-25 + i*10}" y1="${y + (direction * 10)}" 
+                           x2="${x-25 + i*10}" y2="${y + (direction * 5)}"
+                           stroke="black" stroke-width="1" />`
+                ).join('')}
+            `;
+        } else if (type === "pinned") {
+            // Pinned support (triangle)
+            const direction = position === "top" ? -1 : 1;
+            return `
+                <path d="M ${x-30} ${y + (direction * 10)} 
+                         L ${x+30} ${y + (direction * 10)}
+                         L ${x} ${y}"
+                      stroke="black" stroke-width="2" fill="none" />
+                <!-- Circles to represent pins -->
+                <circle cx="${x}" cy="${y}" r="3" fill="black" />
+            `;
+        } else { // free
+            // Free end (nothing)
+            return '';
+        }
+    }
+    
+    function renderLateralSupport(x, y, type) {
+        if (type === "fixed") {
+            // Fixed lateral support (square block with hatching)
+            return `
+                <rect x="${x+20}" y="${y-10}" width="20" height="20" 
+                      stroke="black" stroke-width="2" fill="none" />
+                <!-- Hatching for fixed support -->
+                ${Array.from({length: 4}, (_, i) => 
+                    `<line x1="${x+20}" y1="${y-10 + i*5}" 
+                           x2="${x+40}" y2="${y-10 + i*5}"
+                           stroke="black" stroke-width="1" />`
+                ).join('')}
+                <!-- Line connecting to column -->
+                <line x1="${x+15}" y1="${y}" x2="${x+20}" y2="${y}"
+                      stroke="black" stroke-width="2" />
+                
+                <!-- Left side support - mirror image -->
+                <rect x="${x-40}" y="${y-10}" width="20" height="20" 
+                      stroke="black" stroke-width="2" fill="none" />
+                <!-- Hatching for fixed support -->
+                ${Array.from({length: 4}, (_, i) => 
+                    `<line x1="${x-40}" y1="${y-10 + i*5}" 
+                           x2="${x-20}" y2="${y-10 + i*5}"
+                           stroke="black" stroke-width="1" />`
+                ).join('')}
+                <!-- Line connecting to column -->
+                <line x1="${x-15}" y1="${y}" x2="${x-20}" y2="${y}"
+                      stroke="black" stroke-width="2" />
+            `;
+        } else if (type === "pinned") {
+            // Pinned lateral support (roller)
+            return `
+                <!-- Right side -->
+                <circle cx="${x+30}" cy="${y}" r="10" 
+                        stroke="black" stroke-width="2" fill="none" />
+                <!-- Line connecting to column -->
+                <line x1="${x+15}" y1="${y}" x2="${x+20}" y2="${y}"
+                      stroke="black" stroke-width="2" />
+                <!-- Small circle for pin -->
+                <circle cx="${x+20}" cy="${y}" r="3" fill="black" />
+                
+                <!-- Left side - mirror image -->
+                <circle cx="${x-30}" cy="${y}" r="10" 
+                        stroke="black" stroke-width="2" fill="none" />
+                <!-- Line connecting to column -->
+                <line x1="${x-15}" y1="${y}" x2="${x-20}" y2="${y}"
+                      stroke="black" stroke-width="2" />
+                <!-- Small circle for pin -->
+                <circle cx="${x-20}" cy="${y}" r="3" fill="black" />
+            `;
+        } else { // free
+            // Free lateral support (just a line to indicate position)
+            return `
+                <line x1="${x-40}" y1="${y}" x2="${x+40}" y2="${y}"
+                      stroke="blue" stroke-width="1" stroke-dasharray="5,5" />
+            `;
+        }
+    }
+});
+
+// Steel Properties Database - Simplified version
+// This would normally be loaded from ASTMSPEC.xlsx sheets
+const steelProperties = {
+    "A36": { Fy: 36, Fu: 58, E: 29000 },
+    "A572Gr.42": { Fy: 42, Fu: 60, E: 29000 },
+    "A572Gr.50": { Fy: 50, Fu: 65, E: 29000 },
+    "A572Gr.55": { Fy: 55, Fu: 70, E: 29000 },
+    "A572Gr.60": { Fy: 60, Fu: 75, E: 29000 },
+    "A572Gr.65": { Fy: 65, Fu: 80, E: 29000 },
+    "A588Gr.42": { Fy: 42, Fu: 63, E: 29000 },
+    "A588Gr.46": { Fy: 46, Fu: 67, E: 29000 },
+    "A588Gr.50": { Fy: 50, Fu: 70, E: 29000 },
+    "A687": { Fy: 50, Fu: 70, E: 29000 },
+    "A992": { Fy: 50, Fu: 65, E: 29000 }
+};
+
+// W-Shape Properties Database - Simplified with commonly used sections
+const wShapeProperties = {
+    "W10X77": {
+        A: 22.7, d: 10.6, bf: 10.1, tf: 0.870, tw: 0.530,
+        Ix: 455, Zx: 99.1, Sx: 85.9, rx: 4.49,
+        Iy: 152, Zy: 45.3, Sy: 30.1, ry: 2.60,
+        h: 8.86, J: 4.89, Cw: 3680
+    },
+    "W12X45": {
+        A: 13.2, d: 11.9, bf: 8.0, tf: 0.576, tw: 0.335,
+        Ix: 270, Zx: 51.7, Sx: 45.6, rx: 4.51,
+        Iy: 88.6, Zy: 22.2, Sy: 22.1, ry: 2.59,
+        h: 10.748, J: 1.24, Cw: 1260
+    },
+    // Add more sections as needed
+};
+
+// Main analysis function
+document.addEventListener('DOMContentLoaded', function() {
+    // Get elements
+    const calculateBtn = document.getElementById('calculate');
+    const resultDiv = document.getElementById('ResultComp');
+    const supportRadio = document.getElementById('support');
+    const noSupportRadio = document.getElementById('Nosupport');
+    const supportAmountInput = document.getElementById('supprtamount');
+    const supportDiv = document.getElementById('SupportA');
+    
+    // Show/hide support options based on radio selection
+    supportRadio.addEventListener('change', function() {
+        if (this.checked) {
+            supportDiv.style.display = 'block';
+        }
+    });
+    
+    noSupportRadio.addEventListener('change', function() {
+        if (this.checked) {
+            supportDiv.style.display = 'none';
+            supportAmountInput.value = '';
+        }
+    });
+    
+    // Analyze button click event
+    calculateBtn.addEventListener('click', function() {
+        analyzeCompression();
+    });
+    
+    function analyzeCompression() {
+        // Get inputs
+        const astmSpec = document.getElementById('ASTMinput').value;
+        const shapeDim = document.getElementById('dimA').value.toUpperCase();
+        const columnLength = parseFloat(document.getElementById('Lenght').value) * 12; // Convert ft to inches
+        
+        // Get steel properties
+        const steel = steelProperties[astmSpec];
+        if (!steel) {
+            resultDiv.innerHTML = `<div class="error">Error: Steel specification ${astmSpec} not found.</div>`;
+            return;
+        }
+        
+        // Get shape properties
+        const shape = wShapeProperties[`W${shapeDim}`];
+        if (!shape) {
+            resultDiv.innerHTML = `<div class="error">Error: Shape W${shapeDim} not found.</div>`;
+            return;
+        }
+        
+        // Calculate effective length factor (K)
+        let kx = 1.0; // Default value
+        let ky = 1.0; // Default value
+        
+        // Determine K based on end conditions
+        if (document.getElementById('topfixed').checked && document.getElementById('botfixed').checked) {
+            kx = ky = 0.65; // Fixed-Fixed
+        } else if (document.getElementById('topfixed').checked && document.getElementById('botpinned').checked) {
+            kx = ky = 0.80; // Fixed-Pinned
+        } else if (document.getElementById('toppinned').checked && document.getElementById('botpinned').checked) {
+            kx = ky = 1.0; // Pinned-Pinned
+        } else if ((document.getElementById('topfixed').checked && document.getElementById('botfree').checked) ||
+                   (document.getElementById('topfree').checked && document.getElementById('botfixed').checked)) {
+            kx = ky = 2.1; // Fixed-Free
+        } else if ((document.getElementById('toppinned').checked && document.getElementById('botfree').checked) ||
+                   (document.getElementById('topfree').checked && document.getElementById('botpinned').checked)) {
+            kx = ky = 2.0; // Pinned-Free
+        }
+        
+        // Calculate slenderness ratios
+        const KLrx = (kx * columnLength) / shape.rx;
+        const KLry = (ky * columnLength) / shape.ry;
+        const KLr = Math.max(KLrx, KLry); // Critical KL/r
+        
+        // Update table
+        document.getElementById('topL').textContent = (columnLength / 12).toFixed(2) + ' ft';
+        document.getElementById('topK').textContent = kx.toFixed(2);
+        document.getElementById('topr').textContent = shape.rx.toFixed(2);
+        document.getElementById('topKLr').textContent = KLrx.toFixed(2);
+        
+        document.getElementById('sup1L').textContent = '-';
+        document.getElementById('sup1K').textContent = '-';
+        document.getElementById('sup1r').textContent = '-';
+        document.getElementById('sup1KLr').textContent = '-';
+        
+        document.getElementById('sup2L').textContent = '-';
+        document.getElementById('sup2K').textContent = '-';
+        document.getElementById('sup2r').textContent = '-';
+        document.getElementById('sup2KLr').textContent = '-';
+        
+        document.getElementById('sup3L').textContent = '-';
+        document.getElementById('sup3K').textContent = '-';
+        document.getElementById('sup3r').textContent = '-';
+        document.getElementById('sup3KLr').textContent = '-';
+
+        document.getElementById('sup4L').textContent = '-';
+        document.getElementById('sup4K').textContent = '-';
+        document.getElementById('sup4r').textContent = '-';
+        document.getElementById('sup4KLr').textContent = '-';
+
+        document.getElementById('sup5L').textContent = '-';
+        document.getElementById('sup5K').textContent = '-';
+        document.getElementById('sup5r').textContent = '-';
+        document.getElementById('sup5KLr').textContent = '-';
+        
+        // Check if compact or slender
+        // Flange check
+        const lambdaFlange = shape.bf / (2 * shape.tf);
+        const lambdaFlangeLimit = 0.56 * Math.sqrt(steel.E / steel.Fy);
+        const isCompactFlange = lambdaFlange <= lambdaFlangeLimit;
+        
+        // Web check
+        const lambdaWeb = shape.h / shape.tw;
+        const lambdaWebLimit = 1.49 * Math.sqrt(steel.E / steel.Fy);
+        const isCompactWeb = lambdaWeb <= lambdaWebLimit;
+        
+        // Calculate critical stress
+        let Fcr;
+        const Fe = (Math.pow(Math.PI, 2) * steel.E) / Math.pow(KLr, 2); // Elastic buckling stress
+        
+        if (KLr <= 4.71 * Math.sqrt(steel.E / steel.Fy)) {
+            // Inelastic buckling
+            Fcr = 0.658 ** (steel.Fy / Fe) * steel.Fy;
+        } else {
+            // Elastic buckling
+            Fcr = 0.877 * Fe;
+        }
+        
+        // Calculate nominal compression strength
+        const Pn = shape.A * Fcr;
+        
+        // Calculate design strength (LRFD)
+        const phi = 0.9; // Resistance factor for compression
+        const Pu = phi * Pn;
+        
+        // Calculate available strength (ASD)
+        const omega = 1.67; // Safety factor for compression
+        const Pa = Pn / omega;
+        
+        // Format results for display
+        let resultsHTML = `
+            <h2>Compression Analysis Results for W${shapeDim} (${astmSpec})</h2>
+            <div class="results-section">
+                <h3>1. Section Classification</h3>
+                <div class="result-item">
+                    <strong>Flange:</strong> λ = ${lambdaFlange.toFixed(2)}, λr = ${lambdaFlangeLimit.toFixed(2)} → ${isCompactFlange ? "Compact" : "Slender"}
+                </div>
+                <div class="result-item">
+                    <strong>Web:</strong> λ = ${lambdaWeb.toFixed(2)}, λr = ${lambdaWebLimit.toFixed(2)} → ${isCompactWeb ? "Compact" : "Slender"}
+                </div>
+                <div class="result-item">
+                    <strong>Section:</strong> ${(isCompactFlange && isCompactWeb) ? "Compact Section" : "Non-Compact Section"}
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h3>2. Critical Slenderness</h3>
+                <div class="result-item">
+                    <strong>X-axis:</strong> KL/r = ${KLrx.toFixed(2)}
+                </div>
+                <div class="result-item">
+                    <strong>Y-axis:</strong> KL/r = ${KLry.toFixed(2)}
+                </div>
+                <div class="result-item">
+                    <strong>Critical:</strong> KL/r = ${KLr.toFixed(2)}
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h3>3. Buckling Stress and Strength</h3>
+                <div class="result-item">
+                    <strong>Elastic Buckling Stress (Fe):</strong> ${Fe.toFixed(2)} ksi
+                </div>
+                <div class="result-item">
+                    <strong>Critical Stress (Fcr):</strong> ${Fcr.toFixed(2)} ksi
+                </div>
+                <div class="result-item">
+                    <strong>Nominal Strength (Pn):</strong> ${Pn.toFixed(2)} kips
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h3>4. Design Strength</h3>
+                <div class="result-item">
+                    <strong>LRFD (φPn):</strong> ${Pu.toFixed(2)} kips
+                </div>
+                <div class="result-item">
+                    <strong>ASD (Pn/Ω):</strong> ${Pa.toFixed(2)} kips
+                </div>
+            </div>
+        `;
+        
+        resultDiv.innerHTML = resultsHTML;
+    }
+});
+
+
+const E = 29000; // ksi - Modulus of elasticity
+const PI = Math.PI;
+
+// Global variables to store data from Excel
+let astmData = {};
+let wShapesData = {};
+let dataLoaded = false;
+
+// Function to load data from Excel
+async function loadExcelData() {
+    try {
+        // Use SheetJS to parse the Excel file
+        // This assumes the ASTMSPEC.xlsx file is available
+        const response = await fetch('ASTMSPEC.xlsx');
+        const data = await response.arrayBuffer();
+        const workbook = XLSX.read(data, { type: 'array' });
+        
+        console.log("Excel workbook loaded. Sheet names:", workbook.SheetNames);
+        
+        // Sheet 1: Steel name, Fy, Fu
+        const sheet1 = workbook.Sheets[workbook.SheetNames[0]];
+        const steelData = XLSX.utils.sheet_to_json(sheet1);
+        
+        console.log("Steel data sample:", steelData.slice(0, 3));
+        
+        // Process steel data into our format
+        steelData.forEach(row => {
+            if (row['Steel name']) {
+                astmData[row['Steel name']] = {
+                    Fy: row['Fy'] || 0,
+                    Fu: row['Fu'] || 0
+                };
+            }
+        });
+        
+        console.log("Processed ASTM data:", Object.keys(astmData));
+        
+        // Sheet 2: W-shape properties
+        const sheet2 = workbook.Sheets[workbook.SheetNames[1]];
+        const shapeData = XLSX.utils.sheet_to_json(sheet2);
+        
+        console.log("Shape data sample:", shapeData.slice(0, 3));
+        console.log("Shape data columns:", Object.keys(shapeData[0] || {}));
+        
+        // Process shape data into our format
+        shapeData.forEach(row => {
+            // Check if it's a W-shape by the AISC_Manual_Label or some other field
+            let shapeLabel = row['AISC_Manual_Label'] || row['W_shape'] || '';
+            
+            // Some Excel files might use different column names - try to detect them
+            if (!shapeLabel) {
+                // Look for any key that might contain shape information
+                for (const key in row) {
+                    if (typeof row[key] === 'string' && row[key].startsWith('W')) {
+                        shapeLabel = row[key];
+                        break;
+                    }
+                }
+            }
+            
+            // Remove any spaces and convert to uppercase for consistency
+            shapeLabel = shapeLabel.toString().replace(/\s+/g, '').toUpperCase();
+            
+            if (shapeLabel && shapeLabel.startsWith('W')) {
+                wShapesData[shapeLabel] = {
+                    A: row['A'] || 0,
+                    d: row['d'] || 0,
+                    tw: row['tw'] || 0,
+                    bf: row['bf'] || 0,
+                    tf: row['tf'] || 0,
+                    htw: row['h/tw'] || 0,
+                    Ix: row['Ix'] || 0,
+                    Zx: row['Zx'] || 0,
+                    Sx: row['Sx'] || 0,
+                    rx: row['rx'] || 0,
+                    Iy: row['Iy'] || 0,
+                    Zy: row['Zy'] || 0,
+                    Sy: row['Sy'] || 0,
+                    ry: row['ry'] || 0
+                };
+            }
+        });
+        
+        console.log("Processed W-shapes data:", Object.keys(wShapesData));
+        
+        dataLoaded = true;
+        console.log("Excel data loaded successfully!");
+        
+        // Populate dropdown with ASTM specs
+        const astmSelect = document.getElementById('ASTMinput');
+        astmSelect.innerHTML = '';
+        
+        Object.keys(astmData).forEach(spec => {
+            const option = document.createElement('option');
+            option.value = spec;
+            option.textContent = spec;
+            astmSelect.appendChild(option);
+        });
+        
+        // Enable the analyze button
+        document.getElementById('calculate').disabled = false;
+        
+    } catch (error) {
+        console.error("Error loading Excel data:", error);
+        // If Excel loading fails, use hardcoded default data
+        useDefaultData();
+    }
+}
+
+// Fallback function to use hardcoded data if Excel loading fails
+function useDefaultData() {
+    console.log("Using default hardcoded data");
+    
+    // Default ASTM data
+    astmData = {
+        "A36": { Fy: 36, Fu: 58 },
+        "A572Gr.50": { Fy: 50, Fu: 65 },
+        "A992": { Fy: 50, Fu: 65 }
+    };
+    
+    // Default W shape data (limited set)
+    wShapesData = {
+        "W12X14": {
+            A: 4.16, d: 11.91, tw: 0.170, bf: 3.97, tf: 0.225, htw: 66.8, 
+            Ix: 88.6, Zx: 17.3, Sx: 14.9, rx: 4.62, 
+            Iy: 2.36, Zy: 1.19, Sy: 0.766, ry: 0.754
+        },
+        "W12X26": {
+            A: 7.65, d: 12.22, tw: 0.230, bf: 6.49, tf: 0.380, htw: 50.1, 
+            Ix: 204, Zx: 37.2, Sx: 33.4, rx: 5.17, 
+            Iy: 21.3, Zy: 6.58, Sy: 4.22, ry: 1.67
+        },
+        "W12X45": {
+            A: 13.2, d: 12.06, tw: 0.335, bf: 8.05, tf: 0.575, htw: 33.0, 
+            Ix: 348, Zx: 64.2, Sx: 57.7, rx: 5.13, 
+            Iy: 56.3, Zy: 14.0, Sy: 9.08, ry: 2.06
+        }
+    };
+    
+    dataLoaded = true;
+    document.getElementById('calculate').disabled = false;
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Add SheetJS library
+    const sheetJsScript = document.createElement('script');
+    sheetJsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    document.head.appendChild(sheetJsScript);
+    
+    sheetJsScript.onload = function() {
+        // Try to load Excel data once SheetJS is loaded
+        loadExcelData();
+    };
+    
+    // Disable calculate button until data is loaded
+    document.getElementById('calculate').disabled = true;
+    
+    // Hide support options initially
+    document.getElementById('SupportA').style.display = 'none';
+    
+    // Support radio button event listeners
+    document.getElementById('Nosupport').addEventListener('change', toggleSupportOptions);
+    document.getElementById('support').addEventListener('change', toggleSupportOptions);
+    
+    // Calculate button event listener
+    document.getElementById('calculate').addEventListener('click', analyzeColumn);
+    
+    // Amount of supports input listener
+    document.getElementById('supprtamount').addEventListener('input', function() {
+        updateSupportInputs(this.value);
+    });
+});
+
+// Function to toggle support options visibility
+function toggleSupportOptions() {
+    const supportDiv = document.getElementById('SupportA');
+    if (document.getElementById('support').checked) {
+        supportDiv.style.display = 'block';
+    } else {
+        supportDiv.style.display = 'none';
+    }
+}
+
+// Function to show/hide support input fields based on quantity
+function updateSupportInputs(amount) {
+    // Hide all support divs first
+    document.getElementById('support1').style.display = 'none';
+    document.getElementById('support2').style.display = 'none';
+    document.getElementById('support3').style.display = 'none';
+    
+    // Show divs based on amount
+    for (let i = 1; i <= amount && i <= 5; i++) {
+        document.getElementById('support' + i).style.display = 'block';
+    }
+}
+
+// Main analysis function
+function analyzeColumn() {
+    if (!dataLoaded) {
+        alert("Steel data is still loading. Please wait.");
+        return;
+    }
+    
+    // Get shape and material properties
+    const astmSpec = document.getElementById('ASTMinput').value;
+    const shapeDim = document.getElementById('dimA').value.toUpperCase();
+    const shapeType = document.getElementById('shapeA').value + shapeDim;
+    
+    // Get material properties
+    const material = astmData[astmSpec];
+    if (!material) {
+        alert(`Steel specification ${astmSpec} not found in database.`);
+        return;
+    }
+    
+    // Check if the shape exists in our database
+    if (!wShapesData[shapeType]) {
+        alert(`Shape ${shapeType} not found in database. Try another shape like W12X45.`);
+        return;
+    }
+    
+    // Get shape properties
+    const shape = wShapesData[shapeType];
+    
+    // Get member length
+    const lengthFt = parseFloat(document.getElementById('Lenght').value);
+    if (isNaN(lengthFt) || lengthFt <= 0) {
+        alert('Please enter a valid length.');
+        return;
+    }
+    const lengthIn = lengthFt * 12;
+    
+    // Determine end conditions
+    const topEnd = getEndCondition('top');
+    const botEnd = getEndCondition('bot');
+    
+    // Calculate K factors for strong (x) and weak (y) axes
+    const Kx = calculateKFactor(topEnd, botEnd);
+    const Ky = calculateKFactor(topEnd, botEnd);
+    
+    // Calculate slenderness ratios for both axes
+    const KLrx = (Kx * lengthIn) / shape.rx;
+    const KLry = (Ky * lengthIn) / shape.ry;
+    
+    // Determine governing slenderness ratio
+    const governingKLr = Math.max(KLrx, KLry);
+    const governingAxis = (KLrx > KLry) ? 'X' : 'Y';
+    
+    // Populate the main table results
+    document.getElementById('topL').textContent = lengthFt.toFixed(2);
+    document.getElementById('topK').textContent = Kx.toFixed(2);
+    document.getElementById('topr').textContent = shape.rx.toFixed(2);
+    document.getElementById('topKLr').textContent = KLrx.toFixed(2);
+    
+    document.getElementById('botL').textContent = lengthFt.toFixed(2);
+    document.getElementById('botK').textContent = Ky.toFixed(2);
+    document.getElementById('botr').textContent = shape.ry.toFixed(2);
+    document.getElementById('botKLr').textContent = KLry.toFixed(2);
+    
+    // Handle lateral supports if selected
+    if (document.getElementById('support').checked) {
+        const supportsAmount = parseInt(document.getElementById('supprtamount').value) || 0;
+        
+        // Create array to store support locations
+        const supportLocations = [];
+        
+        // Get and validate support locations
+        for (let i = 1; i <= supportsAmount && i <= 3; i++) {
+            const locationInput = document.getElementById('location' + i);
+            if (locationInput && locationInput.value) {
+                const location = parseFloat(locationInput.value);
+                if (!isNaN(location) && location > 0 && location < lengthFt) {
+                    supportLocations.push(location);
+                }
+            }
+        }
+        
+        // Sort support locations in ascending order
+        supportLocations.sort((a, b) => a - b);
+        
+        // Calculate segment lengths (y1, y2, y3, y4, y5)
+        const segments = [];
+        
+        // First segment (from start to first support)
+        if (supportLocations.length > 0) {
+            segments.push({
+                start: 0,
+                end: supportLocations[0],
+                length: supportLocations[0]
+            });
+            
+            // Middle segments (between supports)
+            for (let i = 0; i < supportLocations.length - 1; i++) {
+                segments.push({
+                    start: supportLocations[i],
+                    end: supportLocations[i + 1],
+                    length: supportLocations[i + 1] - supportLocations[i]
+                });
+            }
+            
+            // Last segment (from last support to end)
+            segments.push({
+                start: supportLocations[supportLocations.length - 1],
+                end: lengthFt,
+                length: lengthFt - supportLocations[supportLocations.length - 1]
+            });
+        } else {
+            // If no supports, just one segment for the full length
+            segments.push({
+                start: 0,
+                end: lengthFt,
+                length: lengthFt
+            });
+        }
+        
+        // Display segment information in the table
+        for (let i = 0; i < segments.length && i < 5; i++) {
+            const segmentRow = document.getElementById('y' + (i + 1));
+            if (segmentRow) {
+                segmentRow.style.display = 'table-row';
+                
+                const segLength = segments[i].length;
+                const segK = Ky; // Using the same K factor for Y-axis
+                
+                document.getElementById('sup' + (i + 1) + 'L').textContent = segLength.toFixed(2);
+                document.getElementById('sup' + (i + 1) + 'K').textContent = segK.toFixed(2);
+                document.getElementById('sup' + (i + 1) + 'r').textContent = shape.ry.toFixed(2);
+                document.getElementById('sup' + (i + 1) + 'KLr').textContent = 
+                    (segK * segLength * 12 / shape.ry).toFixed(2);
+            }
+        }
+        
+        // Hide unused segment rows
+        for (let i = segments.length + 1; i <= 5; i++) {
+            const segmentRow = document.getElementById('y' + i);
+            if (segmentRow) {
+                segmentRow.style.display = 'none';
+            }
+        }
+    } else {
+        // No lateral supports
+        // Display only one segment for the full length
+        document.getElementById('y1').style.display = 'table-row';
+        document.getElementById('sup1L').textContent = lengthFt.toFixed(2);
+        document.getElementById('sup1K').textContent = Ky.toFixed(2);
+        document.getElementById('sup1r').textContent = shape.ry.toFixed(2);
+        document.getElementById('sup1KLr').textContent = KLry.toFixed(2);
+        
+        // Hide other segment rows
+        for (let i = 2; i <= 5; i++) {
+            const segmentRow = document.getElementById('y' + i);
+            if (segmentRow) {
+                segmentRow.style.display = 'none';
+            }
+        }
+    }
+    // Highlight governing row
+    if (KLrx > KLry) {
+        document.getElementById('X').style.backgroundColor = '#ffcccb';
+        document.getElementById('Y').style.backgroundColor = '';
+    } else {
+        document.getElementById('X').style.backgroundColor = '';
+        document.getElementById('Y').style.backgroundColor = '#ffcccb';
+    }
+    
+    // Calculate Euler and AISC column strength
+    const Fe = calculateEulerBuckling(governingKLr);
+    const FcrAISC = calculateAISCStrength(material.Fy, governingKLr);
+    
+    // Calculate nominal strength
+    const Pn = shape.A * FcrAISC;
+    
+    // Calculate LRFD and ASD design strength
+    const phiPn = 0.9 * Pn; // LRFD design strength (ϕ = 0.9)
+    const PnOmega = Pn / 1.67; // ASD allowable strength (Ω = 1.67)
+    
+    // Check compactness criteria
+    const webCompactness = checkWebCompactness(shape.htw, material.Fy);
+    const flangeCompactness = checkFlangeCompactness(shape.bf / (2 * shape.tf), material.Fy);
+    
+    // Generate HTML output for the results
+    const resultHTML = generateResultHTML(
+        astmSpec, 
+        material, 
+        shapeType, 
+        shape, 
+        governingKLr, 
+        governingAxis, 
+        Fe,
+        FcrAISC, 
+        Pn,
+        phiPn,
+        PnOmega,
+        webCompactness, 
+        flangeCompactness
+    );
+    
+    document.getElementById('ResultComp').innerHTML = resultHTML;
+    
+    // Generate the AISC column curve visualization
+    generateColumnCurve(material.Fy, governingKLr, Fe, FcrAISC);
+}
+
+// Function to determine end condition based on selected radio button
+function getEndCondition(position) {
+    if (document.getElementById(position + 'fixed').checked) {
+        return 'fixed';
+    } else if (document.getElementById(position + 'pinned').checked) {
+        return 'pinned';
+    } else if (document.getElementById(position + 'free').checked) {
+        return 'free';
+    }
+    return 'pinned'; // Default to pinned if nothing selected
+}
+
+// Function to get end condition by support ID
+function getEndConditionById(supportId) {
+    if (document.getElementById('fixed' + supportId.charAt(supportId.length - 1)).checked) {
+        return 'fixed';
+    } else if (document.getElementById('pinned' + supportId.charAt(supportId.length - 1)).checked) {
+        return 'pinned';
+    } else if (document.getElementById('Free' + supportId.charAt(supportId.length - 1)).checked) {
+        return 'free';
+    }
+    return 'pinned'; // Default to pinned if nothing selected
+}
+
+// Calculate effective length factor K based on end conditions
+function calculateKFactor(topEnd, botEnd) {
+    // These values are simplified approximations
+    if (topEnd === 'fixed' && botEnd === 'fixed') {
+        return 0.65;
+    } else if ((topEnd === 'fixed' && botEnd === 'pinned') || 
+               (topEnd === 'pinned' && botEnd === 'fixed')) {
+        return 0.80;
+    } else if (topEnd === 'pinned' && botEnd === 'pinned') {
+        return 1.0;
+    } else if ((topEnd === 'fixed' && botEnd === 'free') || 
+               (topEnd === 'free' && botEnd === 'fixed')) {
+        return 2.0;
+    } else {
+        return 1.0; // Default
+    }
+}
+
+// Calculate K factor for a segment based on support type
+function getSegmentK(supportType) {
+    if (supportType === 'fixed') {
+        return 0.65;
+    } else if (supportType === 'pinned') {
+        return 1.0;
+    } else {
+        return 1.0; // Default
+    }
+}
+
+// Calculate elastic buckling stress using Euler's formula
+function calculateEulerBuckling(KLr) {
+    return (Math.PI * Math.PI * E) / (KLr * KLr);
+}
+
+// Calculate column strength per AISC
+function calculateAISCStrength(Fy, KLr) {
+    // Calculate Euler buckling stress
+    const Fe = calculateEulerBuckling(KLr);
+    
+    if (KLr <= 4.71 * Math.sqrt(E / Fy)) {
+        // Inelastic buckling
+        const Fcr = Math.pow(0.658, Fy/Fe) * Fy;
+        return Fcr;
+    } else {
+        // Elastic buckling
+        const Fcr = 0.877 * Fe;
+        return Fcr;
+    }
+}
+
+// Check web compactness
+function checkWebCompactness(htwRatio, Fy) {
+    const lambdaP = 1.49 * Math.sqrt(E / Fy);
+    const lambdaR = 1.98 * Math.sqrt(E / Fy);
+    
+    if (htwRatio <= lambdaP) {
+        return { status: "Compact", ratio: htwRatio, limit: lambdaP };
+    } else if (htwRatio <= lambdaR) {
+        return { status: "Non-compact", ratio: htwRatio, limit: lambdaR };
+    } else {
+        return { status: "Slender", ratio: htwRatio, limit: lambdaR };
+    }
+}
+
+// Check flange compactness
+function checkFlangeCompactness(bftfRatio, Fy) {
+    const lambdaP = 0.38 * Math.sqrt(E / Fy);
+    const lambdaR = 0.84 * Math.sqrt(E / Fy);
+    
+    if (bftfRatio <= lambdaP) {
+        return { status: "Compact", ratio: bftfRatio, limit: lambdaP };
+    } else if (bftfRatio <= lambdaR) {
+        return { status: "Non-compact", ratio: bftfRatio, limit: lambdaR };
+    } else {
+        return { status: "Slender", ratio: bftfRatio, limit: lambdaR };
+    }
+}
+
+// Generate HTML for results display
+function generateResultHTML(astmSpec, material, shapeType, shape, governingKLr, governingAxis, 
+                          Fe, Fcr, Pn, phiPn, PnOmega, webCompactness, flangeCompactness) {
+    return `
+        <h3>Column Analysis Results</h3>
+        <h4>Material Properties (${astmSpec})</h4>
+        <p>Yield Stress (Fy): ${material.Fy} ksi</p>
+        <p>Ultimate Stress (Fu): ${material.Fu} ksi</p>
+        
+        <h4>Shape Properties (${shapeType})</h4>
+        <p>Area: ${shape.A.toFixed(2)} in²</p>
+        <p>Depth: ${shape.d.toFixed(2)} in</p>
+        <p>Web Thickness: ${shape.tw.toFixed(3)} in</p>
+        <p>Flange Width: ${shape.bf.toFixed(2)} in</p>
+        <p>Flange Thickness: ${shape.tf.toFixed(3)} in</p>
+        <p>h/tw Ratio: ${shape.htw.toFixed(1)}</p>
+        
+        <h4>Compactness Check</h4>
+        <p>Web: ${webCompactness.status} (h/tw = ${webCompactness.ratio.toFixed(1)}, Limit = ${webCompactness.limit.toFixed(1)})</p>
+        <p>Flange: ${flangeCompactness.status} (bf/2tf = ${(shape.bf/(2*shape.tf)).toFixed(1)}, Limit = ${flangeCompactness.limit.toFixed(1)})</p>
+        
+        <h4>Column Strength</h4>
+        <p>Governing Slenderness Ratio (KL/r): ${governingKLr.toFixed(2)} (${governingAxis}-axis)</p>
+        <p>Elastic Buckling Stress (Fe): ${Fe.toFixed(2)} ksi</p>
+        <p>Critical Stress (Fcr): ${Fcr.toFixed(2)} ksi</p>
+        <p>Nominal Strength (Pn): ${Pn.toFixed(2)} kips</p>
+        
+        <h4>Design Strength</h4>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+            <tr style="background-color: #f2f2f2;">
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Design Method</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Factor</th>
+                <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Design Strength</th>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">LRFD (φPn)</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">φ = 0.9</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">${phiPn.toFixed(2)} kips</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">ASD (Pn/Ω)</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Ω = 1.67</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">${PnOmega.toFixed(2)} kips</td>
+            </tr>
+        </table>
+        
+        <div id="columnCurveGraph" style="width: 100%; height: 300px;"></div>
+    `;
+}
+
+
+// Function to generate AISC column curve visualization
+function generateColumnCurve(Fy, actualKLr, actualFcr) {
+    // Create canvas for visualization
+    const canvas = document.createElement('canvas');
+    canvas.width = 600;
+    canvas.height = 400;
+    canvas.style.width = '100%';
+    canvas.style.height = '300px';
+    
+    const div = document.getElementById('columnCurveGraph');
+    div.innerHTML = '';
+    div.appendChild(canvas);
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Calculate points for the column curve
+    const points = [];
+    const maxKLr = Math.max(200, actualKLr * 1.2);
+    
+    for (let KLr = 0; KLr <= maxKLr; KLr += 5) {
+        const Fe = (Math.PI * Math.PI * E) / (KLr * KLr);
+        let Fcr;
+        
+        if (KLr <= 4.71 * Math.sqrt(E / Fy)) {
+            // Inelastic buckling
+            Fcr = Math.pow(0.658, Fy/Fe) * Fy;
+        } else {
+            // Elastic buckling
+            Fcr = 0.877 * Fe;
+        }
+        
+        points.push({ x: KLr, y: Fcr });
+    }
+    
+    // Draw the graph
+    ctx.fillStyle = '#f5f5f5';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw axes
+    ctx.beginPath();
+    ctx.moveTo(50, 350);
+    ctx.lineTo(550, 350);
+    ctx.moveTo(50, 350);
+    ctx.lineTo(50, 50);
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Draw labels
+    ctx.font = '12px Arial';
+    ctx.fillStyle = '#000';
+    ctx.fillText('KL/r', 300, 380);
+    
+    // Y-axis label
+    ctx.save();
+    ctx.translate(20, 200);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText('Fcr (ksi)', 0, 0);
+    ctx.restore();
+    
+    // Draw title
+    ctx.font = '16px Arial';
+    ctx.fillText('AISC Column Curve', 220, 30);
+    
+    // Scale factors
+    const xScale = 500 / maxKLr;
+    const yScale = 300 / Fy;
+    
+    // Draw the curve
+    ctx.beginPath();
+    ctx.moveTo(50 + points[0].x * xScale, 350 - points[0].y * yScale);
+    
+    for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(50 + points[i].x * xScale, 350 - points[i].y * yScale);
+    }
+    
+    ctx.strokeStyle = '#0066cc';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Draw transition point (4.71√(E/Fy))
+    const transitionKLr = 4.71 * Math.sqrt(E / Fy);
+    const transitionX = 50 + transitionKLr * xScale;
+    
+    ctx.beginPath();
+    ctx.moveTo(transitionX, 350);
+    ctx.lineTo(transitionX, 50);
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    // Add text for transition point
+    ctx.font = '12px Arial';
+    ctx.fillStyle = '#666';
+    ctx.fillText(`Transition KL/r = ${transitionKLr.toFixed(1)}`, transitionX - 80, 40);
+    
+    // Draw the actual point on the curve
+    ctx.beginPath();
+    ctx.arc(50 + actualKLr * xScale, 350 - actualFcr * yScale, 6, 0, 2 * Math.PI);
+    ctx.fillStyle = 'red';
+    ctx.fill();
+    
+    // Add text for the actual point
+    ctx.fillStyle = '#000';
+    ctx.fillText(`Current: KL/r = ${actualKLr.toFixed(1)}, Fcr = ${actualFcr.toFixed(1)} ksi`, 
+                 50 + actualKLr * xScale - 100, 350 - actualFcr * yScale - 15);
+    
+    // Add legend for AISC column curve regions
+    ctx.font = '12px Arial';
+    ctx.fillStyle = '#333';
+    ctx.fillText('Inelastic Buckling', transitionX - 200, 70);
+    ctx.fillText('Elastic Buckling', transitionX + 50, 70);
+}
+
+// Function to handle uploading actual ASTMSPEC.xlsx file
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        
+        // Process Sheet 1 - ASTM data
+        const sheet1 = workbook.Sheets[workbook.SheetNames[0]];
+        const steelData = XLSX.utils.sheet_to_json(sheet1);
+        
+        astmData = {};
+        steelData.forEach(row => {
+            if (row['Steel name']) {
+                astmData[row['Steel name']] = {
+                    Fy: row['Fy'] || 0,
+                    Fu: row['Fu'] || 0
+                };
+            }
+        });
+        
+        // Process Sheet 2 - W-shape data
+        const sheet2 = workbook.Sheets[workbook.SheetNames[1]];
+        const shapeData = XLSX.utils.sheet_to_json(sheet2);
+        
+        wShapesData = {};
+        shapeData.forEach(row => {
+            if (row['AISC_Manual_Label']) {
+                wShapesData[row['AISC_Manual_Label']] = {
+                    A: row['A'] || 0,
+                    d: row['d'] || 0,
+                    tw: row['tw'] || 0,
+                    bf: row['bf'] || 0,
+                    tf: row['tf'] || 0,
+                    htw: row['h/tw'] || 0,
+                    Ix: row['Ix'] || 0,
+                    Zx: row['Zx'] || 0,
+                    Sx: row['Sx'] || 0,
+                    rx: row['rx'] || 0,
+                    Iy: row['Iy'] || 0,
+                    Zy: row['Zy'] || 0,
+                    Sy: row['Sy'] || 0,
+                    ry: row['ry'] || 0
+                };
+            }
+        });
+        
+        dataLoaded = true;
+        alert("Excel data loaded successfully!");
+        
+        // Update UI with available shapes
+        updateShapeOptions();
+    };
+    
+    reader.readAsArrayBuffer(file);
+}
+
+// Function to update the shape selection options based on loaded data
+function updateShapeOptions() {
+    const dimInput = document.getElementById('dimA');
+    
+    // Create a datalist for shape dimensions
+    let datalist = document.getElementById('shape-dimensions');
+    if (!datalist) {
+        datalist = document.createElement('datalist');
+        datalist.id = 'shape-dimensions';
+        document.body.appendChild(datalist);
+        
+        // Connect the input to the datalist
+        dimInput.setAttribute('list', 'shape-dimensions');
+    }
+    
+    // Clear and populate datalist
+    datalist.innerHTML = '';
+    
+    // Extract just the dimensions part from shape names (e.g., "12X45" from "W12X45")
+    const dimensions = Object.keys(wShapesData)
+        .map(key => key.substring(1)) // Remove the "W" prefix
+        .filter((value, index, self) => self.indexOf(value) === index); // Unique values
+    
+    // Add options to datalist
+    dimensions.forEach(dim => {
+        const option = document.createElement('option');
+        option.value = dim;
+        datalist.appendChild(option);
+    });
+}
+
+
+
+// Function to handle the visibility of the SupportA container
+function handleSupportVisibility() {
+    // Get the radio buttons and the SupportA container
+    const supportRadio = document.getElementById('supportC');
+    const noSupportRadio = document.getElementById('NosupportC');
+    const supportContainer = document.getElementById('SupportC');
+    
+    // Show the SupportA container if the support radio is checked
+    if (supportRadio.checked) {
+      supportContainer.style.display = 'block';
+    }
+    // Hide the SupportA container if the Nosupport radio is checked
+    else if (noSupportRadio.checked) {
+      supportContainer.style.display = 'none';
+    }
+  }
+  
+ 
+// Function to handle the visibility of the SupportC container
+function handleSupportVisibilityC() {
+  // Get the radio buttons and the SupportC container
+  const supportRadio = document.getElementById('supportC');
+  const noSupportRadio = document.getElementById('NosupportC');
+  const supportContainer = document.getElementById('SupportC');
+  
+  // Show the SupportC container if the support radio is checked
+  if (supportRadio.checked) {
+    supportContainer.style.display = 'block';
+  }
+  // Hide the SupportC container if the Nosupport radio is checked
+  else if (noSupportRadio.checked) {
+    supportContainer.style.display = 'none';
+  }
+}
+
+// Add event listeners to both radio buttons
+document.getElementById('supportC').addEventListener('change', handleSupportVisibilityC);
+document.getElementById('NosupportC').addEventListener('change', handleSupportVisibilityC);
+
+// Run the function once when the page loads to set the initial state
+document.addEventListener('DOMContentLoaded', function() {
+  // Check the initial state of the radio buttons and set visibility accordingly
+  handleSupportVisibilityC();
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Get references to DOM elements
+    const noSupportRadio = document.getElementById("NosupportC");
+    const withSupportRadio = document.getElementById("supportC");
+    const supportCDiv = document.getElementById("SupportC");
+    const supportAmountInput = document.getElementById("supprtamountC");
+    const support1Div = document.getElementById("support1C");
+    const support2Div = document.getElementById("support2C");
+    const support3Div = document.getElementById("support3C");
+
+    // Initially hide all support divs
+    support1Div.style.display = "none";
+    support2Div.style.display = "none";
+    support3Div.style.display = "none";
+
+    // Show/hide SupportC div based on radio button selection
+    noSupportRadio.addEventListener("change", function() {
+        if (this.checked) {
+            supportCDiv.style.display = "none";
+        }
+    });
+
+    withSupportRadio.addEventListener("change", function() {
+        if (this.checked) {
+            supportCDiv.style.display = "block";
+            // When support is initially shown, update which support divs are visible
+            updateSupportDivs();
+        }
+    });
+
+    // Listen for changes to the support amount input
+    supportAmountInput.addEventListener("input", updateSupportDivs);
+
+    function updateSupportDivs() {
+        const amount = parseInt(supportAmountInput.value) || 0;
+        
+        // Show/hide support divs based on amount
+        support1Div.style.display = amount >= 1 ? "block" : "none";
+        support2Div.style.display = amount >= 2 ? "block" : "none";
+        support3Div.style.display = amount >= 3 ? "block" : "none";
+    }
+
+    // Initialize state based on initial values
+    if (withSupportRadio.checked) {
+        supportCDiv.style.display = "block";
+        updateSupportDivs();
+    } else {
+        supportCDiv.style.display = "none";
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Add containers for both visualizations after the page loads
+    const graphicalColumnContainer = document.createElement('div');
+    graphicalColumnContainer.className = 'GraphicalColumn';
+    
+    graphicalColumnContainer.innerHTML = `
+        <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px;">
+            <!-- Y-axis visualization (with lateral supports) -->
+            <div class="visualization-container" style="flex: 1; min-width: 300px; height: 500px; border: 1px solid #ccc; position: relative; overflow: hidden;">
+                <h3 style="text-align: center; margin: 5px 0;">Y-Axis Visualization (Lateral Supports)</h3>
+                <div id="beam-visualization-y-c" style="width: 100%; height: 450px; position: relative;">
+                    <!-- SVG will be inserted here -->
+                </div>
+            </div>
+            
+            <!-- X-axis visualization (without lateral supports) -->
+            <div class="visualization-container" style="flex: 1; min-width: 300px; height: 500px; border: 1px solid #ccc; position: relative; overflow: hidden;">
+                <h3 style="text-align: center; margin: 5px 0;">X-Axis Visualization (Full Length)</h3>
+                <div id="beam-visualization-x-c" style="width: 100%; height: 450px; position: relative;">
+                    <!-- SVG will be inserted here -->
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Find where to insert the GraphicalColumn div
+    const designButtonc = document.getElementById("DesignC");
+    if (designButtonc && designButtonc.parentNode) {
+        designButtonc.parentNode.parentNode.insertBefore(graphicalColumnContainer, designButton.parentNode.nextSibling);
+    } else {
+        // Fallback: just append to body
+        document.body.appendChild(graphicalColumnContainer);
+    }
+
+    // Get all the input elements we need to monitor
+    const lengthInput = document.getElementById("LenghtDC");
+    const supportRadio = document.getElementById("supportC");
+    const noSupportRadio = document.getElementById("NosupportC");
+    const supportAmountInput = document.getElementById("supprtamountC");
+    const locationInputs = [
+        document.getElementById("location1C"),
+        document.getElementById("location2C"),
+        document.getElementById("location3C")
+    ];
+    
+    // Top support options
+    const topFixed = document.getElementById("topfixedC");
+    const topPinned = document.getElementById("toppinnedC");
+    const topFree = document.getElementById("topfreeC");
+    
+    // Bottom support options
+    const botFixed = document.getElementById("botfixedC");
+    const botPinned = document.getElementById("botpinnedC");
+    const botFree = document.getElementById("botfreeC");
+    
+    // Lateral support options
+    const lateralSupportTypes = [
+        {
+            pinned: document.getElementById("pinned1C"),
+            fixed: document.getElementById("fixed1C"),
+            free: document.getElementById("Free1C")
+        },
+        {
+            pinned: document.getElementById("pinned2C"),
+            fixed: document.getElementById("fixed2C"),
+            free: document.getElementById("Free2C")
+        },
+        {
+            pinned: document.getElementById("pinned3C"),
+            fixed: document.getElementById("fixed3C"),
+            free: document.getElementById("Free3C")
+        }
+    ];
+
+    // Design button
+    const designButton = document.getElementById("DesignC");
+
+    // Initial drawing
+    drawBeamColumns();
+
+    // Add event listeners to all inputs that should trigger a redraw
+    lengthInput.addEventListener("input", drawBeamColumns);
+    supportRadio.addEventListener("change", drawBeamColumns);
+    noSupportRadio.addEventListener("change", drawBeamColumns);
+    supportAmountInput.addEventListener("input", drawBeamColumns);
+    
+    for (let i = 0; i < locationInputs.length; i++) {
+        if (locationInputs[i]) {
+            locationInputs[i].addEventListener("input", drawBeamColumns);
+        }
+    }
+    
+    // Top support options
+    if (topFixed) topFixed.addEventListener("change", drawBeamColumns);
+    if (topPinned) topPinned.addEventListener("change", drawBeamColumns);
+    if (topFree) topFree.addEventListener("change", drawBeamColumns);
+    
+    // Bottom support options
+    if (botFixed) botFixed.addEventListener("change", drawBeamColumns);
+    if (botPinned) botPinned.addEventListener("change", drawBeamColumns);
+    if (botFree) botFree.addEventListener("change", drawBeamColumns);
+    
+    // Lateral support options
+    for (let i = 0; i < lateralSupportTypes.length; i++) {
+        if (lateralSupportTypes[i].pinned) lateralSupportTypes[i].pinned.addEventListener("change", drawBeamColumns);
+        if (lateralSupportTypes[i].fixed) lateralSupportTypes[i].fixed.addEventListener("change", drawBeamColumns);
+        if (lateralSupportTypes[i].free) lateralSupportTypes[i].free.addEventListener("change", drawBeamColumns);
+    }
+    
+    if (designButton) {
+        designButton.addEventListener("click", drawBeamColumns);
+    }
+
+    function drawBeamColumns() {
+        // Draw both visualizations
+        drawYAxisBeam();
+        drawXAxisBeam();
+    }
+
+    function drawYAxisBeam() {
+        const beamVisualization = document.getElementById("beam-visualization-y-c");
+        if (!beamVisualization) return;
+
+        // Get the current values from the form
+        const columnLength = parseFloat(lengthInput.value) || 16; // Default to 16 if not specified
+        const hasLateralSupports = supportRadio && supportRadio.checked;
+        const supportCount = hasLateralSupports ? parseInt(supportAmountInput.value) || 0 : 0;
+        
+        // Get support locations and sort them by position
+        const supportLocations = [];
+        if (hasLateralSupports) {
+            for (let i = 0; i < supportCount && i < 3; i++) {
+                if (locationInputs[i]) {
+                    const location = parseFloat(locationInputs[i].value) || 0;
+                    if (location > 0 && location < columnLength) {
+                        supportLocations.push({
+                            position: location,
+                            type: lateralSupportTypes[i].fixed && lateralSupportTypes[i].fixed.checked ? "fixed" :
+                                  lateralSupportTypes[i].pinned && lateralSupportTypes[i].pinned.checked ? "pinned" : "free",
+                            index: i + 1
+                        });
+                    }
+                }
+            }
+        }
+        
+        // Sort support locations by position
+        supportLocations.sort((a, b) => a.position - b.position);
+        
+        // Get end supports
+        const topSupport = topFixed && topFixed.checked ? "fixed" : 
+                          topPinned && topPinned.checked ? "pinned" : "free";
+        const botSupport = botFixed && botFixed.checked ? "fixed" : 
+                          botPinned && botPinned.checked ? "pinned" : "free";
+
+        // Calculate dimensions
+        const svgWidth = beamVisualization.clientWidth;
+        const svgHeight = beamVisualization.clientHeight;
+        const margin = { top: 20, right: 40, bottom: 40, left: 60 };
+        const width = svgWidth - margin.left - margin.right;
+        const height = svgHeight - margin.top - margin.bottom;
+        
+        // Scale factors
+        const yScale = height / columnLength;
+        
+        // Determine segment points (top, all supports, bottom)
+        const segmentPoints = [0, ...supportLocations.map(s => s.position), columnLength];
+        
+        // Create the SVG
+        const svg = `
+            <svg width="${svgWidth}" height="${svgHeight}">
+                <g transform="translate(${margin.left}, ${margin.top})">
+                    <!-- Column shaft (W-shape) showing front and side view -->
+                    <!-- Front view (Y-axis) -->
+                    <path d="M ${width/2-15} 0 
+                             L ${width/2-15} ${columnLength * yScale}
+                             M ${width/2+15} 0
+                             L ${width/2+15} ${columnLength * yScale}
+                             M ${width/2-25} 0
+                             L ${width/2+25} 0
+                             M ${width/2-25} ${columnLength * yScale}
+                             L ${width/2+25} ${columnLength * yScale}"
+                          stroke="black" stroke-width="2" fill="none" />
+                    
+                    <!-- "Y" label below the beam -->
+                    <text x="${width/2}" y="${columnLength * yScale + 35}" 
+                          text-anchor="middle" font-size="16" font-weight="bold">
+                        Y
+                    </text>
+                    
+                    <!-- Top support -->
+                    ${renderSupport(width/2, 0, topSupport, "top")}
+                    
+                    <!-- Bottom support -->
+                    ${renderSupport(width/2, columnLength * yScale, botSupport, "bottom")}
+                    
+                    <!-- Lateral supports -->
+                    ${supportLocations.map(support => 
+                        renderLateralSupport(width/2, support.position * yScale, support.type)
+                    ).join('')}
+                    
+                    <!-- Column height label -->
+                    <text x="${width/2 + 40}" y="${columnLength * yScale / 2}" 
+                          transform="rotate(270, ${width/2 + 40}, ${columnLength * yScale / 2})"
+                          text-anchor="middle" dominant-baseline="middle" font-size="12">
+                        ${columnLength}' Column Length
+                    </text>
+                    
+                    <!-- Support location labels -->
+                    ${supportLocations.map((support) => `
+                        <text x="${width/2 - 40}" y="${support.position * yScale}"
+                              text-anchor="end" dominant-baseline="middle" font-size="12">
+                            Support ${support.index}: ${support.position}'
+                        </text>
+                    `).join('')}
+                    
+                    <!-- Segment labels (y1, y2, etc.) -->
+                    ${segmentPoints.slice(0, -1).map((startPoint, i) => {
+                        const endPoint = segmentPoints[i + 1];
+                        const segmentLength = endPoint - startPoint;
+                        const midPoint = (startPoint + endPoint) / 2;
+                        
+                        return `
+                            <!-- y${i+1} segment label -->
+                            <text x="${width/2 + 30}" y="${(startPoint + (segmentLength/2)) * yScale}"
+                                  text-anchor="start" dominant-baseline="middle" font-size="14" fill="blue" font-weight="bold">
+                                y${i+1} = ${segmentLength.toFixed(2)}'
+                            </text>
+                            
+                            <!-- Segment marker lines -->
+                            <line x1="${width/2 + 15}" y1="${startPoint * yScale}" 
+                                  x2="${width/2 + 25}" y2="${startPoint * yScale}"
+                                  stroke="blue" stroke-width="1" />
+                            <line x1="${width/2 + 15}" y1="${endPoint * yScale}" 
+                                  x2="${width/2 + 25}" y2="${endPoint * yScale}"
+                                  stroke="blue" stroke-width="1" />
+                            
+                            <!-- Connecting line for segment -->
+                            <line x1="${width/2 + 25}" y1="${startPoint * yScale}" 
+                                  x2="${width/2 + 25}" y2="${endPoint * yScale}"
+                                  stroke="blue" stroke-width="1" stroke-dasharray="4,2" />
+                        `;
+                    }).join('')}
+                </g>
+            </svg>
+        `;
+        
+        beamVisualization.innerHTML = svg;
+    }
+    
+    function drawXAxisBeam() {
+        const beamVisualization = document.getElementById("beam-visualization-x-c");
+        if (!beamVisualization) return;
+
+        // Get the current values from the form
+        const columnLength = parseFloat(lengthInput.value) || 16; // Default to 16 if not specified
+        
+        // Get end supports
+        const topSupport = topFixed && topFixed.checked ? "fixed" : 
+                          topPinned && topPinned.checked ? "pinned" : "free";
+        const botSupport = botFixed && botFixed.checked ? "fixed" : 
+                          botPinned && botPinned.checked ? "pinned" : "free";
+
+        // Calculate dimensions
+        const svgWidth = beamVisualization.clientWidth;
+        const svgHeight = beamVisualization.clientHeight;
+        const margin = { top: 20, right: 40, bottom: 40, left: 60 };
+        const width = svgWidth - margin.left - margin.right;
+        const height = svgHeight - margin.top - margin.bottom;
+        
+        // Scale factors
+        const yScale = height / columnLength;
+        
+        // Create the SVG - showing the beam from the side (X-axis view)
+        const svg = `
+            <svg width="${svgWidth}" height="${svgHeight}">
+                <g transform="translate(${margin.left}, ${margin.top})">
+                    <!-- Column shaft (W-shape) - side view (X-axis) -->
+                    <path d="M ${width/2-25} 0 
+                             L ${width/2-25} ${columnLength * yScale}
+                             M ${width/2+25} 0
+                             L ${width/2+25} ${columnLength * yScale}
+                             M ${width/2-25} 0
+                             L ${width/2+25} 0
+                             M ${width/2-25} ${columnLength * yScale}
+                             L ${width/2+25} ${columnLength * yScale}"
+                          stroke="black" stroke-width="2" fill="none" />
+                          
+                    <!-- Web of the W-shape (showing flange depth) -->
+                    <path d="M ${width/2-10} 0 
+                             L ${width/2-10} ${columnLength * yScale}
+                             M ${width/2+10} 0
+                             L ${width/2+10} ${columnLength * yScale}"
+                          stroke="black" stroke-width="2" fill="none" />
+                    
+                    <!-- "X" label below the beam -->
+                    <text x="${width/2}" y="${columnLength * yScale + 35}" 
+                          text-anchor="middle" font-size="16" font-weight="bold">
+                        X
+                    </text>
+                    
+                    <!-- Top support -->
+                    ${renderSupport(width/2, 0, topSupport, "top")}
+                    
+                    <!-- Bottom support -->
+                    ${renderSupport(width/2, columnLength * yScale, botSupport, "bottom")}
+                    
+                    <!-- Full column length label -->
+                    <text x="${width/2 + 40}" y="${columnLength * yScale / 2}" 
+                          transform="rotate(270, ${width/2 + 40}, ${columnLength * yScale / 2})"
+                          text-anchor="middle" dominant-baseline="middle" font-size="12">
+                        ${columnLength}' Column Length
+                    </text>
+                    
+                    <!-- Main segment label for X-axis view -->
+                    <text x="${width/2 + 30}" y="${columnLength * yScale / 2}"
+                          text-anchor="start" dominant-baseline="middle" font-size="14" fill="blue" font-weight="bold">
+                        y1 = ${columnLength.toFixed(2)}'
+                    </text>
+                    
+                    <!-- Segment marker lines -->
+                    <line x1="${width/2 + 25}" y1="0" 
+                          x2="${width/2 + 35}" y2="0"
+                          stroke="blue" stroke-width="1" />
+                    <line x1="${width/2 + 25}" y1="${columnLength * yScale}" 
+                          x2="${width/2 + 35}" y2="${columnLength * yScale}"
+                          stroke="blue" stroke-width="1" />
+                    
+                    <!-- Connecting line for segment -->
+                    <line x1="${width/2 + 35}" y1="0" 
+                          x2="${width/2 + 35}" y2="${columnLength * yScale}"
+                          stroke="blue" stroke-width="1" stroke-dasharray="4,2" />
+                </g>
+            </svg>
+        `;
+        
+        beamVisualization.innerHTML = svg;
+    }
+    
+    function renderSupport(x, y, type, position) {
+        if (type === "fixed") {
+            // Fixed support (triangle with hatching)
+            const direction = position === "top" ? -1 : 1;
+            return `
+                <path d="M ${x-30} ${y + (direction * 10)} 
+                         L ${x+30} ${y + (direction * 10)}
+                         L ${x} ${y}"
+                      stroke="black" stroke-width="2" fill="none" />
+                <!-- Hatching lines for fixed support -->
+                ${Array.from({length: 7}, (_, i) => 
+                    `<line x1="${x-25 + i*10}" y1="${y + (direction * 10)}" 
+                           x2="${x-25 + i*10}" y2="${y + (direction * 5)}"
+                           stroke="black" stroke-width="1" />`
+                ).join('')}
+            `;
+        } else if (type === "pinned") {
+            // Pinned support (triangle)
+            const direction = position === "top" ? -1 : 1;
+            return `
+                <path d="M ${x-30} ${y + (direction * 10)} 
+                         L ${x+30} ${y + (direction * 10)}
+                         L ${x} ${y}"
+                      stroke="black" stroke-width="2" fill="none" />
+                <!-- Circles to represent pins -->
+                <circle cx="${x}" cy="${y}" r="3" fill="black" />
+            `;
+        } else { // free
+            // Free end (nothing)
+            return '';
+        }
+    }
+    
+    function renderLateralSupport(x, y, type) {
+        if (type === "fixed") {
+            // Fixed lateral support (square block with hatching)
+            return `
+                <rect x="${x+20}" y="${y-10}" width="20" height="20" 
+                      stroke="black" stroke-width="2" fill="none" />
+                <!-- Hatching for fixed support -->
+                ${Array.from({length: 4}, (_, i) => 
+                    `<line x1="${x+20}" y1="${y-10 + i*5}" 
+                           x2="${x+40}" y2="${y-10 + i*5}"
+                           stroke="black" stroke-width="1" />`
+                ).join('')}
+                <!-- Line connecting to column -->
+                <line x1="${x+15}" y1="${y}" x2="${x+20}" y2="${y}"
+                      stroke="black" stroke-width="2" />
+                
+                <!-- Left side support - mirror image -->
+                <rect x="${x-40}" y="${y-10}" width="20" height="20" 
+                      stroke="black" stroke-width="2" fill="none" />
+                <!-- Hatching for fixed support -->
+                ${Array.from({length: 4}, (_, i) => 
+                    `<line x1="${x-40}" y1="${y-10 + i*5}" 
+                           x2="${x-20}" y2="${y-10 + i*5}"
+                           stroke="black" stroke-width="1" />`
+                ).join('')}
+                <!-- Line connecting to column -->
+                <line x1="${x-15}" y1="${y}" x2="${x-20}" y2="${y}"
+                      stroke="black" stroke-width="2" />
+            `;
+        } else if (type === "pinned") {
+            // Pinned lateral support (roller)
+            return `
+                <!-- Right side -->
+                <circle cx="${x+30}" cy="${y}" r="10" 
+                        stroke="black" stroke-width="2" fill="none" />
+                <!-- Line connecting to column -->
+                <line x1="${x+15}" y1="${y}" x2="${x+20}" y2="${y}"
+                      stroke="black" stroke-width="2" />
+                <!-- Small circle for pin -->
+                <circle cx="${x+20}" cy="${y}" r="3" fill="black" />
+                
+                <!-- Left side - mirror image -->
+                <circle cx="${x-30}" cy="${y}" r="10" 
+                        stroke="black" stroke-width="2" fill="none" />
+                <!-- Line connecting to column -->
+                <line x1="${x-15}" y1="${y}" x2="${x-20}" y2="${y}"
+                      stroke="black" stroke-width="2" />
+                <!-- Small circle for pin -->
+                <circle cx="${x-20}" cy="${y}" r="3" fill="black" />
+            `;
+        } else { // free
+            // Free lateral support (just a line to indicate position)
+            return `
+                <line x1="${x-40}" y1="${y}" x2="${x+40}" y2="${y}"
+                      stroke="blue" stroke-width="1" stroke-dasharray="5,5" />
+            `;
+        }
+    }
+});
+
+
+function calculateLoadCombinations(deadLoad, liveLoad, designMethod, astmSpec) {
+  // Initialize results object
+  const results = {
+    designMethod: designMethod,
+    astmSpecification: astmSpec,
+    inputs: {
+      deadLoad: deadLoad,
+      liveLoad: liveLoad
+    },
+    loadCombinations: [],
+    governingLoad: null,
+    yieldStrength: getYieldStrength(astmSpec)
+  };
+  
+  // Calculate load combinations based on design method
+  if (designMethod === "LRFD") {
+    // LRFD Load Combinations per ASCE 7
+    results.loadCombinations = [
+      { name: "1.4D", value: 1.4 * deadLoad, formula: "1.4 × " + deadLoad + " = " + (1.4 * deadLoad).toFixed(2) + " kips" },
+      { name: "1.2D + 1.6L", value: 1.2 * deadLoad + 1.6 * liveLoad, formula: "1.2 × " + deadLoad + " + 1.6 × " + liveLoad + " = " + (1.2 * deadLoad + 1.6 * liveLoad).toFixed(2) + " kips" },
+      { name: "1.2D", value: 1.2 * deadLoad, formula: "1.2 × " + deadLoad + " = " + (1.2 * deadLoad).toFixed(2) + " kips" },
+      { name: "0.9D", value: 0.9 * deadLoad, formula: "0.9 × " + deadLoad + " = " + (0.9 * deadLoad).toFixed(2) + " kips" }
+    ];
+  } else { // ASD
+    // ASD Load Combinations per ASCE 7
+    results.loadCombinations = [
+      { name: "D", value: deadLoad, formula: deadLoad + " kips" },
+      { name: "D + L", value: deadLoad + liveLoad, formula: deadLoad + " + " + liveLoad + " = " + (deadLoad + liveLoad).toFixed(2) + " kips" },
+      { name: "0.6D", value: 0.6 * deadLoad, formula: "0.6 × " + deadLoad + " = " + (0.6 * deadLoad).toFixed(2) + " kips" }
+    ];
+  }
+  
+  // Find governing load combination (maximum value)
+  results.governingLoad = results.loadCombinations.reduce((max, combo) => 
+    combo.value > max.value ? combo : max, results.loadCombinations[0]);
+  
+  return results;
+}
+
+/**
+ * Get yield strength based on ASTM specification
+ * @param {string} astmSpec - ASTM specification
+ * @return {number} - Yield strength in ksi
+ */
+function getYieldStrength(astmSpec) {
+  const yieldStrengths = {
+    "A36": 36,
+    "A572Gr.42": 42,
+    "A572Gr.50": 50,
+    "A572Gr.55": 55,
+    "A572Gr.60": 60,
+    "A572Gr.65": 65,
+    "A588Gr.42": 42,
+    "A588Gr.46": 46,
+    "A588Gr.50": 50,
+    "A687": 50,
+    "A992": 50
+  };
+  
+  return yieldStrengths[astmSpec] || 36; // Default to 36 ksi if not found
+}
+
+// Example usage with the inputs from the form
+function processDesignInputs() {
+  // Get input values
+  const deadLoad = parseFloat(document.getElementById("DeadLoad").value) || 0;
+  const liveLoad = parseFloat(document.getElementById("LiveLoad").value) || 0;
+  const designMethod = document.getElementById("designMethod").value;
+  const astmSpec = document.getElementById("ASTMinputC").value;
+  
+  // Calculate load combinations
+  const results = calculateLoadCombinations(deadLoad, liveLoad, designMethod, astmSpec);
+  
+  // Display results
+  console.log("Load Combination Results:", results);
+  return results;
+}
+
+// Add event listener to the Design button
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById("DesignC").addEventListener("click", function() {
+    const results = processDesignInputs();
+    displayResults(results);
+  });
+});
+
+// Function to display results on the page
+function displayResults(results) {
+  // Create a results div if it doesn't exist
+  let resultsDiv = document.getElementById("loadCombinationResults");
+  if (!resultsDiv) {
+    resultsDiv = document.createElement("div");
+    resultsDiv.id = "loadCombinationResults";
+    document.querySelector(".INPUTCOMPRESS").after(resultsDiv);
+  }
+  
+  // Format the results
+  let html = `
+    <h3>Load Combination Results</h3>
+    <p><strong>Design Method:</strong> ${results.designMethod}</p>
+    <p><strong>ASTM Specification:</strong> ${results.astmSpecification} (Fy = ${results.yieldStrength} ksi)</p>
+    <h4>Load Combinations:</h4>
+    <ul>
+  `;
+  
+  results.loadCombinations.forEach(combo => {
+    html += `<li>${combo.name}: ${combo.formula}</li>`;
+  });
+  
+  html += `
+    </ul>
+    <p><strong>Governing Load Combination:</strong> ${results.governingLoad.name} = ${results.governingLoad.value.toFixed(2)} kips</p>
+  `;
+  
+  resultsDiv.innerHTML = html;
+}
+
+
+// Compression Member Design Calculator
+document.addEventListener('DOMContentLoaded', function() {
+    // Hide support sections initially
+    document.getElementById('support1C').style.display = 'none';
+    document.getElementById('support2C').style.display = 'none';
+    document.getElementById('support3C').style.display = 'none';
+    
+    // Show/hide support inputs based on selection
+    document.getElementById('supportC').addEventListener('change', function() {
+        document.getElementById('SupportC').style.display = 'block';
+    });
+    
+    document.getElementById('NosupportC').addEventListener('change', function() {
+        document.getElementById('SupportC').style.display = 'none';
+        document.getElementById('support1C').style.display = 'none';
+        document.getElementById('support2C').style.display = 'none';
+        document.getElementById('support3C').style.display = 'none';
+    });
+    
+    // Handle number of supports
+    document.getElementById('supprtamountC').addEventListener('change', function() {
+        const supportCount = parseInt(this.value) || 0;
+        
+        document.getElementById('support1C').style.display = supportCount >= 1 ? 'block' : 'none';
+        document.getElementById('support2C').style.display = supportCount >= 2 ? 'block' : 'none';
+        document.getElementById('support3C').style.display = supportCount >= 3 ? 'block' : 'none';
+    });
+    
+    // Handle design button click
+    document.getElementById('DesignC').addEventListener('click', performDesign);
+});
+
+// ASTM Specification data (simplified for demo)
+const astmSpecData = {
+    'A36': { Fy: 36, Fu: 58 },
+    'A572Gr.42': { Fy: 42, Fu: 60 },
+    'A572Gr.50': { Fy: 50, Fu: 65 },
+    'A572Gr.55': { Fy: 55, Fu: 70 },
+    'A572Gr.60': { Fy: 60, Fu: 75 },
+    'A572Gr.65': { Fy: 65, Fu: 80 },
+    'A588Gr.42': { Fy: 42, Fu: 63 },
+    'A588Gr.46': { Fy: 46, Fu: 67 },
+    'A588Gr.50': { Fy: 50, Fu: 70 },
+    'A687': { Fy: 50, Fu: 70 },
+    'A992': { Fy: 50, Fu: 65 }
+};
+
+// Sample W-shape section properties (simplified)
+const wShapeSections = {
+    'W14': [
+        { name: 'W14×730', weight: 730, area: 215, rx: 9.27, ry: 5.94, Pn_ASD: [], Pn_LRFD: [] },
+        { name: 'W14×550', weight: 550, area: 162, rx: 8.67, ry: 5.55, Pn_ASD: [], Pn_LRFD: [] },
+        { name: 'W14×455', weight: 455, area: 134, rx: 8.27, ry: 5.32, Pn_ASD: [], Pn_LRFD: [] }
+    ],
+    'W12': [
+        { name: 'W12×336', weight: 336, area: 98.8, rx: 7.16, ry: 4.49, Pn_ASD: [], Pn_LRFD: [] },
+        { name: 'W12×230', weight: 230, area: 67.7, rx: 6.58, ry: 4.11, Pn_ASD: [], Pn_LRFD: [] },
+        { name: 'W12×152', weight: 152, area: 44.7, rx: 6.10, ry: 3.78, Pn_ASD: [], Pn_LRFD: [] }
+    ],
+    'W10': [
+        { name: 'W10×112', weight: 112, area: 32.9, rx: 4.94, ry: 3.20, Pn_ASD: [], Pn_LRFD: [] },
+        { name: 'W10×88', weight: 88, area: 25.9, rx: 4.66, ry: 3.02, Pn_ASD: [], Pn_LRFD: [] },
+        { name: 'W10×54', weight: 54, area: 15.8, rx: 4.32, ry: 2.54, Pn_ASD: [], Pn_LRFD: [] }
+    ],
+    'W8': [
+        { name: 'W8×67', weight: 67, area: 19.7, rx: 3.61, ry: 2.55, Pn_ASD: [], Pn_LRFD: [] },
+        { name: 'W8×48', weight: 48, area: 14.1, rx: 3.45, ry: 2.21, Pn_ASD: [], Pn_LRFD: [] },
+        { name: 'W8×31', weight: 31, area: 9.13, rx: 3.21, ry: 1.85, Pn_ASD: [], Pn_LRFD: [] }
+    ]
+};
+
+// Based on AISC tables for compression members (simplified)
+// Pre-calculated values for different KL/r ratios
+function getDesignStrengthFromKLratio(section, astmSpec, KLratio, designMethod) {
+    // For simplicity, using a formula-based approach rather than lookup tables
+    // In a real implementation, you would use the actual AISC tables or formulas
+    
+    const Fy = astmSpecData[astmSpec].Fy;
+    const E = 29000; // ksi
+    
+    // Calculate critical stress based on Euler buckling formula with AISC modifications
+    let Fcr;
+    
+    if (KLratio <= 4.71 * Math.sqrt(E / Fy)) {
+        // Inelastic buckling
+        const Fe = Math.pow(Math.PI, 2) * E / Math.pow(KLratio, 2);
+        Fcr = Math.pow(0.658, Fy/Fe) * Fy;
+    } else {
+        // Elastic buckling
+        Fcr = 0.877 * Math.pow(Math.PI, 2) * E / Math.pow(KLratio, 2);
+    }
+    
+    // Calculate nominal strength
+    const Pn = section.area * Fcr;
+    
+    // Apply safety factors based on design method
+    if (designMethod === 'LRFD') {
+        return 0.9 * Pn; // LRFD resistance factor
+    } else {
+        return Pn / 1.67; // ASD safety factor
+    }
+}
+
+// Function to calculate effective length factor (K) based on end conditions
+function calculateK(topCondition, botCondition) {
+    if ((topCondition === 'fixed' && botCondition === 'fixed')) {
+        return 0.65; // Fixed-Fixed
+    } else if ((topCondition === 'fixed' && botCondition === 'pinned') || 
+               (topCondition === 'pinned' && botCondition === 'fixed')) {
+        return 0.8; // Fixed-Pinned
+    } else if (topCondition === 'pinned' && botCondition === 'pinned') {
+        return 1.0; // Pinned-Pinned
+    } else if ((topCondition === 'fixed' && botCondition === 'free') || 
+               (topCondition === 'free' && botCondition === 'fixed')) {
+        return 2.0; // Fixed-Free
+    } else {
+        return 1.2; // Default/Other cases
+    }
+}
+
+// Function to get end conditions
+function getEndCondition(prefix) {
+    if (document.getElementById(prefix + 'fixedC').checked) {
+        return 'fixed';
+    } else if (document.getElementById(prefix + 'pinnedC').checked) {
+        return 'pinned';
+    } else if (document.getElementById(prefix + 'freeC').checked) {
+        return 'free';
+    } else {
+        return 'unknown';
+    }
+}
+
+// Function to get support conditions
+function getSupportCondition(prefix) {
+    if (document.getElementById(prefix + 'pinnedC').checked) {
+        return 'pinned';
+    } else if (document.getElementById(prefix + 'fixed').checked) {
+        return 'fixed';
+    } else if (document.getElementById(prefix + 'free').checked) {
+        return 'free';
+    } else {
+        return 'unknown';
+    }
+}
+
+// Main design function
+function performDesign() {
+    // Get inputs
+    const astmSpec = document.getElementById('ASTMinputC').value;
+    const designMethod = document.getElementById('designMethod').value;
+    const deadLoad = parseFloat(document.getElementById('DeadLoad').value) || 0;
+    const liveLoad = parseFloat(document.getElementById('LiveLoad').value) || 0;
+    const memberLength = parseFloat(document.getElementById('LenghtDC').value) || 0;
+    
+    // End conditions
+    const topCondition = getEndCondition('top');
+    const botCondition = getEndCondition('bot');
+    
+    // Calculate KL values
+    const KxLengthFactor = calculateK(topCondition, botCondition);
+    const KxL = KxLengthFactor * memberLength;
+    
+    // Initialize KyL values
+    let KyL = KxL; // Default to same as KxL
+    
+    // Check if lateral supports exist
+    const hasLateralSupport = document.getElementById('supportC').checked;
+    
+    // Calculate effective lengths with lateral supports
+    if (hasLateralSupport) {
+        const supports = parseInt(document.getElementById('supprtamountC').value) || 0;
+        
+        // Calculate unbraced lengths
+        const supportLocations = [];
+        for (let i = 1; i <= supports; i++) {
+            const location = parseFloat(document.getElementById('location' + i + 'C').value) || 0;
+            if (location > 0 && location < memberLength) {
+                supportLocations.push(location);
+            }
+        }
+        
+        // Sort support locations
+        supportLocations.sort((a, b) => a - b);
+        
+        // Calculate maximum unbraced length
+        let maxUnbracedLength = 0;
+        let prevLocation = 0;
+        
+        for (const location of supportLocations) {
+            const unbracedLength = location - prevLocation;
+            maxUnbracedLength = Math.max(maxUnbracedLength, unbracedLength);
+            prevLocation = location;
+        }
+        
+        // Final segment
+        const finalUnbracedLength = memberLength - prevLocation;
+        maxUnbracedLength = Math.max(maxUnbracedLength, finalUnbracedLength);
+        
+        // Apply K factor to max unbraced length
+        KyL = KxLengthFactor * maxUnbracedLength;
+    }
+    
+    // Use KLy as effective length if lateral supports exist
+    const KLeff = hasLateralSupport ? KyL : KxL;
+    
+    // Calculate design load
+    let designLoad;
+    if (designMethod === 'LRFD') {
+        designLoad = 1.2 * deadLoad + 1.6 * liveLoad;
+    } else { // ASD
+        designLoad = deadLoad + liveLoad;
+    }
+    
+    // Display results in the primary table
+    document.getElementById('L1').textContent = memberLength.toFixed(2);
+    document.getElementById('K1').textContent = KxLengthFactor.toFixed(2);
+    
+    if (hasLateralSupport) {
+        document.getElementById('L2').textContent = (KyL / KxLengthFactor).toFixed(2);
+        document.getElementById('K2').textContent = KxLengthFactor.toFixed(2);
+        document.getElementById('G2').textContent = KyL < KxL ? 'Yes' : 'No';
+    }
+    
+    // Calculate KL/r values
+    document.getElementById('K/L1').textContent = KxL.toFixed(2);
+    if (hasLateralSupport) {
+        document.getElementById('K/L2').textContent = KyL.toFixed(2);
+    }
+    
+    // Mark governing case
+    document.getElementById('G1').textContent = !hasLateralSupport || KxL >= KyL ? 'Yes' : 'No';
+    
+    // Populate the table with calculated values for each W shape
+    const wShapeSizes = ['W14', 'W12', 'W10', 'W8'];
+    const results = [];
+    
+    for (let i = 0; i < wShapeSizes.length; i++) {
+        const shapeType = wShapeSizes[i];
+        const bestShape = findBestSection(shapeType, KLeff, designLoad, astmSpec, designMethod);
+        
+        if (bestShape) {
+            results.push(bestShape);
+            
+            // Update results table - initial placeholder values
+            document.getElementById(shapeType).textContent = bestShape.name;
+            document.getElementById('Weight' + (i+1)).textContent = bestShape.weight.toFixed(1);
+            document.getElementById('rxry' + (i+1)).textContent = (bestShape.rx / bestShape.ry).toFixed(2);
+            
+            // Will be updated in showFinalResults with proper values
+        }
+    }
+    
+    // Show the final results with detailed calculations
+    showFinalResults(results, designLoad, KLeff, astmSpec, designMethod);
+}
+
+// Function to find the best section
+function findBestSection(shapeType, KLeff, designLoad, astmSpec, designMethod) {
+    const sections = wShapeSections[shapeType];
+    let bestSection = null;
+    let minWeight = Infinity;
+    
+    for (const section of sections) {
+        // Calculate the KL/r ratio
+        const KLrRatio = KLeff / section.ry; // Using ry as it's typically the governing radius of gyration
+        
+        // Get design strength
+        const designStrength = getDesignStrengthFromKLratio(section, astmSpec, KLrRatio, designMethod);
+        
+        // Calculate capacity ratio
+        const capacityRatio = designLoad / designStrength;
+        
+        // Create extended section object with calculated properties
+        const extendedSection = {
+            ...section,
+            capacityRatio,
+            KFactor: calculateK(getEndCondition('top'), getEndCondition('bot')),
+            designStrength,
+            isBestOption: false
+        };
+        
+        // Check if this section works
+        if (capacityRatio <= 1.0 && section.weight < minWeight) {
+            minWeight = section.weight;
+            bestSection = extendedSection;
+        } else if (!bestSection) {
+            // If no valid section found, still return the best one we have
+            if (!bestSection || capacityRatio < bestSection.capacityRatio) {
+                bestSection = extendedSection;
+            }
+        }
+    }
+    
+    return bestSection;
+}
+// Function to show final results
+function showFinalResults(results, designLoad, KLeff, astmSpec, designMethod) {
+    // Sort results by weight
+    results.sort((a, b) => a.weight - b.weight);
+    
+    // Assign ranks to all options that meet criteria
+    let validResults = results.filter(r => r.capacityRatio <= 1.0);
+    validResults.forEach((result, index) => {
+        result.rank = index + 1;
+    });
+    
+    // Mark the best option (rank 1)
+    const bestOption = validResults.length > 0 ? validResults[0] : null;
+    
+    // Get load combination results to include in the output
+    const deadLoad = parseFloat(document.getElementById("DeadLoad").value) || 0;
+    const liveLoad = parseFloat(document.getElementById("LiveLoad").value) || 0;
+    const loadResults = calculateLoadCombinations(deadLoad, liveLoad, designMethod, astmSpec);
+    
+    // Make sure we're targeting the correct result div
+    const resultDiv = document.getElementById('Result123');
+    if (!resultDiv) {
+        console.error("Result123 div not found in the document");
+        return;
+    }
+    
+    // Update result tables first
+    for (let i = 0; i < results.length; i++) {
+        const result = results[i];
+        const bestElement = document.getElementById('Best' + (i+1));
+        const pupaElement = document.getElementById('pupa' + (i+1));
+        
+        if (bestElement) {
+            if (result.rank) {
+                bestElement.textContent = `Rank ${result.rank}`;
+            } else {
+                bestElement.textContent = 'N/A';
+            }
+        }
+        
+        if (pupaElement) {
+            // Pu/Pa should be the maximum ultimate load, not a ratio
+            pupaElement.textContent = result.designStrength.toFixed(1) + ' kips';
+        }
+    }
+    
+    // Create load combinations HTML section
+    let loadCombinationsHTML = `
+        <h3>Load Combinations Analysis</h3>
+        <p><strong>Design Method:</strong> ${loadResults.designMethod}</p>
+        <p><strong>ASTM Specification:</strong> ${loadResults.astmSpecification} (Fy = ${loadResults.yieldStrength} ksi)</p>
+        <h4>Load Combinations:</h4>
+        <ul>
+    `;
+    
+    loadResults.loadCombinations.forEach(combo => {
+        loadCombinationsHTML += `<li>${combo.name}: ${combo.formula}</li>`;
+    });
+    
+    loadCombinationsHTML += `
+        </ul>
+        <p><strong>Governing Load Combination:</strong> ${loadResults.governingLoad.name} = ${loadResults.governingLoad.value.toFixed(2)} kips</p>
+    `;
+    
+    if (bestOption) {
+        // Get ASTM properties
+        const Fy = astmSpecData[astmSpec].Fy;
+        const Fu = astmSpecData[astmSpec].Fu;
+        const E = 29000; // ksi
+        
+        // Calculate critical KL/r
+        const criticalKLr = KLeff / bestOption.ry;
+        
+        // Calculate Euler buckling stress
+        const Fe = Math.pow(Math.PI, 2) * E / Math.pow(criticalKLr, 2);
+        
+        // Calculate critical stress Fcr
+        let Fcr;
+        if (criticalKLr <= 4.71 * Math.sqrt(E / Fy)) {
+            // Inelastic buckling
+            Fcr = Math.pow(0.658, Fy/Fe) * Fy;
+        } else {
+            // Elastic buckling
+            Fcr = 0.877 * Math.pow(Math.PI, 2) * E / Math.pow(criticalKLr, 2);
+        }
+        
+        // Determine if section is compact
+        // Note: This is simplified - actual compactness check requires flange and web properties
+        const isCompact = criticalKLr < 3.76 * Math.sqrt(E / Fy);
+        
+        // Calculate design strength
+        const nominalStrength = bestOption.area * Fcr;
+        const designStrength = designMethod === 'LRFD' ? 
+            0.9 * nominalStrength : 
+            nominalStrength / 1.67;
+        
+        resultDiv.innerHTML = `
+            <h2>Detailed Design Calculations</h2>
+            
+            ${loadCombinationsHTML}
+            
+            <h3>1. Input Parameters</h3>
+            <ul>
+                <li>ASTM Specification: ${astmSpec} (Fy = ${Fy} ksi, Fu = ${Fu} ksi)</li>
+                <li>Design Method: ${designMethod}</li>
+                <li>Design Load: ${designLoad.toFixed(2)} kips</li>
+                <li>Column Length: ${KLeff / bestOption.KFactor} ft</li>
+                <li>Effective Length Factor (K): ${bestOption.KFactor}</li>
+                <li>Effective Length (KL): ${KLeff.toFixed(2)} ft</li>
+            </ul>
+            
+            <h3>2. Best Section Properties</h3>
+            <ul>
+                <li>Selected Section: <strong>${bestOption.name}</strong> (Rank 1)</li>
+                <li>Section Weight: ${bestOption.weight} lb/ft</li>
+                <li>Cross-sectional Area: ${bestOption.area} in²</li>
+                <li>Radius of Gyration: rx = ${bestOption.rx} in, ry = ${bestOption.ry} in</li>
+                <li>rx/ry Ratio: ${(bestOption.rx / bestOption.ry).toFixed(2)}</li>
+                <li>Compactness Status: ${isCompact ? "Compact Section" : "Non-compact Section"}</li>
+            </ul>
+            
+            <h3>3. Strength Calculation</h3>
+            <p><strong>Critical KL/r:</strong> ${criticalKLr.toFixed(2)}</p>
+            
+            <p><strong>Euler Buckling Stress Formula:</strong></p>
+            <div>Fe = π²E/(KL/r)² = π² × ${E}/(${criticalKLr.toFixed(2)})² = ${Fe.toFixed(2)} ksi</div>
+            
+            <p><strong>Critical Stress (Fcr) Formula:</strong></p>
+            ${criticalKLr <= 4.71 * Math.sqrt(E / Fy) ? 
+                `<div>For KL/r ≤ 4.71√(E/Fy) = ${(4.71 * Math.sqrt(E / Fy)).toFixed(2)} (Inelastic Buckling):</div>
+                <div>Fcr = 0.658^(Fy/Fe) × Fy = 0.658^(${Fy}/${Fe.toFixed(2)}) × ${Fy} = ${Fcr.toFixed(2)} ksi</div>` :
+                `<div>For KL/r > 4.71√(E/Fy) = ${(4.71 * Math.sqrt(E / Fy)).toFixed(2)} (Elastic Buckling):</div>
+                <div>Fcr = 0.877 × Fe = 0.877 × ${Fe.toFixed(2)} = ${Fcr.toFixed(2)} ksi</div>`
+            }
+            
+            <p><strong>Nominal Compressive Strength:</strong></p>
+            <div>Pn = Fcr × A = ${Fcr.toFixed(2)} ksi × ${bestOption.area} in² = ${nominalStrength.toFixed(2)} kips</div>
+            
+            <p><strong>Design Compressive Strength (${designMethod}):</strong></p>
+            ${designMethod === 'LRFD' ? 
+                `<div>φPn = 0.9 × ${nominalStrength.toFixed(2)} = ${designStrength.toFixed(2)} kips</div>` :
+                `<div>Pn/Ω = ${nominalStrength.toFixed(2)}/1.67 = ${designStrength.toFixed(2)} kips</div>`
+            }
+            
+            <h3>4. Design Check</h3>
+            <p><strong>Design Load:</strong> ${designLoad.toFixed(2)} kips</p>
+            <p><strong>Design Strength:</strong> ${designStrength.toFixed(2)} kips</p>
+            <p><strong>D.C. Ratio:</strong> ${(designLoad / designStrength).toFixed(3)} ${(designLoad / designStrength) <= 1.0 ? "≤ 1.0 ✓" : "> 1.0 ✗"}</p>
+            
+            <h3>5. Final Result</h3>
+            <p>Status: <span style="color: ${(designLoad / designStrength) <= 1.0 ? "green" : "red"}; font-weight: bold;">
+            ${(designLoad / designStrength) <= 1.0 ? "SAFE" : "NOT SAFE"}</span></p>
+            
+            <h3>6. Comparative Results (All Sections)</h3>
+            <table border="1" style="border-collapse: collapse; width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Shape</th>
+                        <th>Weight (lb/ft)</th>
+                        <th>Design Strength (kips)</th>
+                        <th>D.C. Ratio</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${results.map(r => `
+                        <tr ${r.rank === 1 ? 'style="background-color: #e6ffe6;"' : ''}>
+                            <td>${r.rank || 'N/A'}</td>
+                            <td>${r.name}</td>
+                            <td>${r.weight}</td>
+                            <td>${r.designStrength.toFixed(1)}</td>
+                            <td>${(designLoad / r.designStrength).toFixed(3)}</td>
+                            <td style="color: ${(designLoad / r.designStrength) <= 1.0 ? 'green' : 'red'}; font-weight: bold;">
+                                ${(designLoad / r.designStrength) <= 1.0 ? 'SAFE' : 'NOT SAFE'}
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    } else {
+        resultDiv.innerHTML = `
+            <h2>Design Results</h2>
+            
+            ${loadCombinationsHTML}
+            
+            <p>No suitable section found for the given loads and constraints.</p>
+            
+            <h3>1. Input Parameters</h3>
+            <ul>
+                <li>Design Method: ${designMethod}</li>
+                <li>Design Load: ${designLoad.toFixed(2)} kips</li>
+                <li>Effective Length (KL): ${KLeff.toFixed(2)} ft</li>
+            </ul>
+            
+            <h3>2. Analysis</h3>
+            <p>All evaluated sections fail to provide adequate strength for the given design load.</p>
+            <p>Consider the following options:</p>
+            <ul>
+                <li>Reduce the applied loads</li>
+                <li>Provide additional lateral support to reduce effective length</li>
+                <li>Consider different end conditions</li>
+                <li>Use a different steel grade with higher strength</li>
+                <li>Consider using built-up sections or other section types</li>
+            </ul>
+            
+            <h3>3. Comparative Results (All Sections)</h3>
+            <table border="1" style="border-collapse: collapse; width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Shape</th>
+                        <th>Weight (lb/ft)</th>
+                        <th>Design Strength (kips)</th>
+                        <th>D.C. Ratio</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${results.map(r => `
+                        <tr>
+                            <td>${r.name}</td>
+                            <td>${r.weight}</td>
+                            <td>${r.designStrength.toFixed(1)}</td>
+                            <td>${(designLoad / r.designStrength).toFixed(3)}</td>
+                            <td style="color: red; font-weight: bold;">NOT SAFE</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+    
+    // No need to keep the separate loadCombinationResults div now that we've integrated it
+    const oldResultsDiv = document.getElementById("loadCombinationResults");
+    if (oldResultsDiv) {
+        oldResultsDiv.remove();
+    }
+}
+
+// Main design function
+function performDesign() {
+    // Get inputs
+    const astmSpec = document.getElementById('ASTMinputC').value;
+    const designMethod = document.getElementById('designMethod').value;
+    const deadLoad = parseFloat(document.getElementById('DeadLoad').value) || 0;
+    const liveLoad = parseFloat(document.getElementById('LiveLoad').value) || 0;
+    const memberLength = parseFloat(document.getElementById('LenghtDC').value) || 0;
+    
+    // End conditions
+    const topCondition = getEndCondition('top');
+    const botCondition = getEndCondition('bot');
+    
+    // Calculate KL values
+    const KxLengthFactor = calculateK(topCondition, botCondition);
+    const KxL = KxLengthFactor * memberLength;
+    
+    // Initialize KyL values
+    let KyL = KxL; // Default to same as KxL
+    
+    // Check if lateral supports exist
+    const hasLateralSupport = document.getElementById('supportC').checked;
+    
+    // Calculate effective lengths with lateral supports
+    if (hasLateralSupport) {
+        const supports = parseInt(document.getElementById('supprtamountC').value) || 0;
+        
+        // Calculate unbraced lengths
+        const supportLocations = [];
+        for (let i = 1; i <= supports; i++) {
+            const location = parseFloat(document.getElementById('location' + i + 'C').value) || 0;
+            if (location > 0 && location < memberLength) {
+                supportLocations.push(location);
+            }
+        }
+        
+        // Sort support locations
+        supportLocations.sort((a, b) => a - b);
+        
+        // Calculate maximum unbraced length
+        let maxUnbracedLength = 0;
+        let prevLocation = 0;
+        
+        for (const location of supportLocations) {
+            const unbracedLength = location - prevLocation;
+            maxUnbracedLength = Math.max(maxUnbracedLength, unbracedLength);
+            prevLocation = location;
+        }
+        
+        // Final segment
+        const finalUnbracedLength = memberLength - prevLocation;
+        maxUnbracedLength = Math.max(maxUnbracedLength, finalUnbracedLength);
+        
+        // Apply K factor to max unbraced length
+        KyL = KxLengthFactor * maxUnbracedLength;
+    }
+    
+    // Use KLy as effective length if lateral supports exist
+    const KLeff = hasLateralSupport ? KyL : KxL;
+    
+    // Calculate design load based on load combinations calculated in calculateLoadCombinations
+    const loadCombinationResults = calculateLoadCombinations(deadLoad, liveLoad, designMethod, astmSpec);
+    const designLoad = loadCombinationResults.governingLoad.value;
+    
+    // Display results in the primary table
+    document.getElementById('L1').textContent = memberLength.toFixed(2);
+    document.getElementById('K1').textContent = KxLengthFactor.toFixed(2);
+    
+    if (hasLateralSupport) {
+        document.getElementById('L2').textContent = (KyL / KxLengthFactor).toFixed(2);
+        document.getElementById('K2').textContent = KxLengthFactor.toFixed(2);
+        document.getElementById('G2').textContent = KyL < KxL ? 'Yes' : 'No';
+    }
+    
+    // Calculate KL/r values
+    document.getElementById('K/L1').textContent = KxL.toFixed(2);
+    if (hasLateralSupport) {
+        document.getElementById('K/L2').textContent = KyL.toFixed(2);
+    }
+    
+    // Mark governing case
+    document.getElementById('G1').textContent = !hasLateralSupport || KxL >= KyL ? 'Yes' : 'No';
+    
+    // Populate the table with calculated values for each W shape
+    const wShapeSizes = ['W14', 'W12', 'W10', 'W8'];
+    const results = [];
+    
+    for (let i = 0; i < wShapeSizes.length; i++) {
+        const shapeType = wShapeSizes[i];
+        const bestShape = findBestSection(shapeType, KLeff, designLoad, astmSpec, designMethod);
+        
+        if (bestShape) {
+            results.push(bestShape);
+            
+            // Update results table - initial placeholder values
+            document.getElementById(shapeType).textContent = bestShape.name;
+            document.getElementById('Weight' + (i+1)).textContent = bestShape.weight.toFixed(1);
+            document.getElementById('rxry' + (i+1)).textContent = (bestShape.rx / bestShape.ry).toFixed(2);
+            
+            // Will be updated in showFinalResults with proper values
+        }
+    }
+    
+    // Show the final results with detailed calculations
+    showFinalResults(results, designLoad, KLeff, astmSpec, designMethod);
+}
+    
+</script>
+
 </body>
 </html>
