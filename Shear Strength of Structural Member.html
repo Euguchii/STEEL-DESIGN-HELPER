@@ -98,7 +98,53 @@
               
           </div>
           
+          
     
+</div>
+<div class="DesignForShear">
+        <div style="display: inline;">
+            <h1>DESIGN FOR SHEAR</h1> 
+        </div>
+
+        <div class="InputForShear">
+            <div>
+                <label>ASTM Specification</label>
+                <select name="ASTMinput" id="ASTMinputS">
+                    <option value="A36">A36</option>
+                    <option value="A572Gr.42">A572 Gr. 42</option>
+                    <option value="A572Gr.50">A572 Gr. 50</option>
+                    <option value="A572Gr.55">A572 Gr. 55</option>
+                    <option value="A572Gr.60">A572 Gr. 60</option>
+                    <option value="A572Gr.65">A572 Gr. 65</option>
+                    <option value="A588Gr.42">A588 Gr. 42</option>
+                    <option value="A588Gr.46">A588 Gr. 46</option>
+                    <option value="A588Gr.50">A588 Gr. 50</option>
+                    <option value="A687">A687</option>
+                    <option value="A992">A992</option>
+                </select>
+            </div>
+            <div>
+                <label>Design Method</label>
+                <select id="DesignMethod">
+                    <option value="LRFD">LRFD</option>
+                    <option value="ASD">ASD</option>
+                </select>
+            </div>
+            <div>
+                <label>DeadLoad:</label>
+                <input id="DeadLoad" size="10" placeholder="kips/ft">
+                <label>Liveload:</label>
+                <input  id="LiveLoad" size="10" placeholder="kips/ft">
+                <label>Lenght:</label>
+                <input id="Lenght" size="10" placeholder="ft">
+            </div>
+            <button id="ShearBending" class="DesignXbUT">Design</button>
+
+           
+        </div>
+        <div id="ResultShaer" class="ResultShaer">
+
+        </div>
 </div>
     
 

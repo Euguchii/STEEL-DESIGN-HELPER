@@ -13,13 +13,19 @@ body{
 
 
 
+
+
 .filler{
     display: block;
         background-color: rgb(255, 255, 255);
-        border: 5px solid black;
-        color: red;
+        border: 1px solid black;
+        color: rgb(0, 0, 0);
         height: 500px;
-
+        align-items: center;
+        padding: 100px;
+        justify-content: center;
+        margin: auto;
+        
     }
 
 header{
@@ -989,7 +995,7 @@ th, td {
 .tableABending{
   
     height: 500px;
-    width: 720px;
+    width: 400px;
     top: 400px;
     position: absolute;  
     display: inline-block;
@@ -1001,8 +1007,8 @@ th, td {
 
 
     height: 680px;
-    left: 900px;
-    width: 800px;
+    left: 800px;
+    width: 750px;
     display:inline-block;
     position: absolute;
   
@@ -1129,6 +1135,9 @@ button.AnalyzeBending:hover {
 .ResultBendingDesign{
     height: 2000px ;
 }
+.ResultShaer{
+     height: 2000px ;
+}
 
 .AnalysisForShear{
     height: 1300px;
@@ -1163,4 +1172,18 @@ td{
     width: 800px;
     display:inline-block;
     position: absolute;
+}
+
+.InputForShear{
+      background-color: #d5fac4ec;
+    justify-content: center;
+    display: flex;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid black;
+}
+
+.DesignXbUT{
+    margin-left: 100px;
+    border: 1px solid black;
 }
