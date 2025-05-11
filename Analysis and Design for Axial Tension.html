@@ -69,6 +69,7 @@
                     <label>Shape:</label>
                     <select id="shapeA">
                         <option value="W">W</option>
+                         <option value="W">L</option>
                     </select>
                     <label>Dimension:</label>
                     <input type="text" id="dimA" placeholder="12X45" required>
@@ -217,10 +218,11 @@
                     
                     <div><label>number of holes</label>
                     <input class="nholeD" placeholder="in." type="number" > </div>
-                    <button class="Design" id="design">DESIGN</button> 
+                   
 
                     
             </form>
+             <button class="Design" id="design">DESIGN</button> 
 
 
 
@@ -266,11 +268,11 @@
                         <tr>
                             <th>Rank</th>
                             <th>Shape</th>
-                            <th>Area (in²)</th>
-                            <th>Capacity/Demand</th>
+                            <th>Area Gross (in²)</th>
+                            <th>Demand</th>
                             <th>Weight (lb/ft)</th>
-                            <th>Depth (in)</th>
-                            <th>Width (in)</th>
+                            <th>Ahole</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -278,37 +280,37 @@
                             <td id="rank1"></td>
                             <td id="Shape1"></td>
                             <td id="AreaG1"></td>
-                            <td id="CD1"></td>
+                            <td id="D1"></td>
                             <td id="Weight1"></td>
-                            <td id="Depth1"></td>
-                            <td id="Width1"></td>
+                            <td id="Ahole1"></td>
+                            <td id="Status1"></td>
                         </tr>
                         <tr>
                             <td id="rank2"></td>
                             <td id="Shape2"></td>
                             <td id="AreaG2"></td>
-                            <td id="CD2"></td>
+                            <td id="D2"></td>
                             <td id="Weight2"></td>
-                            <td id="Depth2"></td>
-                            <td id="Width2"></td>
+                            <td id="Ahole2"></td>
+                            <td id="Status2"></td>
                         </tr>
                         <tr>
                             <td id="rank3"></td>
                             <td id="Shape3"></td>
                             <td id="AreaG3"></td>
-                            <td id="CD3"></td>
+                            <td id="D3"></td>
                             <td id="Weight3"></td>
-                            <td id="Depth3"></td>
-                            <td id="Width3"></td>
+                            <td id="Ahole3"></td>
+                            <td id="Status3"></td>
                         </tr>
                         <tr>
                             <td id="rank4"></td>
                             <td id="Shape4"></td>
                             <td id="AreaG4"></td>
-                            <td id="CD4"></td>
+                            <td id="D4"></td>
                             <td id="Weight4"></td>
-                            <td id="Depth4"></td>
-                            <td id="Width4"></td>
+                            <td id="Ahole4"></td>
+                            <td id="Status4"></td>
                         </tr>
                         
                     </tbody>
@@ -329,8 +331,9 @@
 </div>
     <script>
     
-    // Add a loading state
+ // Add a loading state
 let dataLoaded = false;
+let steelData = {}; // Define steelData object if not already defined elsewhere
 
 function loadExcelData() {
     console.log("Loading Excel data...");
@@ -362,12 +365,27 @@ function loadExcelData() {
             shapeRows.forEach(row => {
                 if (row["AISC_Manual_Label"]) {
                     const label = row["AISC_Manual_Label"].trim().toUpperCase().replace(/\s/g, '');
-                    steelData[label] = {
-                        A: parseFloat(row.A),
-                        tw: parseFloat(row.tw),
-                        d: parseFloat(row.d),
-                        bf: parseFloat(row.bf)
-                    };
+                    
+                    // Store data based on section type
+                    if (label.startsWith('W')) {
+                        // W shape (wide flange)
+                        steelData[label] = {
+                            type: 'W',
+                            A: parseFloat(row.A),
+                            tw: parseFloat(row.tw),
+                            d: parseFloat(row.d),
+                            bf: parseFloat(row.bf)
+                        };
+                    } else if (label.startsWith('L')) {
+                        // L shape (angle)
+                        steelData[label] = {
+                            type: 'L',
+                            A: parseFloat(row.A),
+                            t: parseFloat(row.t),          // thickness
+                            b: parseFloat(row.b),          // longer leg
+                            d: parseFloat(row.d)           // shorter leg
+                        };
+                    }
                 }
             });
             
@@ -380,7 +398,21 @@ function loadExcelData() {
         .catch(error => {
             console.error("Error loading Excel data:", error);
             // Fallback to some default data
-            steelData["W12X45"] = { A: 13.2, tw: 0.335, d: 12.1, bf: 8.05 };
+            steelData["W12X45"] = { 
+                type: 'W',
+                A: 13.2, 
+                tw: 0.335, 
+                d: 12.1, 
+                bf: 8.05 
+            };
+            
+            steelData["L4X3X3/8"] = { 
+                type: 'L',
+                A: 2.59, 
+                t: 0.375, 
+                b: 4.0, 
+                d: 3.0 
+            };
             
             // Update loading indicator
             document.getElementById('loading-indicator').innerHTML = 'Failed to load data. Using defaults.';
@@ -394,8 +426,7 @@ function loadExcelData() {
         });
 }
 
-
-        // Add this function to debug the steel data loading
+// Add this function to debug the steel data loading
 function debugSteelData(sectionKey) {
     console.log("Looking for section: " + sectionKey);
     console.log("Available steel data keys:", Object.keys(steelData));
@@ -403,8 +434,8 @@ function debugSteelData(sectionKey) {
     
     // Check if we have any keys that are similar
     const similarKeys = Object.keys(steelData).filter(key => 
-        key.includes(sectionKey.replace('W', '')) || 
-        sectionKey.includes(key.replace('W', ''))
+        key.includes(sectionKey.replace(/^[WL]/, '')) || 
+        sectionKey.includes(key.replace(/^[WL]/, ''))
     );
     
     if (similarKeys.length > 0) {
@@ -414,42 +445,126 @@ function debugSteelData(sectionKey) {
     return steelData[sectionKey];
 }
 
-// Modify the section retrieval in calculateZigzagNetArea and other functions
+// Normalize section key to handle various input formats
+function normalizeSectionKey(shape, dim) {
+    // Convert to uppercase and remove spaces
+    shape = shape.trim().toUpperCase();
+    dim = dim.trim().toUpperCase().replace(/\s/g, '');
+    
+    // Handle L shape special format (may contain multiple X's)
+    if (shape === 'L') {
+        // Ensure format is like L4X3X3/8 (no spaces)
+        return shape + dim.replace(/X/g, 'X');
+    }
+    
+    // For W shapes
+    return shape + dim;
+}
+
+// Get section data with improved format handling
 function getSectionData() {
-    const shape = document.getElementById('shapeA').value.toUpperCase();
-    const dim = document.getElementById('dimA').value.toUpperCase().replace(/\s/g, '');
-    const sectionKey = shape + dim;
+    const shape = document.getElementById('shapeA').value.trim().toUpperCase();
+    const dim = document.getElementById('dimA').value.trim().toUpperCase().replace(/\s/g, '');
+    const sectionKey = normalizeSectionKey(shape, dim);
     
     console.log("Attempting to get section data for:", sectionKey);
     
-    const section = steelData[sectionKey];
+    let section = steelData[sectionKey];
     
     // If not found, try with different formatting
     if (!section) {
         console.log("Section not found, trying alternative formats...");
-        // Try alternative formats
-        const altKey1 = shape + dim.replace('X', 'x');
-        const altKey2 = shape + 'X' + dim.replace('X', '');
         
-        if (steelData[altKey1]) {
-            console.log("Found with format:", altKey1);
-            return steelData[altKey1];
-        } else if (steelData[altKey2]) {
-            console.log("Found with format:", altKey2);
-            return steelData[altKey2];
+        // Array of possible format variations
+        const alternativeFormats = [];
+        
+        if (shape === 'W') {
+            // Try alternative W formats
+            alternativeFormats.push(
+                shape + dim.replace('X', 'x'),
+                shape + 'X' + dim.replace('X', '')
+            );
+        } else if (shape === 'L') {
+            // Try alternative L formats - angles often have various formats
+            // e.g. L4X3X3/8, L4x3x3/8, L4X3-3/8
+            
+            // Split the dimension by X
+            const parts = dim.split('X');
+            if (parts.length >= 2) {
+                const leg1 = parts[0];
+                const leg2 = parts.length > 1 ? parts[1] : parts[0];
+                const thickness = parts.length > 2 ? parts[2] : "";
+                
+                alternativeFormats.push(
+                    `L${leg1}X${leg2}X${thickness}`,
+                    `L${leg1}x${leg2}x${thickness}`,
+                    `L${leg1}X${leg2}-${thickness}`
+                );
+            }
         }
         
-        // Log all available keys for debugging
-        console.log("Available keys:", Object.keys(steelData).join(", "));
-        console.log("Using default values");
+        // Try each alternative format
+        for (const altFormat of alternativeFormats) {
+            if (steelData[altFormat]) {
+                console.log("Found with format:", altFormat);
+                section = steelData[altFormat];
+                break;
+            }
+        }
         
-        // Return default values if not found
-        return { 
-            A: 13.2, 
-            tw: 0.335, 
-            d: 12.1, 
-            bf: 8.05 
-        };
+        // If still not found, check for similar keys as a last resort
+        if (!section) {
+            // For L shapes, try to match by the main dimensions
+            if (shape === 'L') {
+                const mainDims = dim.split('X').slice(0, 2).join('X');
+                const possibleMatches = Object.keys(steelData).filter(key => 
+                    key.startsWith('L') && key.includes(mainDims)
+                );
+                
+                if (possibleMatches.length > 0) {
+                    console.log("Found similar angle section:", possibleMatches[0]);
+                    section = steelData[possibleMatches[0]];
+                }
+            } else {
+                // For W shapes, try to match by the main number
+                const mainNumber = dim.split('X')[0];
+                const possibleMatches = Object.keys(steelData).filter(key => 
+                    key.startsWith('W') && key.includes(mainNumber)
+                );
+                
+                if (possibleMatches.length > 0) {
+                    console.log("Found similar W section:", possibleMatches[0]);
+                    section = steelData[possibleMatches[0]];
+                }
+            }
+        }
+    }
+    
+    // If still not found, log and return defaults
+    if (!section) {
+        // Log all available keys for debugging
+        console.log("Section not found. Available keys:", Object.keys(steelData).slice(0, 10).join(", ") + "...");
+        
+        // Return default values based on shape type
+        if (shape === 'L') {
+            console.log("Using default L shape values");
+            return { 
+                type: 'L',
+                A: 2.59, 
+                t: 0.375, 
+                b: 4.0, 
+                d: 3.0
+            };
+        } else {
+            console.log("Using default W shape values");
+            return { 
+                type: 'W',
+                A: 13.2, 
+                tw: 0.335, 
+                d: 12.1, 
+                bf: 8.05 
+            };
+        }
     }
     
     console.log("Section found:", section);
@@ -586,7 +701,6 @@ function updateHoleLayout() {
 
         // Global variables
         let removedHoles = new Set();
-        let steelData = {};
 
         // ASTM material properties
         const astmData = {
@@ -1407,64 +1521,143 @@ function loadScript(url) {
     });
 }
 
-// Function to read local Excel file using File API
-async function readExcelFile(filePath) {
+// Enhanced steel data management
+async function loadLShapeData() {
     try {
-        // Load SheetJS library if not already loaded
-        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+        console.log("Loading L shape data...");
         
-        // This is a mock function since direct file system access isn't allowed in browsers
-        // In a real implementation, you would use a server-side approach or request user to select the file
+        // Show loading indicator
+        const loadingIndicator = document.createElement('div');
+        loadingIndicator.id = 'loading-indicator';
+        loadingIndicator.innerHTML = 'Loading L shape data...';
+        loadingIndicator.style.position = 'fixed';
+        loadingIndicator.style.top = '10px';
+        loadingIndicator.style.right = '10px';
+        loadingIndicator.style.padding = '5px 10px';
+        loadingIndicator.style.backgroundColor = '#e0f0ff';
+        loadingIndicator.style.border = '1px solid #ccddff';
+        loadingIndicator.style.borderRadius = '3px';
+        loadingIndicator.style.zIndex = '1000';
+        document.body.appendChild(loadingIndicator);
         
-        // For demonstration, we'll use hardcoded data that mimics what would be in the Excel file
-        return [
-            { shape: "W4X13", area: 3.83, weight: 13, depth: 4.16, width: 4.06 },
-            { shape: "W5X16", area: 4.71, weight: 16, depth: 5.01, width: 5.00 },
-            { shape: "W6X9", area: 2.68, weight: 9, depth: 5.90, width: 3.94 },
-            { shape: "W6X12", area: 3.55, weight: 12, depth: 6.03, width: 4.00 },
-            { shape: "W6X15", area: 4.43, weight: 15, depth: 5.99, width: 5.99 },
-            { shape: "W6X16", area: 4.74, weight: 16, depth: 6.28, width: 4.03 },
-            { shape: "W8X10", area: 2.96, weight: 10, depth: 7.89, width: 3.94 },
-            { shape: "W8X13", area: 3.84, weight: 13, depth: 8.00, width: 4.00 },
-            { shape: "W8X15", area: 4.44, weight: 15, depth: 8.11, width: 4.01 },
-            { shape: "W8X18", area: 5.26, weight: 18, depth: 8.14, width: 5.25 },
-            { shape: "W8X21", area: 6.16, weight: 21, depth: 8.28, width: 5.27 },
-            { shape: "W10X12", area: 3.54, weight: 12, depth: 9.87, width: 3.96 },
-            { shape: "W10X15", area: 4.41, weight: 15, depth: 10.11, width: 4.00 },
-            { shape: "W10X17", area: 4.99, weight: 17, depth: 10.11, width: 4.01 },
-            { shape: "W10X19", area: 5.62, weight: 19, depth: 10.24, width: 4.02 },
-            { shape: "W10X22", area: 6.49, weight: 22, depth: 10.17, width: 5.75 },
-            { shape: "W10X26", area: 7.61, weight: 26, depth: 10.33, width: 5.77 },
-            { shape: "W12X14", area: 4.16, weight: 14, depth: 11.91, width: 3.97 },
-            { shape: "W12X16", area: 4.71, weight: 16, depth: 12.00, width: 3.99 },
-            { shape: "W12X19", area: 5.57, weight: 19, depth: 12.16, width: 4.01 },
-            { shape: "W12X22", area: 6.48, weight: 22, depth: 12.31, width: 4.03 },
-            { shape: "W12X26", area: 7.65, weight: 26, depth: 12.22, width: 6.49 },
-            { shape: "W12X30", area: 8.79, weight: 30, depth: 12.34, width: 6.52 },
-            { shape: "W14X22", area: 6.49, weight: 22, depth: 13.74, width: 5.00 },
-            { shape: "W14X26", area: 7.69, weight: 26, depth: 13.91, width: 5.03 },
-            { shape: "W14X30", area: 8.85, weight: 30, depth: 13.84, width: 6.73 },
-            { shape: "W14X34", area: 10.0, weight: 34, depth: 13.98, width: 6.75 },
-            { shape: "W16X26", area: 7.68, weight: 26, depth: 15.69, width: 5.50 },
-            { shape: "W16X31", area: 9.12, weight: 31, depth: 15.88, width: 5.53 },
-            { shape: "W16X36", area: 10.6, weight: 36, depth: 15.86, width: 6.99 },
-            { shape: "W16X40", area: 11.8, weight: 40, depth: 16.01, width: 7.00 },
-            { shape: "W18X35", area: 10.3, weight: 35, depth: 17.70, width: 6.00 },
-            { shape: "W18X40", area: 11.8, weight: 40, depth: 17.90, width: 6.02 },
-            { shape: "W18X46", area: 13.5, weight: 46, depth: 17.99, width: 7.50 },
-            { shape: "W18X50", area: 14.7, weight: 50, depth: 18.06, width: 7.50 },
-            { shape: "W21X44", area: 13.0, weight: 44, depth: 20.66, width: 6.50 },
-            { shape: "W21X50", area: 14.7, weight: 50, depth: 20.83, width: 6.53 },
-            { shape: "W21X57", area: 16.7, weight: 57, depth: 21.06, width: 6.56 },
-            { shape: "W21X62", area: 18.3, weight: 62, depth: 20.99, width: 8.24 },
-            { shape: "W24X55", area: 16.2, weight: 55, depth: 23.57, width: 7.01 },
-            { shape: "W24X62", area: 18.2, weight: 62, depth: 23.74, width: 7.04 },
-            { shape: "W24X68", area: 20.1, weight: 68, depth: 23.73, width: 8.97 },
-            { shape: "W24X76", area: 22.4, weight: 76, depth: 23.92, width: 8.99 }
-        ];
+        // Initialize steelData object if it doesn't exist
+        if (!window.steelData) {
+            window.steelData = {};
+        }
+        
+        // Load the Excel file
+        try {
+            const response = await fetch('./ASTMSPEC.xlsx');
+            if (!response.ok) {
+                throw new Error(`Failed to fetch Excel file: ${response.status} ${response.statusText}`);
+            }
+            
+            const data = await response.arrayBuffer();
+            const workbook = XLSX.read(data, { type: 'array' });
+            
+            // Find the sheet with L shapes
+            // Try to find a sheet with "angle" or "L" in the name, otherwise default to second sheet
+            let sheetIndex = 1; // Default to second sheet
+            for (let i = 0; i < workbook.SheetNames.length; i++) {
+                const name = workbook.SheetNames[i].toLowerCase();
+                if (name.includes('angle') || name.includes('l shapes') || name === 'l') {
+                    sheetIndex = i;
+                    break;
+                }
+            }
+            
+            const sheetName = workbook.SheetNames[sheetIndex];
+            console.log(`Using sheet: ${sheetName}`);
+            
+            const shapeSheet = workbook.Sheets[sheetName];
+            const shapeRows = XLSX.utils.sheet_to_json(shapeSheet);
+            
+            console.log("Excel data loaded, processing", shapeRows.length, "rows");
+            
+            let lShapeCount = 0;
+            
+            // Process only L shapes
+            shapeRows.forEach(row => {
+                // Check if AISC_Manual_Label exists and starts with L
+                if (row["AISC_Manual_Label"] && 
+                    typeof row["AISC_Manual_Label"] === 'string' && 
+                    row["AISC_Manual_Label"].trim().toUpperCase().startsWith('L')) {
+                    
+                    const label = row["AISC_Manual_Label"].trim().toUpperCase().replace(/\s/g, '');
+                    
+                    // Extract thickness from the label (e.g., L3X1/2 means 1/2 inch thickness)
+                    let thickness = extractThicknessFromLabel(label);
+                    
+                    // Safely parse values with fallbacks to avoid NaN
+                    const safeParseFloat = (value) => {
+                        if (value === undefined || value === null) return 0;
+                        const parsed = parseFloat(value);
+                        return isNaN(parsed) ? 0 : parsed;
+                    };
+                    
+                    window.steelData[label] = {
+                        type: 'L',
+                        shape: label,
+                        A: safeParseFloat(row.A),       // Cross-sectional area
+                        t: thickness,                   // Thickness extracted from shape name
+                        b: safeParseFloat(row.b),       // Longer leg
+                        d: safeParseFloat(row.d),       // Shorter leg
+                        weight: safeParseFloat(row.W),  // Weight per foot
+                        rx: safeParseFloat(row.rx),     // Radius of gyration x-axis
+                        ry: safeParseFloat(row.ry),     // Radius of gyration y-axis
+                        rz: safeParseFloat(row.rz),     // Radius of gyration z-axis
+                        x: safeParseFloat(row.x),       // Centroid x coordinate
+                        y: safeParseFloat(row.y)        // Centroid y coordinate
+                    };
+                    
+                    lShapeCount++;
+                }
+            });
+            
+            console.log(`Successfully loaded ${lShapeCount} L shapes`);
+            return lShapeCount;
+            
+        } catch (error) {
+            console.error("Error loading Excel file:", error);
+            throw error;
+        }
+        
     } catch (error) {
-        console.error("Error reading Excel file:", error);
-        return null;
+        console.error("Error in loadLShapeData:", error);
+        alert("Failed to load L shape data: " + error.message);
+    } finally {
+        // Remove loading indicator
+        const loadingIndicator = document.getElementById('loading-indicator');
+        if (loadingIndicator) {
+            loadingIndicator.remove();
+        }
+    }
+}
+
+// Function to extract thickness from L shape label (e.g., L3X1/2 → 0.5)
+function extractThicknessFromLabel(label) {
+    try {
+        // Handle various formats like L3X1/2, L3X3X1/2, L3X3X3/8, etc.
+        const parts = label.split('X');
+        
+        // Get the last part which should contain the thickness
+        const thicknessPart = parts[parts.length - 1];
+        
+        // Handle fraction format (e.g., 1/2, 3/8)
+        if (thicknessPart.includes('/')) {
+            const fractionParts = thicknessPart.split('/');
+            if (fractionParts.length === 2) {
+                const numerator = parseFloat(fractionParts[0]);
+                const denominator = parseFloat(fractionParts[1]);
+                return numerator / denominator;
+            }
+        }
+        
+        // Handle decimal format
+        return parseFloat(thicknessPart);
+    } catch (error) {
+        console.error("Error extracting thickness from label:", label, error);
+        return 0.5; // Default fallback
     }
 }
 
@@ -1487,230 +1680,571 @@ function getSteelProperties(astmSpec) {
     return steelProperties[astmSpec] || { Fy: 36, Fu: 58 }; // Default to A36 if not found
 }
 
-// Calculate shear lag factor U using the provided logic
-function calculateU(caseId, xbar, length, bf, d) {
-    switch (parseInt(caseId)) {
-        case 1: return 1.0;
-        case 2: 
+// Enhanced shear lag factor U calculation
+function calculateShearLagFactor(caseId, shape) {
+    // Get centroid value (x-bar) for the shape
+    let xbar = 0;
+    
+    if (shape && shape.x) {
+        xbar = shape.x; // Use actual centroid from shape data
+    } else {
+        // Default approximate calculation if shape data not available
+        if (shape && shape.b && shape.d) {
+            // For unequal leg angles
+            if (shape.b !== shape.d) {
+                xbar = (shape.b * shape.b) / (shape.b + shape.d);
+            } else {
+                // For equal leg angles
+                xbar = shape.b / 3;
+            }
+        } else {
+            // Fallback default
+            xbar = 0.8;
+        }
+    }
+    
+    const caseIdInt = parseInt(caseId);
+    const length = parseFloat(document.getElementById('LenghtD').value) || 24; // Connection length
+    let U = 1.0; // Default value
+    
+    switch (caseIdInt) {
+        case 1: // All elements connected
+            U = 1.0;
+            break;
+        case 2: // Some elements connected
+            U = 1 - (xbar / length);
+            if (U < 0.4) U = 0.4; // AISC lower bound
+            if (U > 0.9) U = 0.9; // AISC upper bound
+            break;
+        case 7: // Angles connected by one leg
+            const bf = shape && shape.b ? shape.b : 4.0;
+            const d = shape && shape.d ? shape.d : 4.0;
             const case2Value = 1 - (xbar / length);
-            return case2Value;
-        case 7: 
-            const case2ForComp = 1 - (xbar / length);
-            return Math.max(bf / d >= 2 / 3 ? 0.9 : 0.8, case2ForComp);
-        case 8: return 0.8;
-        default: return 1.0;
+            // Apply special case for angles
+            U = Math.max(bf / d >= 2 / 3 ? 0.9 : 0.8, case2Value);
+            if (U > 0.9) U = 0.9; // AISC upper bound
+            break;
+        case 8: // Single angles
+            U = 0.8;
+            break;
+        default:
+            U = 1.0;
     }
+    
+    return parseFloat(U.toFixed(3));
 }
 
-// Calculate required area
-function calculateRequiredArea(deadLoad, liveLoad, designMethod, astmSpec, shearLagCase, length, dHole, numHoles, width, depth) {
-    // Get steel properties
-    const { Fy, Fu } = getSteelProperties(astmSpec);
+// Calculate design loads based on method
+function calculateDesignLoads(deadLoad, liveLoad, designMethod) {
+    const loads = {
+        LRFD: {
+            load: 1.2 * deadLoad + 1.6 * liveLoad,
+            formula: `1.2D + 1.6L = 1.2 × ${deadLoad} + 1.6 × ${liveLoad} = ${(1.2 * deadLoad + 1.6 * liveLoad).toFixed(2)} kips`
+        },
+        ASD: {
+            load: deadLoad + liveLoad,
+            formula: `D + L = ${deadLoad} + ${liveLoad} = ${(deadLoad + liveLoad).toFixed(2)} kips`
+        }
+    };
     
-    // Calculate design load
-    let designLoad;
-    if (designMethod === 'LRFD') {
-        designLoad = 1.2 * deadLoad + 1.6 * liveLoad;
-    } else { // ASD
-        designLoad = deadLoad + liveLoad;
-    }
+    return loads[designMethod];
+}
+
+// Calculate required areas for tension member design
+function calculateRequiredAreas(designLoad, steelProperties, U, designMethod, numHoles, dHole, memberThickness) {
+    const areas = {};
     
-    // Update load combination display
-    document.getElementById('LRFDdesignComb').textContent = (1.2 * deadLoad + 1.6 * liveLoad).toFixed(2) + " kips";
-    document.getElementById('ASDdesignComb').textContent = (deadLoad + liveLoad).toFixed(2) + " kips";
-    
-    // Calculate x-bar (estimation for typical W shapes)
-    // This would ideally come from section properties, but we'll estimate for now
-    const xbar = width / 4; // Simplified estimation
-    
-    // Get shear lag factor using the provided function
-    const U = calculateU(shearLagCase, xbar, length, width, depth);
-    
-    // Display the calculated U factor
-    const uFactorElement = document.getElementById('uFactor');
-    if (uFactorElement) {
-        uFactorElement.textContent = U.toFixed(3);
-    }
-    
-    // Calculate required area for yielding
-    let requiredAreaYielding;
+    // Hole area calculation (if hole parameters are provided)
+    const holeArea = numHoles && dHole && memberThickness ? numHoles * dHole * memberThickness : 0;
     
     if (designMethod === 'LRFD') {
-        // φ = 0.9 for yielding
-        requiredAreaYielding = designLoad / (0.9 * Fy);
-        const yieldElement = document.getElementById('LRFDYielding');
-        if (yieldElement) {
-            yieldElement.textContent = requiredAreaYielding.toFixed(2) + " in²";
-        }
-    } else { // ASD
-        // Ω = 1.67 for yielding
-        requiredAreaYielding = designLoad * 1.67 / Fy;
-        const yieldElement = document.getElementById('ASDYielding');
-        if (yieldElement) {
-            yieldElement.textContent = requiredAreaYielding.toFixed(2) + " in²";
-        }
-    }
-    
-    // Calculate net area considering bolt holes
-    const netAreaReduction = numHoles * dHole * 0.125; // For typical bolt holes: hole diameter * plate thickness * number of holes
-    
-    // Calculate required area for fracture
-    let requiredAreaFracture;
-    
-    if (designMethod === 'LRFD') {
-        // φ = 0.75 for fracture
-        requiredAreaFracture = designLoad / (0.75 * Fu * U);
-        const fractureElement = document.getElementById('LRFDFracture');
-        if (fractureElement) {
-            fractureElement.textContent = requiredAreaFracture.toFixed(2) + " in²";
-        }
-    } else { // ASD
-        // Ω = 2.0 for fracture
-        requiredAreaFracture = designLoad * 2.0 / (Fu * U);
-        const fractureElement = document.getElementById('ASDFracture');
-        if (fractureElement) {
-            fractureElement.textContent = requiredAreaFracture.toFixed(2) + " in²";
-        }
-    }
-    
-    // Determine controlling area and color-code the results
-    const controllingArea = Math.max(requiredAreaYielding, requiredAreaFracture);
-    
-    // Color code the governing case
-    if (designMethod === 'LRFD') {
-        const yieldElement = document.getElementById('LRFDYielding');
-        const fractureElement = document.getElementById('LRFDFracture');
+        // LRFD calculations
+        // Yielding (φ = 0.9)
+        areas.yielding = designLoad / (0.9 * steelProperties.Fy);
         
-        if (yieldElement && fractureElement) {
-            if (requiredAreaYielding >= requiredAreaFracture) {
-                yieldElement.style.color = 'red';  // Yielding governs
-                fractureElement.style.color = 'green';
-            } else {
-                yieldElement.style.color = 'green';
-                fractureElement.style.color = 'red';  // Fracture governs
+        // Fracture (φ = 0.75)
+        // Calculate required net area directly
+        const requiredAn = designLoad / (0.75 * steelProperties.Fu * U);
+        
+        // For fracture, we need Ag where: An = Ag - hole_area
+        // Therefore: Ag = An + hole_area
+        areas.fracture = requiredAn + holeArea;
+        
+        // Controlling case
+        areas.controlling = Math.max(areas.yielding, areas.fracture);
+        areas.governingCase = areas.yielding >= areas.fracture ? 'yielding' : 'fracture';
+        
+        // Store the net area requirement for reference
+        areas.requiredNetArea = requiredAn;
+        areas.holeArea = holeArea;
+    } else {
+        // ASD calculations
+        // Yielding (Ω = 1.67)
+        areas.yielding = designLoad * 1.67 / steelProperties.Fy;
+        
+        // Fracture (Ω = 2.0)
+        // Calculate required net area directly
+        const requiredAn = designLoad * 2.0 / (steelProperties.Fu * U);
+        
+        // For fracture, we need Ag where: An = Ag - hole_area
+        // Therefore: Ag = An + hole_area
+        areas.fracture = requiredAn + holeArea;
+        
+        // Controlling case
+        areas.controlling = Math.max(areas.yielding, areas.fracture);
+        areas.governingCase = areas.yielding >= areas.fracture ? 'yielding' : 'fracture';
+        
+        // Store the net area requirement for reference
+        areas.requiredNetArea = requiredAn;
+        areas.holeArea = holeArea;
+    }
+    
+    return areas;
+}
+
+// Enhanced L shape selector with additional evaluation criteria
+function selectBestLShapes(requiredArea, designLoad, designMethod, astmSpec, shearLagCase, connectionLength, dHole, numHoles) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Make sure L shape data is loaded
+            if (!window.steelData || Object.keys(window.steelData).filter(k => k.startsWith('L')).length === 0) {
+                await loadLShapeData();
             }
-        }
-    } else { // ASD
-        const yieldElement = document.getElementById('ASDYielding');
-        const fractureElement = document.getElementById('ASDFracture');
-        
-        if (yieldElement && fractureElement) {
-            if (requiredAreaYielding >= requiredAreaFracture) {
-                yieldElement.style.color = 'red';  // Yielding governs
-                fractureElement.style.color = 'green';
-            } else {
-                yieldElement.style.color = 'green';
-                fractureElement.style.color = 'red';  // Fracture governs
+            
+            // Get all L shapes from the loaded data
+            const lShapes = Object.values(window.steelData).filter(section => section.type === 'L');
+            
+            if (!lShapes || lShapes.length === 0) {
+                throw new Error("No L shapes data available");
             }
+            
+            console.log(`Found ${lShapes.length} L shapes to evaluate`);
+            
+            // Get steel properties
+            const steelProps = getSteelProperties(astmSpec);
+            
+            // Advanced shape selection criteria
+            const shapes = lShapes.map(shape => {
+                // Calculate hole area for this shape
+                const holeArea = numHoles * dHole * shape.t;
+                
+                // Calculate net area
+                const netArea = shape.A - holeArea;
+                
+                // Calculate specific shear lag factor for this shape
+                const U = calculateShearLagFactor(shearLagCase, shape);
+                
+                // Calculate effective area
+                const effectiveArea = U * netArea;
+                
+                // Calculate LRFD capacity
+                const LRFDYieldCapacity = 0.9 * steelProps.Fy * shape.A;
+                const LRFDFractureCapacity = 0.75 * steelProps.Fu * effectiveArea;
+                const LRFDCapacity = Math.min(LRFDYieldCapacity, LRFDFractureCapacity);
+                
+                // Calculate ASD capacity
+                const ASDYieldCapacity = steelProps.Fy * shape.A / 1.67;
+                const ASDFractureCapacity = steelProps.Fu * effectiveArea / 2.0;
+                const ASDCapacity = Math.min(ASDYieldCapacity, ASDFractureCapacity);
+                
+                // Select the appropriate capacity based on design method
+                const capacity = designMethod === 'LRFD' ? LRFDCapacity : ASDCapacity;
+                
+                // Calculate demand/capacity ratio
+                const DCRatio = designLoad / capacity;
+                
+                // Calculate fracture area requirement (this is An)
+                let requiredNetArea;
+                if (designMethod === 'LRFD') {
+                    requiredNetArea = designLoad / (0.75 * steelProps.Fu * U);
+                } else { // ASD
+                    requiredNetArea = designLoad * 2.0 / (steelProps.Fu * U);
+                }
+                
+                // Calculate gross area requirement for fracture
+                // Ag = An + holeArea
+                const requiredGrossArea = requiredNetArea + holeArea;
+                
+                // Calculate weight efficiency (capacity per pound)
+                const weightEfficiency = capacity / shape.weight;
+                
+                // Calculate cost index (approximation based on weight)
+                const costIndex = shape.weight * 1.5; // simplified cost model
+                
+                // Calculate an overall score (lower is better)
+                // Factors: 1) How close is area to required (avoid over-design)
+                //          2) Weight efficiency
+                //          3) Must satisfy DCRatio < 1.0
+                let score = 0;
+                
+                if (DCRatio < 1.0) {
+                    // Only consider shapes that have sufficient capacity
+                    // Score based on how close the area is to required (avoid excess material)
+                    const areaRatio = shape.A / requiredArea;
+                    score = areaRatio * 0.7 + (1/weightEfficiency) * 0.3;
+                } else {
+                    // Penalize shapes that don't meet capacity requirements
+                    score = 999;
+                }
+                
+                return {
+                    shape: shape.shape,
+                    area: shape.A,
+                    thickness: shape.t,
+                    legs: `${shape.b} × ${shape.d}`,
+                    weight: shape.weight,
+                    holeArea: holeArea,
+                    netArea: netArea,
+                    effectiveArea: effectiveArea,
+                    shearLagFactor: U,
+                    capacity: capacity,
+                    requiredNetArea: requiredNetArea,
+                    requiredGrossArea: requiredGrossArea,
+                    demandCapacityRatio: DCRatio, // Keep this for internal use
+                    weightEfficiency: weightEfficiency,
+                    costIndex: costIndex,
+                    score: score,
+                    status: DCRatio < 1.0 ? "PASS" : "FAIL"
+                };
+            });
+            
+            // Log for debugging
+            console.log(`Evaluated ${shapes.length} shapes, filtering for valid ones...`);
+            
+            // Sort by score (best options first)
+            const validShapes = shapes
+                .filter(shape => shape.status === "PASS")
+                .sort((a, b) => a.score - b.score);
+            
+            console.log(`Found ${validShapes.length} valid shapes that meet requirements`);
+            
+            resolve(validShapes.slice(0, 4)); // Return top 4 options to match the table in the HTML
+        } catch (error) {
+            console.error("Error selecting L shapes:", error);
+            reject(error);
         }
-    }
-    
-    // Update the controlling required area display
-    const controllingElement = document.querySelector('.controlR');
-    if (controllingElement) {
-        controllingElement.textContent = controllingArea.toFixed(2) + " in²";
-        controllingElement.style.color = 'red'; // Highlight the controlling value
-    }
-    
-    return controllingArea;
+    });
 }
 
-// Select appropriate W shapes based on required area
-async function selectWShapes(requiredArea) {
-    try {
-        // Read W shapes data from Excel file
-        const wShapes = await readExcelFile('./ASTMSPEC.xlsx');
-        
-        if (!wShapes || wShapes.length === 0) {
-            console.error("No W shapes data available");
-            return;
-        }
-        
-        // Filter shapes that have sufficient area
-        const suitableShapes = wShapes.filter(shape => shape.area >= requiredArea);
-        
-        // Sort by area (most economical first - closest to required area)
-        suitableShapes.sort((a, b) => a.area - b.area);
-        
-        // Take the top 4 shapes or fewer if not enough available
-        const recommendedShapes = suitableShapes.slice(0, 4);
-        
-        // Display recommended shapes
-        recommendedShapes.forEach((shape, index) => {
-            const rank = index + 1;
-            document.getElementById(`rank${rank}`).textContent = rank;
-            document.getElementById(`Shape${rank}`).textContent = shape.shape;
-            document.getElementById(`AreaG${rank}`).textContent = shape.area.toFixed(2);
-            document.getElementById(`CD${rank}`).textContent = (shape.area / requiredArea).toFixed(2);
-            document.getElementById(`Weight${rank}`).textContent = shape.weight;
-            document.getElementById(`Depth${rank}`).textContent = shape.depth.toFixed(2);
-            document.getElementById(`Width${rank}`).textContent = shape.width.toFixed(2);
-        });
-        
-        // Clear any unused rows
-        for (let i = recommendedShapes.length + 1; i <= 4; i++) {
-            document.getElementById(`rank${i}`).textContent = "";
-            document.getElementById(`Shape${i}`).textContent = "";
-            document.getElementById(`AreaG${i}`).textContent = "";
-            document.getElementById(`CD${i}`).textContent = "";
-            document.getElementById(`Weight${i}`).textContent = "";
-            document.getElementById(`Depth${i}`).textContent = "";
-            document.getElementById(`Width${i}`).textContent = "";
-        }
-    } catch (error) {
-        console.error("Error selecting W shapes:", error);
-    }
-}
-
-// Main function to run the design
+// Main design function for tension members
 async function designTensionMember() {
-    // Get input values
-    const designMethod = document.getElementById('designMethod').value;
-    const astmSpec = document.getElementById('ASpecD').value;
-    const shearLagCase = document.getElementById('ulagCase').value;
-    const deadLoad = parseFloat(document.getElementById('Dload').value) || 0;
-    const liveLoad = parseFloat(document.getElementById('Lload').value) || 0;
-    const length = parseFloat(document.getElementById('LenghtD').value) || 0;
-    const dHole = parseFloat(document.getElementById('dholeD').value) || 0;
-    const numHoles = parseInt(document.querySelector('.nholeD').value) || 0;
-    
-    // Default width and depth values (would ideally be determined from the selected shape)
-    const width = 6.0; // Default flange width
-    const depth = 12.0; // Default section depth
-    
-    // Calculate required area with the updated parameters
-    const requiredArea = calculateRequiredArea(
-        deadLoad, 
-        liveLoad, 
-        designMethod, 
-        astmSpec, 
-        shearLagCase, 
-        length, 
-        dHole, 
-        numHoles,
-        width,
-        depth
-    );
-    
-    // Select and display appropriate W shapes
-    await selectWShapes(requiredArea);
+    try {
+        // Show calculating indicator
+        const calculatingIndicator = document.createElement('div');
+        calculatingIndicator.id = 'calculating-indicator';
+        calculatingIndicator.innerHTML = 'Calculating tension member design...';
+        calculatingIndicator.style.position = 'fixed';
+        calculatingIndicator.style.top = '50%';
+        calculatingIndicator.style.left = '50%';
+        calculatingIndicator.style.transform = 'translate(-50%, -50%)';
+        calculatingIndicator.style.padding = '10px 20px';
+        calculatingIndicator.style.backgroundColor = '#f0f8ff';
+        calculatingIndicator.style.border = '1px solid #b0d8ff';
+        calculatingIndicator.style.borderRadius = '5px';
+        calculatingIndicator.style.zIndex = '1000';
+        document.body.appendChild(calculatingIndicator);
+        
+        // Get input values
+        const designMethod = document.getElementById('designMethod').value;
+        const astmSpec = document.getElementById('ASpecD').value;
+        const shearLagCase = document.getElementById('ulagCase').value;
+        const deadLoad = parseFloat(document.getElementById('Dload').value) || 0;
+        const liveLoad = parseFloat(document.getElementById('Lload').value) || 0;
+        const length = parseFloat(document.getElementById('LenghtD').value) || 0;
+        const dHole = parseFloat(document.getElementById('dholeD').value) || 0;
+        const numHoles = parseInt(document.querySelector('.nholeD').value) || 0;
+        
+        console.log("Design inputs:", { designMethod, astmSpec, shearLagCase, deadLoad, liveLoad, length, dHole, numHoles });
+        
+        // Calculate design loads
+        const designLoads = calculateDesignLoads(deadLoad, liveLoad, designMethod);
+        const designLoad = designLoads.load;
+        
+        console.log("Design load:", designLoad);
+        
+        // Display load combinations
+        document.getElementById('LRFDdesignComb').textContent = calculateDesignLoads(deadLoad, liveLoad, 'LRFD').formula;
+        document.getElementById('ASDdesignComb').textContent = calculateDesignLoads(deadLoad, liveLoad, 'ASD').formula;
+        
+        // Get steel properties
+        const steelProperties = getSteelProperties(astmSpec);
+        
+        console.log("Steel properties:", steelProperties);
+        
+        // Ensure L shape data is loaded
+        if (!window.steelData || Object.keys(window.steelData).filter(k => k.startsWith('L')).length === 0) {
+            console.log("L shape data not loaded yet, loading now...");
+            await loadLShapeData();
+        }
+        
+        // Use a real shape from the loaded data for U factor calculation if possible
+        let defaultShape;
+        const sampleLShapes = Object.values(window.steelData).filter(section => section.type === 'L');
+        
+        if (sampleLShapes && sampleLShapes.length > 0) {
+            // Use the first available L shape
+            defaultShape = sampleLShapes[0];
+            console.log("Using actual L shape data for U factor:", defaultShape);
+        } else {
+            // Fallback to default shape
+            defaultShape = {
+                b: 4.0, // default longer leg
+                d: 4.0, // default shorter leg
+                x: 1.1  // approximate centroid
+            };
+            console.log("Using fallback shape data for U factor");
+        }
+        
+        // Calculate shear lag factor
+        const U = calculateShearLagFactor(shearLagCase, defaultShape);
+        console.log("Calculated shear lag factor U:", U);
+        
+        // Calculate required areas
+        const areas = calculateRequiredAreas(designLoad, steelProperties, U, designMethod);
+        console.log("Required areas:", areas);
+        
+        // Display calculated areas
+        if (designMethod === 'LRFD') {
+            document.getElementById('LRFDYielding').textContent = areas.yielding.toFixed(2) + " in²";
+            document.getElementById('LRFDFracture').textContent = areas.fracture.toFixed(2) + " in²";
+            
+            // Hide ASD results
+            document.getElementById('ASDFracture').textContent = "";
+            document.getElementById('ASDYielding').textContent = "";
+        } else {
+            document.getElementById('ASDYielding').textContent = areas.yielding.toFixed(2) + " in²";
+            document.getElementById('ASDFracture').textContent = areas.fracture.toFixed(2) + " in²";
+            
+            // Hide LRFD results
+            document.getElementById('LRFDYielding').textContent = "";
+            document.getElementById('LRFDFracture').textContent = "";
+        }
+        
+        // Update the controlling required area display
+        document.querySelector('.controlR').textContent = areas.controlling.toFixed(2) + " in²";
+        
+        // Highlight the governing case
+        if (designMethod === 'LRFD') {
+            if (areas.governingCase === 'yielding') {
+                document.getElementById('LRFDYielding').parentElement.style.color = 'red';
+                document.getElementById('LRFDFracture').parentElement.style.color = '';
+            } else {
+                document.getElementById('LRFDYielding').parentElement.style.color = '';
+                document.getElementById('LRFDFracture').parentElement.style.color = 'red';
+            }
+        } else {
+            if (areas.governingCase === 'yielding') {
+                document.getElementById('ASDYielding').parentElement.style.color = 'red';
+                document.getElementById('ASDFracture').parentElement.style.color = '';
+            } else {
+                document.getElementById('ASDYielding').parentElement.style.color = '';
+                document.getElementById('ASDFracture').parentElement.style.color = 'red';
+            }
+        }
+        
+        // Select best L shapes
+        console.log("Selecting best L shapes...");
+        const bestShapes = await selectBestLShapes(
+            areas.controlling,
+            designLoad,
+            designMethod,
+            astmSpec,
+            shearLagCase,
+            length,
+            dHole,
+            numHoles
+        );
+        
+        console.log("Best shapes selected:", bestShapes);
+        
+        // Display results in the table
+        displayShapeResults(bestShapes, areas.controlling);
+        
+        // Remove calculating indicator
+        document.getElementById('calculating-indicator').remove();
+        
+        // Show success message
+        showMessage("Design complete! Showing top recommendations.", "success");
+        
+    } catch (error) {
+        console.error("Error in tension member design:", error);
+        
+        // Remove calculating indicator if it exists
+        if (document.getElementById('calculating-indicator')) {
+            document.getElementById('calculating-indicator').remove();
+        }
+        
+        // Show error message
+        showMessage("Error in tension member design: " + error.message, "error");
+    }
 }
 
-// Add event listener for the design button
+// Display shape results in the table
+function displayShapeResults(shapes, requiredArea) {
+    // Update each row in the table with results
+    shapes.forEach((shape, index) => {
+        const rankId = `rank${index + 1}`;
+        const shapeId = `Shape${index + 1}`;
+        const areaGId = `AreaG${index + 1}`;
+        const demandId = `D${index + 1}`;  // This will now show An+Ahole
+        const weightId = `Weight${index + 1}`;
+        const aholeId = `Ahole${index + 1}`;
+        const statusId = `Status${index + 1}`;
+        
+        // Set values
+        document.getElementById(rankId).textContent = index + 1;
+        document.getElementById(shapeId).textContent = shape.shape;
+        document.getElementById(areaGId).textContent = shape.area.toFixed(2);
+        
+        // Changed from DCRatio to An+Ahole - FIX HERE: Use anPlusAhole instead
+        document.getElementById(demandId).textContent = shape.anPlusAhole.toFixed(2);
+        
+        document.getElementById(weightId).textContent = shape.weight.toFixed(1);
+        document.getElementById(aholeId).textContent = shape.holeArea.toFixed(2);
+        document.getElementById(statusId).textContent = shape.status;
+        
+        // Style based on status
+        document.getElementById(statusId).style.color = shape.status === 'PASS' ? 'green' : 'red';
+        document.getElementById(statusId).style.fontWeight = 'bold';
+    });
+    
+    // Clear any unused rows
+    for (let i = shapes.length + 1; i <= 4; i++) {
+        document.getElementById(`rank${i}`).textContent = '';
+        document.getElementById(`Shape${i}`).textContent = '';
+        document.getElementById(`AreaG${i}`).textContent = '';
+        document.getElementById(`D${i}`).textContent = '';
+        document.getElementById(`Weight${i}`).textContent = '';
+        document.getElementById(`Ahole${i}`).textContent = '';
+        document.getElementById(`Status${i}`).textContent = '';
+    }
+    
+    // If no shapes were found
+    if (shapes.length === 0) {
+        document.getElementById('rank1').textContent = '';
+        document.getElementById('Shape1').textContent = 'No suitable shapes found';
+        document.getElementById('Shape1').colSpan = 7;
+        document.getElementById('Shape1').style.textAlign = 'center';
+        document.getElementById('Shape1').style.color = 'red';
+        document.getElementById('AreaG1').textContent = '';
+        document.getElementById('D1').textContent = '';
+        document.getElementById('Weight1').textContent = '';
+        document.getElementById('Ahole1').textContent = '';
+        document.getElementById('Status1').textContent = '';
+    }
+    
+    // Update the column header to reflect the new calculation
+    const dcHeader = document.querySelector('th[data-field="D"]');
+    if (dcHeader) {
+        dcHeader.textContent = "An+Ahole (in²)";
+    }
+}
+// Helper function to show messages
+function showMessage(message, type = "info") {
+    // Create message element
+    const messageElement = document.createElement('div');
+    messageElement.className = 'message ' + type;
+    messageElement.innerHTML = message;
+    messageElement.style.position = 'fixed';
+    messageElement.style.bottom = '20px';
+    messageElement.style.right = '20px';
+    messageElement.style.padding = '10px 20px';
+    messageElement.style.borderRadius = '5px';
+    messageElement.style.zIndex = '1000';
+    
+    // Style based on type
+    switch (type) {
+        case "success":
+            messageElement.style.backgroundColor = '#d4edda';
+            messageElement.style.border = '1px solid #c3e6cb';
+            messageElement.style.color = '#155724';
+            break;
+        case "error":
+            messageElement.style.backgroundColor = '#f8d7da';
+            messageElement.style.border = '1px solid #f5c6cb';
+            messageElement.style.color = '#721c24';
+            break;
+        default:
+            messageElement.style.backgroundColor = '#cce5ff';
+            messageElement.style.border = '1px solid #b8daff';
+            messageElement.style.color = '#004085';
+    }
+    
+    // Add to document
+    document.body.appendChild(messageElement);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (messageElement.parentNode) {
+            messageElement.parentNode.removeChild(messageElement);
+        }
+    }, 5000);
+}
+
+
+
+
+// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM loaded, initializing tension member design app");
+    
+    // Preload L shape data
+    loadLShapeData();
+    
+    // Add event listener for the design button
     const designButton = document.getElementById('design');
     if (designButton) {
         designButton.addEventListener('click', function(e) {
             e.preventDefault();
             designTensionMember();
         });
+        console.log("Design button listener added");
     } else {
         console.error("Design button not found");
     }
+    
+    // Add input validation for numeric fields
+    const numericInputs = document.querySelectorAll('input[type="number"]');
+    numericInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            const value = parseFloat(this.value);
+            if (isNaN(value) || value < 0) {
+                this.style.borderColor = 'red';
+            } else {
+                this.style.borderColor = '';
+            }
+        });
+    });
+
+    // Add shear lag info
+    addShearLagInfo();
+    
+    // Adjust the visibility of design calculation sections based on the selected design method
+    const designMethodSelect = document.getElementById('designMethod');
+    if (designMethodSelect) {
+        designMethodSelect.addEventListener('change', function() {
+            if (this.value === 'LRFD') {
+                document.querySelectorAll('[id^="LRFD"]').forEach(el => {
+                    el.parentElement.style.display = 'block';
+                });
+                document.querySelectorAll('[id^="ASD"]').forEach(el => {
+                    el.parentElement.style.display = 'none';
+                });
+            } else {
+                document.querySelectorAll('[id^="LRFD"]').forEach(el => {
+                    el.parentElement.style.display = 'none';
+                });
+                document.querySelectorAll('[id^="ASD"]').forEach(el => {
+                    el.parentElement.style.display = 'block';
+                });
+            }
+        });
+        
+        // Trigger the change event to set initial visibility
+        const changeEvent = new Event('change');
+        designMethodSelect.dispatchEvent(changeEvent);
+    }
 });
-
-
-
     </script>
 </body>
 </html>

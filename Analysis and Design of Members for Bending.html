@@ -31,7 +31,7 @@
           <div class="InputForAnalysisBending">
               <h3></h3>
               <div>
-                  <label>W-SHAPE</label>
+                  <label>SHAPE</label>
                   <input id="Wshape" placeholder="W12x44" type="text">
                   
               </div>
@@ -94,7 +94,7 @@
         <div class="InputForBendingDesign">
             <div>
                 <label>ASTM Specification</label>
-                <select  id="ASTMinputBending">
+                <select name="ASTMinput" id="ASTMinputD">
                     <option value="A36">A36</option>
                     <option value="A572Gr.42">A572 Gr. 42</option>
                     <option value="A572Gr.50">A572 Gr. 50</option>
@@ -127,6 +127,9 @@
 
            
         </div>
+        <div id="ResultBendingDesign" class="ResultBendingDesign">
+
+        </div>
         
     </div>
    
@@ -136,6 +139,7 @@
 // Global variables for data storage
 let steelSpecs = [];
 let sectionData = {};
+let beamData = {};  // New variable to store the beam data from sheet 3
 let dataLoaded = false;
 
 // Initialize the application when the document is loaded
@@ -182,7 +186,6 @@ function setupEventListeners() {
         });
     }
 }
-
 
 // Modified function to load Excel data using fetch API
 async function loadExcelData() {
@@ -485,6 +488,7 @@ async function loadExcelData() {
     }
 }
 
+
 function initialize() {
     console.log("Initializing application...");
     
@@ -492,6 +496,7 @@ function initialize() {
     dataLoaded = false;
     steelSpecs = [];
     sectionData = {};
+    beamData = {};  // Initialize beam data
     
     // Add SheetJS library
     addExcelLibrary()
@@ -523,8 +528,6 @@ function initialize() {
     // Set up event listeners
     setupEventListeners();
 }
-
-
 // Start initialization when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', initialize);
 
@@ -864,24 +867,30 @@ function showNotification(type, message) {
     }, 3000);
 }
 
-// Add the SheetJS library to handle Excel files
+// Function to add Excel library to the page
 function addExcelLibrary() {
     return new Promise((resolve, reject) => {
+        // Check if SheetJS is already loaded
         if (window.XLSX) {
+            console.log("SheetJS already loaded");
             resolve();
             return;
         }
         
+        console.log("Loading SheetJS...");
         const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-        script.integrity = 'sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==';
-        script.crossOrigin = 'anonymous';
-        script.onload = resolve;
-        script.onerror = reject;
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js';
+        script.onload = () => {
+            console.log("SheetJS loaded successfully");
+            resolve();
+        };
+        script.onerror = () => {
+            console.error("Failed to load SheetJS");
+            reject(new Error("Failed to load SheetJS library"));
+        };
         document.head.appendChild(script);
     });
 }
-
 // Add necessary CSS
 function addStyles() {
     const styleElement = document.createElement('style');
@@ -952,9 +961,389 @@ addExcelLibrary()
     });
 
 addStyles();
-  
+
+
+// Add event listener to Design button
+document.addEventListener('DOMContentLoaded', function() {
+    const designButton = document.getElementById('DesignBending');
+    if (designButton) {
+        designButton.addEventListener('click', designBendingMember);
+        console.log("Design button listener attached");
+    } else {
+        console.error("Design button not found");
+    }
+});
+
+// Main function to design a bending member
+function designBendingMember() {
+    console.log("Starting bending member design...");
+    
+    // Get input values
+    const deadLoad = parseFloat(document.getElementById('DeadLoad').value);
+    const liveLoad = parseFloat(document.getElementById('LiveLoad').value);
+    const length = parseFloat(document.getElementById('LenghtDC').value);
+    const designMethod = document.getElementById('DesignMethod').value;
+    const steelType = document.getElementById('ASTMinputD').value;
+    
+    // Validate inputs
+    if (isNaN(deadLoad) || isNaN(liveLoad) || isNaN(length) || length <= 0) {
+        document.getElementById('ResultBendingDesign').innerHTML = 
+            '<p class="error">Please enter valid values for all inputs.</p>';
+        return;
+    }
+    
+    // Find the selected steel specification
+    const selectedSteel = findSteelSpec(steelType);
+    if (!selectedSteel) {
+        document.getElementById('ResultBendingDesign').innerHTML = 
+            '<p class="error">Selected steel specification not found.</p>';
+        return;
+    }
+    
+    // Initialize results output
+    let resultsHTML = '<h2>Bending Member Design Results</h2>';
+    resultsHTML += `<p><strong>Design Method:</strong> ${designMethod}</p>`;
+    resultsHTML += `<p><strong>Steel:</strong> ${selectedSteel.Steel_name} (Fy = ${selectedSteel.Fy} ksi, Fu = ${selectedSteel.Fu} ksi)</p>`;
+    resultsHTML += `<p><strong>Loads:</strong> Dead Load = ${deadLoad} kips, Live Load = ${liveLoad} kips, Length = ${length} ft</p>`;
+    
+    // Step 1: Calculate total factored load based on design method
+    let totalLoad;
+    if (designMethod === 'LRFD') {
+        totalLoad = 1.2 * deadLoad + 1.6 * liveLoad;
+        resultsHTML += `<p><strong>Load Combination (LRFD):</strong> 1.2D + 1.6L = 1.2 × ${deadLoad} + 1.6 × ${liveLoad} = ${totalLoad.toFixed(2)} kips</p>`;
+    } else { // ASD
+        totalLoad = deadLoad + liveLoad;
+        resultsHTML += `<p><strong>Load Combination (ASD):</strong> D + L = ${deadLoad} + ${liveLoad} = ${totalLoad.toFixed(2)} kips</p>`;
+    }
+    
+    // Step 2: Calculate initial moment (without beam weight)
+    const initialMoment = (totalLoad * length * length) / 8;
+    resultsHTML += `<p><strong>Initial Moment:</strong> M = WL²/8 = ${totalLoad.toFixed(2)} × ${length}² / 8 = ${initialMoment.toFixed(2)} kip-ft</p>`;
+    
+    // Step 3: Calculate required plastic section modulus (Zx)
+    let requiredZx;
+    if (designMethod === 'LRFD') {
+        requiredZx = (initialMoment * 12) / (0.9 * selectedSteel.Fy);
+        resultsHTML += `<p><strong>Required Zx (LRFD):</strong> Zx = Mu×12/(ΦbFy) = ${initialMoment.toFixed(2)}×12/(0.9×${selectedSteel.Fy}) = ${requiredZx.toFixed(2)} in³</p>`;
+    } else { // ASD
+        requiredZx = (initialMoment * 12) / (0.6 * selectedSteel.Fy);
+        resultsHTML += `<p><strong>Required Zx (ASD):</strong> Zx = M×12/(0.6×Fy) = ${initialMoment.toFixed(2)}×12/(0.6×${selectedSteel.Fy}) = ${requiredZx.toFixed(2)} in³</p>`;
+    }
+    
+    // Step 4: Find suitable beam sections
+    const suitableBeams = findSuitableBeams(requiredZx);
+    if (suitableBeams.length === 0) {
+        resultsHTML += `<p class="error">No suitable beams found for the required Zx = ${requiredZx.toFixed(2)} in³.</p>`;
+        document.getElementById('ResultBendingDesign').innerHTML = resultsHTML;
+        return;
+    }
+    
+    resultsHTML += `<p><strong>Initial Selection:</strong> Finding beams with Zx ≥ ${requiredZx.toFixed(2)} in³</p>`;
+    
+    // Step 5: Calculate required moment of inertia for deflection control
+    // Calculate uniform load per length
+    const uniformLoad = totalLoad / length; // kips/ft
+    
+    // Calculate required Ix for deflection limit L/360
+    const deflectionLimit = (length * 12) / 360; // in
+    const E = 29000; // ksi
+    const requiredIx = (5 * uniformLoad * Math.pow(length * 12, 3)) / (384 * E * deflectionLimit);
+    
+    resultsHTML += `<p><strong>Deflection Control:</strong> Required Ix for L/360 = ${requiredIx.toFixed(2)} in⁴</p>`;
+    
+    // Step 5: Detailed design check for each suitable beam
+    resultsHTML += '<h3>Detailed Design Checks</h3>';
+    
+    // Array to store valid beams after checking
+    const validBeams = [];
+    
+    // Check each beam
+    for (let i = 0; i < Math.min(5, suitableBeams.length); i++) {
+        const beam = suitableBeams[i];
+        resultsHTML += `<div class="beam-check">`;
+        resultsHTML += `<h4>Check for ${beam.AISC_Manual_Label}</h4>`;
+        
+        // Calculate beam weight and add to total load
+        // Get beam weight from sectionData and convert to kips
+        const beamWeight = beam.W / 1000; // Convert from lb/ft to kip/ft
+        const beamWeightTotal = beamWeight * length; // Total beam weight in kips
+        
+        // Recalculate total load with beam weight
+        let totalLoadWithBeam;
+        if (designMethod === 'LRFD') {
+            totalLoadWithBeam = 1.2 * (deadLoad + beamWeightTotal) + 1.6 * liveLoad;
+            resultsHTML += `<p>Load with beam weight (LRFD): 1.2(${deadLoad} + ${beamWeightTotal.toFixed(3)}) + 1.6(${liveLoad}) = ${totalLoadWithBeam.toFixed(2)} kips</p>`;
+        } else { // ASD
+            totalLoadWithBeam = deadLoad + beamWeightTotal + liveLoad;
+            resultsHTML += `<p>Load with beam weight (ASD): ${deadLoad} + ${beamWeightTotal.toFixed(3)} + ${liveLoad} = ${totalLoadWithBeam.toFixed(2)} kips</p>`;
+        }
+        
+        // Calculate moment with beam weight
+        const momentWithBeam = (totalLoadWithBeam * length * length) / 8;
+        resultsHTML += `<p>Moment with beam weight: M = WL²/8 = ${totalLoadWithBeam.toFixed(2)} × ${length}² / 8 = ${momentWithBeam.toFixed(2)} kip-ft</p>`;
+        
+        // Check if section is compact, non-compact, or slender
+        const flangeBF2TF = beam["bf/2tf"];
+        const webHW = beam["h/tw"];
+        
+        // Calculate limiting width-thickness ratios for the flange
+        const lambdaPF = 0.38 * Math.sqrt(29000 / selectedSteel.Fy);
+        const lambdaRF = 1.0 * Math.sqrt(29000 / selectedSteel.Fy);
+        
+        // Calculate limiting width-thickness ratios for the web
+        const lambdaPW = 3.76 * Math.sqrt(29000 / selectedSteel.Fy);
+        const lambdaRW = 5.70 * Math.sqrt(29000 / selectedSteel.Fy);
+        
+        // Determine section classification
+        let sectionType = "";
+        let momentCapacity = 0;
+        
+        if (flangeBF2TF <= lambdaPF && webHW <= lambdaPW) {
+            sectionType = "Compact";
+            // For compact sections Mp = Fy * Zx
+            if (designMethod === 'LRFD') {
+                momentCapacity = 0.9 * selectedSteel.Fy * beam.Zx / 12; // Convert to kip-ft
+            } else { // ASD
+                momentCapacity = 0.6 * selectedSteel.Fy * beam.Zx / 12; // Convert to kip-ft
+            }
+        } else if (flangeBF2TF <= lambdaRF && webHW <= lambdaRW) {
+            sectionType = "Non-compact";
+            // For non-compact sections, linear interpolation between Mp and Mr
+            // This is a simplified approach - in practice, would need more detailed calculations
+            const Mp = selectedSteel.Fy * beam.Zx;
+            const Mr = selectedSteel.Fy * beam.Sx;
+            
+            const flangeRatio = (flangeBF2TF - lambdaPF) / (lambdaRF - lambdaPF);
+            const webRatio = (webHW - lambdaPW) / (lambdaRW - lambdaPW);
+            const worstRatio = Math.max(flangeRatio, webRatio);
+            
+            const Mn = Mp - worstRatio * (Mp - Mr);
+            
+            if (designMethod === 'LRFD') {
+                momentCapacity = 0.9 * Mn / 12; // Convert to kip-ft
+            } else { // ASD
+                momentCapacity = 0.6 * Mn / 12; // Convert to kip-ft
+            }
+        } else {
+            sectionType = "Slender";
+            // For slender sections, would need more complex calculations
+            // Using a conservative estimate of 0.9 * Mr for this example
+            if (designMethod === 'LRFD') {
+                momentCapacity = 0.9 * 0.9 * selectedSteel.Fy * beam.Sx / 12; // Convert to kip-ft
+            } else { // ASD
+                momentCapacity = 0.6 * 0.9 * selectedSteel.Fy * beam.Sx / 12; // Convert to kip-ft
+            }
+        }
+        
+        resultsHTML += `<p>Section Classification: <strong>${sectionType}</strong></p>`;
+        resultsHTML += `<p>Flange b/2tf = ${flangeBF2TF.toFixed(2)}, λp = ${lambdaPF.toFixed(2)}, λr = ${lambdaRF.toFixed(2)}</p>`;
+        resultsHTML += `<p>Web h/tw = ${webHW.toFixed(2)}, λp = ${lambdaPW.toFixed(2)}, λr = ${lambdaRW.toFixed(2)}</p>`;
+        
+        // Calculate capacity
+        resultsHTML += `<p>Moment Capacity: ${momentCapacity.toFixed(2)} kip-ft</p>`;
+        
+        // Check if moment capacity is adequate
+        const isAdequate = momentWithBeam <= momentCapacity;
+        if (isAdequate) {
+            resultsHTML += `<p class="success"><strong>SAFE:</strong> Demand (${momentWithBeam.toFixed(2)} kip-ft) < Capacity (${momentCapacity.toFixed(2)} kip-ft). The section ${beam.AISC_Manual_Label} is adequate.</p>`;
+        } else {
+            resultsHTML += `<p class="error"><strong>UNSAFE:</strong> Demand (${momentWithBeam.toFixed(2)} kip-ft) > Capacity (${momentCapacity.toFixed(2)} kip-ft). The section ${beam.AISC_Manual_Label} is NOT adequate.</p>`;
+        }
+        
+        // Calculate and check deflection
+        const w = totalLoadWithBeam / length; // kips/ft
+        const actualIx = beam.Ix; // in^4
+        const actualDeflection = (5 * w * Math.pow(length * 12, 3)) / (384 * E * actualIx); // inches
+        const serviceabilityLimit = (length * 12) / 360; // L/360 is common serviceability limit
+        
+        resultsHTML += `<p><strong>Deflection Check:</strong></p>`;
+        resultsHTML += `<p>Allowable Deflection = L/360 = (${length * 12}) / 360 = ${serviceabilityLimit.toFixed(3)} in</p>`;
+        resultsHTML += `<p>Required Ix = (5 * w * L³) / (384 * E * Δallowable) = ${requiredIx.toFixed(2)} in⁴</p>`;
+        resultsHTML += `<p>Actual Ix for ${beam.AISC_Manual_Label} = ${actualIx.toFixed(2)} in⁴</p>`;
+        
+        const isDeflectionOK = actualIx >= requiredIx;
+        if (isDeflectionOK) {
+            resultsHTML += `<p class="success"><strong>DEFLECTION OK:</strong> Available Ix (${actualIx.toFixed(2)} in⁴) ≥ Required Ix (${requiredIx.toFixed(2)} in⁴)</p>`;
+           
+        } else {
+            resultsHTML += `<p class="warning"><strong>EXCESSIVE DEFLECTION:</strong> Available Ix (${actualIx.toFixed(2)} in⁴) < Required Ix (${requiredIx.toFixed(2)} in⁴)</p>`;
+            
+        }
+        
+        if (isAdequate && isDeflectionOK) {
+            validBeams.push({
+                shape: beam.AISC_Manual_Label,
+                capacity: momentCapacity,
+                demand: momentWithBeam,
+                actualIx: actualIx,
+                requiredIx: requiredIx,
+                deflection: actualDeflection
+            });
+        }
+        
+        resultsHTML += `</div>`;
+        
+        // If we found 3 valid beams, stop checking
+        if (validBeams.length >= 3) break;
+    }
+    
+    // Step 6: Summarize results
+    resultsHTML += '<h3>Design Summary</h3>';
+    
+    if (validBeams.length > 0) {
+        // Sort valid beams by weight (most efficient first)
+        validBeams.sort((a, b) => {
+            const weightA = getBeamWeight(a.shape);
+            const weightB = getBeamWeight(b.shape);
+            return weightA - weightB;
+        });
+        
+        resultsHTML += '<p>The following sections are adequate for the design:</p>';
+        resultsHTML += '<ul>';
+        validBeams.forEach(beam => {
+            resultsHTML += `<li>${beam.shape} (Capacity: ${beam.capacity.toFixed(2)} kip-ft, Required moment: ${beam.demand.toFixed(2)} kip-ft, Ix: ${beam.actualIx.toFixed(2)} in⁴, Deflection: ${beam.deflection.toFixed(3)} in)</li>`;
+        });
+        resultsHTML += '</ul>';
+        
+        resultsHTML += `<p class="recommendation"><strong>Recommended Section:</strong> ${validBeams[0].shape} (lightest adequate section)</p>`;
+    } else {
+        resultsHTML += '<p class="error">No adequate sections found from the checked beams. Consider using larger sections or reducing the loads.</p>';
+    }
+    
+    // Display the final results
+    document.getElementById('ResultBendingDesign').innerHTML = resultsHTML;
+}
+
+
+// Helper function to find a steel specification by name
+function findSteelSpec(steelName) {
+    for (let i = 0; i < steelSpecs.length; i++) {
+        const spec = steelSpecs[i];
+        if (spec.Steel_name && spec.Steel_name.replace(/\s/g, '') === steelName) {
+            return spec;
+        }
+    }
+    
+    // If not found, use hardcoded values as fallback
+    const hardcodedSpecs = {
+        "A36": { Steel_name: "A36", Fy: 36, Fu: 58 },
+        "A572Gr.42": { Steel_name: "A572 Gr. 42", Fy: 42, Fu: 60 },
+        "A572Gr.50": { Steel_name: "A572 Gr. 50", Fy: 50, Fu: 65 },
+        "A572Gr.55": { Steel_name: "A572 Gr. 55", Fy: 55, Fu: 70 },
+        "A572Gr.60": { Steel_name: "A572 Gr. 60", Fy: 60, Fu: 75 },
+        "A572Gr.65": { Steel_name: "A572 Gr. 65", Fy: 65, Fu: 80 },
+        "A588Gr.42": { Steel_name: "A588 Gr. 42", Fy: 42, Fu: 63 },
+        "A588Gr.46": { Steel_name: "A588 Gr. 46", Fy: 46, Fu: 67 },
+        "A588Gr.50": { Steel_name: "A588 Gr. 50", Fy: 50, Fu: 70 },
+        "A687": { Steel_name: "A687", Fy: 50, Fu: 70 },
+        "A992": { Steel_name: "A992", Fy: 50, Fu: 65 }
+    };
+    
+    return hardcodedSpecs[steelName];
+}
+
+// Helper function to find suitable beams based on required Zx
+function findSuitableBeams(requiredZx) {
+    const suitable = [];
+    
+    // Convert section data object to array for easier sorting
+    const sections = Object.values(sectionData);
+    
+    // Filter sections that have sufficient Zx
+    const eligibleSections = sections.filter(section => 
+        section.AISC_Manual_Label && 
+        section.AISC_Manual_Label.startsWith('W') && 
+        section.Zx && 
+        section.Zx >= requiredZx
+    );
+    
+    // Sort by Zx (ascending - most efficient first)
+    eligibleSections.sort((a, b) => a.Zx - b.Zx);
+    
+    return eligibleSections;
+}
+
+// Helper function to get beam weight in pounds per foot
+function getBeamWeight(shapeName) {
+    if (!shapeName) return 0;
+    
+    // Get weight directly from sectionData
+    if (sectionData[shapeName] && sectionData[shapeName].W) {
+        return sectionData[shapeName].W;
+    }
+    
+    // Extract weight from shape name as fallback (e.g., "W12X45" has weight of 45 lbs/ft)
+    const parts = shapeName.split('X');
+    if (parts.length === 2) {
+        const weight = parseFloat(parts[1]);
+        if (!isNaN(weight)) {
+            return weight;
+        }
+    }
+    
+    // Fallback: estimate based on section area
+    if (sectionData[shapeName] && sectionData[shapeName].A) {
+        // Rough estimate: steel density ≈ 490 lbs/ft³, and A is in in²
+        return sectionData[shapeName].A * 3.4; // Approximate conversion
+    }
+    
+    return 0; // Default if all else fails
+}
+
+// Add some CSS styles for the results
+const style = document.createElement('style');
+style.innerHTML = `
+    #ResultBendingDesign {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        max-height: 1400px;
+        overflow-y: auto;
+    }
+    #ResultBendingDesign h2 {
+        margin-top: 0;
+        color: #333;
+    }
+    #ResultBendingDesign h3 {
+        margin-top: 15px;
+        color: #444;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 5px;
+    }
+    #ResultBendingDesign h4 {
+        margin-top: 10px;
+        color: #555;
+    }
+    .beam-check {
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+    }
+    .success {
+        color: green;
+        font-weight: bold;
+    }
+    .error {
+        color: red;
+        font-weight: bold;
+    }
+    .warning {
+        color: orange;
+        font-weight: bold;
+    }
+    .recommendation {
+        font-size: 18px;
+        padding: 10px;
+        background-color: #e9f7ef;
+        border-left: 5px solid #27ae60;
+        margin: 15px 0;
+    }
+`;
+document.head.appendChild(style);
 
 </script>
     
 </body>
-</html>
+</html> 

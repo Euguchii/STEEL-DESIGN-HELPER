@@ -164,18 +164,19 @@ header{
 .Calculate{
   margin-left: 280px;
   margin-top: 5px;
-  background-color: rgb(215, 228, 253);
-  width: 100px;
+  background-color: rgb(78, 137, 247);
+  width: 120px;
   border-radius: 0;
-  height: 40px;
+  height: 50px;
+  border: 1px solid rgb(0, 0, 0);
   font-size: large;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  
+  border-radius: 10px;
 }
 
-.Calculate a:hover{
+button:hover{
    
-    background-color: rgb(98, 148, 241);
+    background-color: rgb(76, 82, 92);
   
     
   }
@@ -334,15 +335,15 @@ input{
 }
 .Design{
 
-    display: inline-block;
-    position: absolute;
-    background-color: #8cc6f3;
-    border-radius: 1px;
-    margin-top: 10px;
-    margin-left: 0px;
+    display: flex;
+    position: relative;
+    background-color: #38a9ff;
+    border-radius: 10px;
     height: 40px;
+    left: 10px;
+    font-weight: bold;
     border: 1px solid black;
-    left: 1800px;
+ 
 }
 
 .DesignTenData{
@@ -1123,4 +1124,43 @@ button.AnalyzeBending:hover {
     padding: 20px;
     border-radius: 10px;
     border: 1px solid black;
+}
+
+.ResultBendingDesign{
+    height: 2000px ;
+}
+
+.AnalysisForShear{
+    height: 1300px;
+}
+
+.Given{
+    background-color: #a6ffce;
+}
+.Data{
+    background-color: #fff9a5;
+}
+
+.data{
+    background-color: rgb(245, 255, 211);
+}
+
+td{
+    background-color: #daffd7;
+}
+
+.tableGiven{
+    top: 650px;
+    width: 500px;
+     position: absolute;  
+    display: inline-block;
+
+
+}
+.ResultAnalysisShear{
+    height: 680px;
+    left: 900px;
+    width: 800px;
+    display:inline-block;
+    position: absolute;
 }
