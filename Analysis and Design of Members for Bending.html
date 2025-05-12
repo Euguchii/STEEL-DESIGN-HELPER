@@ -237,14 +237,57 @@ async function loadExcelData() {
         const sectionsArray = XLSX.utils.sheet_to_json(sectionSheet);
         
         // Convert array to object with section names as keys
+        // Ensure only W sections are included with all required properties
         sectionData = {};
         sectionsArray.forEach(section => {
-            if (section.AISC_Manual_Label) {
-                sectionData[section.AISC_Manual_Label] = section;
+            if (section.AISC_Manual_Label && section.AISC_Manual_Label.startsWith('W')) {
+                // Make sure all required properties are included
+                // W, A, tw, bf, bfdet, twdet, twdet/2, tf, tfdet, bf/2tf, h/tw, Ix, Zx, Sx, rx, Iy, Zy, Sy, ry, d
+                const requiredProperties = [
+                    'W', 'A', 'tw', 'bf', 'bfdet', 'twdet', 'tf', 'tfdet', 'Ix', 
+                    'Zx', 'Sx', 'rx', 'Iy', 'Zy', 'Sy', 'ry', 'd'
+                ];
+                
+                // Calculate derived properties if missing
+                if (!section['twdet/2'] && section.twdet) {
+                    section['twdet/2'] = section.twdet / 2;
+                }
+                
+                if (!section['bf/2tf'] && section.bf && section.tf) {
+                    section['bf/2tf'] = section.bf / (2 * section.tf);
+                }
+                
+                if (!section['h/tw'] && section.d && section.tw) {
+                    section['h/tw'] = (section.d - 2 * section.tf) / section.tw;
+                }
+                
+                // Only include W sections with most required properties
+                const hasEnoughProperties = requiredProperties.reduce((hasProps, prop) => {
+                    return hasProps && (section[prop] !== undefined || 
+                           // Allow some derived properties
+                           (prop === 'W' && section.AISC_Manual_Label) || 
+                           (prop === 'bf/2tf' && section.bf && section.tf) || 
+                           (prop === 'h/tw' && section.d && section.tw && section.tf) ||
+                           (prop === 'twdet/2' && section.twdet));
+                }, true);
+                
+                if (hasEnoughProperties) {
+                    // Ensure W property is set based on AISC_Manual_Label
+                    if (!section.W && section.AISC_Manual_Label) {
+                        section.W = section.AISC_Manual_Label;
+                    }
+                    
+                    sectionData[section.AISC_Manual_Label] = section;
+                }
             }
         });
         
-        console.log(`Loaded ${Object.keys(sectionData).length} sections`);
+        console.log(`Loaded ${Object.keys(sectionData).length} W sections`);
+        // Log first section to verify structure
+        const firstSectionKey = Object.keys(sectionData)[0];
+        if (firstSectionKey) {
+            console.log("Sample section data:", firstSectionKey, sectionData[firstSectionKey]);
+        }
         
         // Update UI with loaded data
         updateShapeOptions();
@@ -1063,19 +1106,25 @@ function designBendingMember() {
         resultsHTML += `<div class="beam-check">`;
         resultsHTML += `<h4>Check for ${beam.AISC_Manual_Label}</h4>`;
         
-        // Calculate beam weight and add to total load
-        // Get beam weight from sectionData and convert to kips
-        const beamWeight = beam.W / 1000; // Convert from lb/ft to kip/ft
-        const beamWeightTotal = beamWeight * length; // Total beam weight in kips
+        // Extract beam weight from the shape name (W12X22 -> 22 lbs/ft) and convert to kips/ft
+        const beamName = beam.AISC_Manual_Label;
+        const weightPart = beamName.split('X')[1];
+        const beamWeight = parseFloat(weightPart) / 1000; // Convert from lb/ft to kip/ft
         
+        // FIXED: Apply beam weight as a distributed load
+        // The total beam load is beamWeight * length, but this is incorrect
+        // Instead, we need to use beamWeight directly as a distributed load (kips/ft)
+
         // Recalculate total load with beam weight
         let totalLoadWithBeam;
         if (designMethod === 'LRFD') {
-            totalLoadWithBeam = 1.2 * (deadLoad + beamWeightTotal) + 1.6 * liveLoad;
-            resultsHTML += `<p>Load with beam weight (LRFD): 1.2(${deadLoad} + ${beamWeightTotal.toFixed(3)}) + 1.6(${liveLoad}) = ${totalLoadWithBeam.toFixed(2)} kips</p>`;
+            // For LRFD: 1.2(DL + beam weight) + 1.6(LL)
+            totalLoadWithBeam = 1.2 * (deadLoad + beamWeight) + 1.6 * liveLoad;
+            resultsHTML += `<p>Load with beam weight (LRFD): 1.2(${deadLoad} + ${beamWeight.toFixed(3)} ) + 1.6(${liveLoad}) = ${totalLoadWithBeam.toFixed(2)} kips</p>`;
         } else { // ASD
-            totalLoadWithBeam = deadLoad + beamWeightTotal + liveLoad;
-            resultsHTML += `<p>Load with beam weight (ASD): ${deadLoad} + ${beamWeightTotal.toFixed(3)} + ${liveLoad} = ${totalLoadWithBeam.toFixed(2)} kips</p>`;
+            // For ASD: DL + beam weight + LL
+            totalLoadWithBeam = deadLoad + beamWeight * length + liveLoad;
+            resultsHTML += `<p>Load with beam weight (ASD): ${deadLoad} + ${beamWeight.toFixed(3)}  + ${liveLoad} = ${totalLoadWithBeam.toFixed(2)} kips</p>`;
         }
         
         // Calculate moment with beam weight
@@ -1151,6 +1200,7 @@ function designBendingMember() {
         }
         
         // Calculate and check deflection
+        // FIXED: Use totalLoadWithBeam but divide by length to get distributed load w
         const w = totalLoadWithBeam / length; // kips/ft
         const actualIx = beam.Ix; // in^4
         const actualDeflection = (5 * w * Math.pow(length * 12, 3)) / (384 * E * actualIx); // inches
@@ -1170,6 +1220,9 @@ function designBendingMember() {
             
         }
         
+        // Store weight in lb/ft for consistency with the original code
+        const beamWeightLbs = parseFloat(weightPart);
+        
         if (isAdequate && isDeflectionOK) {
             validBeams.push({
                 shape: beam.AISC_Manual_Label,
@@ -1177,7 +1230,8 @@ function designBendingMember() {
                 demand: momentWithBeam,
                 actualIx: actualIx,
                 requiredIx: requiredIx,
-                deflection: actualDeflection
+                deflection: actualDeflection,
+                weight: beamWeightLbs  // Store the beam weight for sorting
             });
         }
         
@@ -1192,16 +1246,12 @@ function designBendingMember() {
     
     if (validBeams.length > 0) {
         // Sort valid beams by weight (most efficient first)
-        validBeams.sort((a, b) => {
-            const weightA = getBeamWeight(a.shape);
-            const weightB = getBeamWeight(b.shape);
-            return weightA - weightB;
-        });
+        validBeams.sort((a, b) => a.weight - b.weight);
         
         resultsHTML += '<p>The following sections are adequate for the design:</p>';
         resultsHTML += '<ul>';
         validBeams.forEach(beam => {
-            resultsHTML += `<li>${beam.shape} (Capacity: ${beam.capacity.toFixed(2)} kip-ft, Required moment: ${beam.demand.toFixed(2)} kip-ft, Ix: ${beam.actualIx.toFixed(2)} in⁴, Deflection: ${beam.deflection.toFixed(3)} in)</li>`;
+            resultsHTML += `<li>${beam.shape} (Weight: ${beam.weight.toFixed(1)} lb/ft, Capacity: ${beam.capacity.toFixed(2)} kip-ft, Required moment: ${beam.demand.toFixed(2)} kip-ft, Ix: ${beam.actualIx.toFixed(2)} in⁴, Deflection: ${beam.deflection.toFixed(3)} in)</li>`;
         });
         resultsHTML += '</ul>';
         
@@ -1213,7 +1263,6 @@ function designBendingMember() {
     // Display the final results
     document.getElementById('ResultBendingDesign').innerHTML = resultsHTML;
 }
-
 
 // Helper function to find a steel specification by name
 function findSteelSpec(steelName) {
@@ -1261,33 +1310,6 @@ function findSuitableBeams(requiredZx) {
     eligibleSections.sort((a, b) => a.Zx - b.Zx);
     
     return eligibleSections;
-}
-
-// Helper function to get beam weight in pounds per foot
-function getBeamWeight(shapeName) {
-    if (!shapeName) return 0;
-    
-    // Get weight directly from sectionData
-    if (sectionData[shapeName] && sectionData[shapeName].W) {
-        return sectionData[shapeName].W;
-    }
-    
-    // Extract weight from shape name as fallback (e.g., "W12X45" has weight of 45 lbs/ft)
-    const parts = shapeName.split('X');
-    if (parts.length === 2) {
-        const weight = parseFloat(parts[1]);
-        if (!isNaN(weight)) {
-            return weight;
-        }
-    }
-    
-    // Fallback: estimate based on section area
-    if (sectionData[shapeName] && sectionData[shapeName].A) {
-        // Rough estimate: steel density ≈ 490 lbs/ft³, and A is in in²
-        return sectionData[shapeName].A * 3.4; // Approximate conversion
-    }
-    
-    return 0; // Default if all else fails
 }
 
 // Add some CSS styles for the results
@@ -1342,6 +1364,58 @@ style.innerHTML = `
     }
 `;
 document.head.appendChild(style);
+
+
+// Helper function to get beam weight in pounds per foot - UPDATED
+function getBeamWeight(shapeName) {
+    if (!shapeName) return 0;
+    
+    // Find the section in sectionData
+    let section = null;
+    if (sectionData[shapeName]) {
+        section = sectionData[shapeName];
+    } else {
+        // Try to find it in the array if not found by direct key
+        const sections = Object.values(sectionData);
+        section = sections.find(s => s.AISC_Manual_Label === shapeName);
+    }
+    
+    // Get weight from section if found
+    if (section && typeof section.W === 'number') {
+        return section.W;
+    }
+    
+    // Extract weight from shape name as fallback (e.g., "W12X45" has weight of 45 lbs/ft)
+    const parts = shapeName.split('X');
+    if (parts.length === 2) {
+        const weight = parseFloat(parts[1]);
+        if (!isNaN(weight)) {
+            return weight;
+        }
+    }
+    
+    // Fallback: estimate based on section area
+    if (section && section.A) {
+        // Rough estimate: steel density ≈ 490 lbs/ft³, and A is in in²
+        return section.A * 3.4; // Approximate conversion
+    }
+    
+    return 0; // Default if all else fails
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </script>
     
