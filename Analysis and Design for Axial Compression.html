@@ -350,111 +350,13 @@
             
         </div>  
         <div class="ResultofallCD">
-            <div class="TableR">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ELement</th>
-                            <th>Length</th>
-                            <th>K</th>
-                            <th>K/L</th>
-                            <th>Governing</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>X</td>
-                            <td id="L1"></td>
-                            <td id="K1"> </td>
-                            <td dir="K/L1"></td>
-                            <td id="G1"></td>
-                        </tr>
-                        <tr>
-                            <td>Y</td>
-                            <td id="L2"></td>
-                            <td id="K2"> </td>
-                            <td dir="K/L2"></td>
-                            <td id="G2"></td>
-                        </tr>
-                        <tr>
-                            <td>Y1</td>
-                            <td id="L3"></td>
-                            <td id="K3"> </td>
-                            <td dir="K/L3"></td>
-                            <td id="G3"></td>
-                        </tr>
-                        <tr>
-                            <td>Y2</td>
-                            <td id="L4"></td>
-                            <td id="K4"> </td>
-                            <td dir="K/L4"></td>
-                            <td id="G4"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                
+            
 
                 
             </div>
-            <div class="TableR1">
-                <table>
-                    <thead>
-                        <tr>
-                            <th id="CompShape">W-SHAPE</th>
-                            <th id="pupa">Table 3-6 (continued)
-                                Maximum Total 
-                               Uniform Load</th>
-                            <th id="Weight">W</th>
-                            <th id="rxry">rx/ry</th>
-                            <th id="Best">Best</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td id="W14"></td>
-                            <td id="pupa1"></td>
-                            <td id="Weight1"></td>
-                            <td id="rxry1"></td>
-                            <td id="Best1"></td>
-                            
-                            
-                        </tr>
-                        <tr>
-                            <td id="W12"></td>
-                            <td id="pupa2"></td>
-                            <td id="Weight2"></td>
-                            <td id="rxry2"></td>
-                            <td id="Best2"></td>
-
-                          
-                        </tr>
-                        <tr>
-                            <td id="W10"></td>
-                            <td id="pupa3"></td>
-                            <td id="Weight3"></td>
-                            <td id="rxry3"></td>
-                            <td id="Best3"></td>
-                          
-                        </tr>
-                        <tr>
-                            <td id="W8"></td>
-                            <td id="pupa4"></td>
-                            <td id="Weight4"></td>
-                            <td id="rxry4"></td>
-                            <td id="Best4"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                
-
-                
-            </div>
-            <div class="    " >
-                
-            </div>
-
+            <div class="downlaod"></div>
+        
+        
         </div>
      </div>
 
@@ -2613,121 +2515,49 @@ function handleSupportVisibilityC() {
     }
 }
 
-// Database of W-shapes
-const wShapeDatabase = {
-    "W14": [
-        ["W14X730", 730, 215, 22.4, 1.88, 17.9, 3.07, 4, 1.5, 7.5, 9.80, 5.81, 1830, 838, 1550, 546, 6.29, 16.2, 2590, 98800, 205, 7720, 545, 1.88, 273, 633, 5500, 3700],
-        ["W14X605", 605, 178, 21.6, 1.56, 17.4, 2.59, 3.5, 1.5, 7.5, 9.43, 5.64, 1460, 675, 1240, 441, 6.10, 16.4, 1470, 73400, 169, 6220, 437, 1.56, 212, 483, 4600, 3100],
-        ["W14X500", 500, 147, 20.7, 1.31, 16.9, 2.19, 3, 1.5, 7.5, 9.09, 5.49, 1170, 545, 991, 356, 5.94, 16.3, 887, 56000, 142, 4960, 351, 1.31, 169, 379, 3800, 2500],
-        ["W14X398", 398, 117, 19.7, 1.06, 16.5, 1.77, 2.5, 1.5, 7.5, 8.75, 5.38, 901, 431, 763, 279, 5.82, 16.2, 456, 42000, 116, 3820, 269, 1.06, 134, 297, 3000, 2000],
-        ["W14X283", 283, 83.3, 18.0, 0.938, 15.9, 1.56, 2.25, 1, 6, 8.22, 5.16, 613, 302, 515, 195, 5.55, 14.9, 184, 26200, 84.7, 2570, 196, 0.938, 92.5, 194, 2100, 1400],
-        ["W14X211", 211, 62.0, 16.5, 0.75, 15.6, 1.31, 2, 1, 6, 7.83, 5.06, 445, 227, 373, 146, 5.43, 13.9, 91.7, 18000, 65.1, 1870, 146, 0.75, 69.1, 144, 1600, 1050]
-    ],
-    "W12": [
-        ["W12X336", 336, 98.8, 16.8, 1.09, 13.4, 1.94, 2.5, 1, 5.5, 7.17, 4.22, 674, 291, 564, 187, 4.64, 12.9, 175, 14600, 75.8, 2250, 187, 1.09, 93.7, 245, 2500, 1700],
-        ["W12X279", 279, 82.0, 16.1, 0.938, 13.1, 1.66, 2.25, 1, 5.5, 6.98, 4.14, 543, 237, 454, 152, 4.54, 12.8, 110, 11500, 65.2, 1810, 156, 0.938, 75.9, 197, 2100, 1400],
-        ["W12X230", 230, 67.7, 15.4, 0.812, 12.8, 1.44, 2, 1, 5.5, 6.83, 4.08, 435, 193, 362, 124, 4.47, 12.5, 68.0, 8950, 55.4, 1450, 125, 0.812, 62.1, 159, 1700, 1150],
-        ["W12X190", 190, 55.8, 14.7, 0.75, 12.5, 1.25, 1.75, 0.75, 5.5, 6.65, 4.01, 348, 157, 289, 101, 4.36, 12.2, 42.4, 6780, 47.3, 1160, 101, 0.75, 50.5, 128, 1400, 950],
-        ["W12X152", 152, 44.7, 14.0, 0.625, 12.2, 1.06, 1.5, 0.75, 5.5, 6.49, 3.95, 275, 125, 229, 80.7, 4.28, 11.9, 24.5, 5260, 39.7, 914, 80.6, 0.625, 40.3, 102, 1150, 750],
-        ["W12X120", 120, 35.3, 13.4, 0.55, 12.0, 0.9, 1.25, 0.75, 5.5, 6.41, 3.9, 214, 99.3, 177, 63.8, 4.21, 11.6, 15.1, 4000, 32.8, 710, 63.7, 0.55, 31.9, 80.4, 900, 600]
-    ],
-    "W10": [
-        ["W10X112", 112, 33.0, 11.4, 0.755, 10.4, 1.25, 1.75, 0.75, 5.5, 4.98, 3.03, 170, 78.9, 146, 60.0, 3.43, 8.89, 11.5, 1660, 28.3, 583, 60.0, 0.755, 30.0, 66.5, 850, 550],
-        ["W10X100", 100, 29.4, 11.1, 0.68, 10.3, 1.12, 1.5, 0.75, 5.5, 4.91, 3.01, 150, 77.7, 129, 53.1, 3.39, 8.86, 8.36, 1450, 28.9, 518, 53.0, 0.68, 26.5, 58.6, 750, 500],
-        ["W10X88", 88, 25.9, 10.8, 0.605, 10.1, 0.99, 1.25, 0.75, 5.5, 4.85, 2.99, 131, 68.0, 112, 46.3, 3.36, 8.83, 5.95, 1260, 26.1, 449, 46.3, 0.605, 23.2, 51.0, 650, 450],
-        ["W10X77", 77, 22.6, 10.6, 0.53, 10.1, 0.87, 1.25, 0.75, 5.5, 4.83, 2.98, 114, 59.6, 97.7, 40.5, 3.35, 8.86, 4.06, 1100, 23.2, 391, 40.5, 0.53, 20.3, 44.4, 600, 400],
-        ["W10X68", 68, 20.0, 10.4, 0.47, 10.0, 0.77, 1, 0.75, 5.5, 4.82, 2.97, 101, 52.6, 85.9, 35.7, 3.33, 8.86, 2.87, 970, 20.7, 345, 35.7, 0.47, 17.9, 39.0, 500, 350],
-        ["W10X60", 60, 17.6, 10.2, 0.42, 10.0, 0.68, 1, 0.75, 5.5, 4.82, 2.97, 88.7, 46.4, 75.7, 31.3, 3.32, 8.84, 2.00, 844, 18.5, 303, 31.3, 0.42, 15.7, 34.2, 450, 300]
-    ],
-    "W8": [
-        ["W8X67", 67, 19.7, 9.0, 0.57, 8.28, 0.935, 1.25, 0.75, 4.5, 3.81, 2.14, 82.8, 39.6, 70.4, 26.7, 2.48, 7.13, 3.71, 386, 17.3, 282, 26.7, 0.57, 13.3, 30.6, 500, 350],
-        ["W8X58", 58, 17.1, 8.75, 0.51, 8.22, 0.81, 1, 0.75, 4.5, 3.76, 2.12, 70.7, 33.8, 60.0, 22.8, 2.45, 7.13, 2.45, 325, 15.1, 240, 22.8, 0.51, 11.4, 26.0, 450, 300],
-        ["W8X48", 48, 14.1, 8.5, 0.4, 8.11, 0.685, 1, 0.75, 4.5, 3.74, 2.11, 58.1, 27.9, 49.0, 18.7, 2.43, 7.13, 1.41, 269, 12.5, 196, 18.7, 0.4, 9.38, 21.4, 350, 250],
-        ["W8X40", 40, 11.7, 8.25, 0.36, 8.07, 0.56, 0.75, 0.75, 4.5, 3.7, 2.08, 47.3, 22.5, 39.8, 15.2, 2.39, 7.13, 0.794, 213, 10.5, 159, 15.2, 0.36, 7.59, 17.4, 300, 200],
-        ["W8X35", 35, 10.3, 8.12, 0.31, 8.02, 0.495, 0.75, 0.75, 4.5, 3.69, 2.08, 41.3, 19.7, 34.7, 13.3, 2.38, 7.13, 0.536, 185, 9.27, 139, 13.3, 0.31, 6.66, 15.2, 250, 170],
-        ["W8X31", 31, 9.13, 8.0, 0.285, 8.0, 0.435, 0.75, 0.75, 4.5, 3.67, 2.08, 36.1, 17.3, 30.4, 11.6, 2.37, 7.13, 0.363, 160, 8.21, 122, 11.6, 0.285, 5.83, 13.2, 230, 150]
-    ]
-};
-
-// ASTM Steel specification properties
-const astmSpecs = {
-    "A36": { Fy: 36, Fu: 58, E: 29000 },
-    "A572Gr.42": { Fy: 42, Fu: 60, E: 29000 },
-    "A572Gr.50": { Fy: 50, Fu: 65, E: 29000 },
-    "A572Gr.55": { Fy: 55, Fu: 70, E: 29000 },
-    "A572Gr.60": { Fy: 60, Fu: 75, E: 29000 },
-    "A572Gr.65": { Fy: 65, Fu: 80, E: 29000 },
-    "A588Gr.42": { Fy: 42, Fu: 63, E: 29000 },
-    "A588Gr.46": { Fy: 46, Fu: 67, E: 29000 },
-    "A588Gr.50": { Fy: 50, Fu: 70, E: 29000 },
-    "A687": { Fy: 50, Fu: 70, E: 29000 },
-    "A992": { Fy: 50, Fu: 65, E: 29000 }
-};
-
-// Main design function
+// Function to perform the column design calculations
 function performDesign() {
+    console.log("Performing column design calculations...");
+    
     try {
-        console.log("Performing column design calculation...");
+        // Get load values
+        const deadLoad = parseFloat(document.getElementById("DeadLoad").value) || 0;
+        const liveLoad = parseFloat(document.getElementById("LiveLoad").value) || 0;
+        const columnLength = parseFloat(document.getElementById("LenghtDC").value) || 0;
         
-        // Get required DOM elements
-        const astmSelect = getRequiredElement("ASTMinputC", "ASTM specification selector");
-        const designMethodSelect = getRequiredElement("designMethod", "Design method selector");
-        const deadLoadInput = getRequiredElement("DeadLoad", "Dead load input");
-        const liveLoadInput = getRequiredElement("LiveLoad", "Live load input");
-        const lengthInput = getRequiredElement("LenghtDC", "Column length input");
+        // Get ASTM specification
+        const astmSpec = document.getElementById("ASTMinputC").value;
         
-        // Get input values
-        const astmSpec = astmSelect.value;
-        const designMethod = designMethodSelect.value;
-        const deadLoad = parseFloat(deadLoadInput.value) || 0;
-        const liveLoad = parseFloat(liveLoadInput.value) || 0;
-        const columnLength = parseFloat(lengthInput.value) || 0;
+        // Get design method
+        const designMethod = document.getElementById("designMethod").value;
         
-        // Check if inputs are valid
-        if (columnLength <= 0) {
-            throw new Error("Column length must be greater than zero");
-        }
+        // Store DL and LL
+        const DL = deadLoad;
+        const LL = liveLoad;
         
-        // Get end support conditions
-        const topFixed = document.getElementById("topfixedC");
-        const topPinned = document.getElementById("toppinnedC");
-        const topFree = document.getElementById("topfreeC");
-        const botFixed = document.getElementById("botfixedC");
-        const botPinned = document.getElementById("botpinnedC");
-        const botFree = document.getElementById("botfreeC");
+        // Get support conditions
+        const topSupport = getEndSupportCondition("top");
+        const botSupport = getEndSupportCondition("bot");
         
-        const topSupportType = topFixed && topFixed.checked ? "fixed" : 
-                              topPinned && topPinned.checked ? "pinned" : "free";
-        const botSupportType = botFixed && botFixed.checked ? "fixed" : 
-                              botPinned && botPinned.checked ? "pinned" : "free";
+        // Determine k-factor for X-axis based on end supports
+        const kFactorX = determineKFactorX(topSupport, botSupport);
         
         // Get lateral support information
-        const noSupport = document.getElementById("NosupportC");
-        const withSupport = document.getElementById("supportC");
-        const supportAmountInput = document.getElementById("supprtamountC");
-        
-        const hasLateralSupports = withSupport && withSupport.checked;
-        const supportCount = hasLateralSupports ? parseInt(supportAmountInput.value) || 0 : 0;
+        const hasLateralSupports = document.getElementById("supportC").checked;
+        const supportCount = hasLateralSupports ? 
+            parseInt(document.getElementById("supprtamountC").value) || 0 : 0;
         
         // Get lateral support locations and types
         const lateralSupports = [];
         if (hasLateralSupports) {
-            for (let i = 0; i < supportCount && i < 3; i++) {
-                const fixedElement = document.getElementById(`fixed${i+1}C`);
-                const pinnedElement = document.getElementById(`pinned${i+1}C`);
-                const locationElement = document.getElementById(`location${i+1}C`);
-                
-                if (locationElement) {
-                    const location = parseFloat(locationElement.value) || 0;
-                    const type = fixedElement && fixedElement.checked ? "fixed" :
-                                pinnedElement && pinnedElement.checked ? "pinned" : "free";
-                    
-                    if (location > 0 && location < columnLength) {
-                        lateralSupports.push({
-                            position: location,
-                            type: type
-                        });
-                    }
+            for (let i = 1; i <= supportCount; i++) {
+                const location = parseFloat(document.getElementById(`location${i}C`).value) || 0;
+                const type = getLateralSupportType(i);
+                if (location > 0 && location < columnLength) {
+                    lateralSupports.push({
+                        position: location,
+                        type: type
+                    });
                 }
             }
         }
@@ -2735,139 +2565,479 @@ function performDesign() {
         // Sort lateral supports by position
         lateralSupports.sort((a, b) => a.position - b.position);
         
-        // Calculate effective length factors
-        const { Kx, Ky, segmentsY } = calculateEffectiveLengthFactors(
-            columnLength, 
-            topSupportType, 
-            botSupportType, 
-            lateralSupports
-        );
+        // Calculate segments for Y-axis
+        const segments = calculateSegments(columnLength, lateralSupports);
         
-        // Calculate effective lengths
-        const Klx = Kx * columnLength * 12; // Convert to inches
-        const Kly = Ky * columnLength * 12; // Convert to inches
-        
-        // Determine governing effective length
-        const governingKl = Math.max(Klx, Kly);
-        const isYGoverning = Kly >= Klx;
-        
-        // Calculate required capacity
-        const totalLoad = calculateTotalLoad(deadLoad, liveLoad, designMethod);
-        
-        // Find suitable W-shapes
-        const suitableShapes = findSuitableShapes(
-            governingKl, 
-            totalLoad, 
-            designMethod, 
-            wShapeDatabase,
-            astmSpec
-        );
-        
-        // Display results
-        displayResults(
-            suitableShapes, 
-            Klx, 
-            Kly, 
-            isYGoverning, 
-            totalLoad, 
-            astmSpec, 
-            designMethod, 
-            segmentsY
-        );
-        
-        console.log("Design calculation completed successfully");
-    } catch (error) {
-        console.error("Error in design calculation:", error);
-        displayErrorMessage(`Design calculation error: ${error.message}`);
-    }
-}
-
-// Calculate effective length factors based on support conditions
-function calculateEffectiveLengthFactors(length, topSupport, botSupport, lateralSupports) {
-    // Default K factors for different end conditions
-    const endConditionFactors = {
-        'fixed-fixed': 0.5,
-        'fixed-pinned': 0.7,
-        'fixed-free': 2.0,
-        'pinned-pinned': 1.0,
-        'pinned-fixed': 0.7,
-        'pinned-free': 2.0,
-        'free-fixed': 2.0,
-        'free-pinned': 2.0,
-        'free-free': 10.0 // Effectively unstable
-    };
-    
-    // For X-axis: we only consider end supports
-    const endConditionX = `${topSupport}-${botSupport}`;
-    const Kx = endConditionFactors[endConditionX] || 1.0; // Default to 1.0 if condition not found
-    
-    // For Y-axis: consider both end supports and lateral bracing
-    let Ky = Kx; // Start with the same factor as X-axis
-    
-    // If we have lateral supports, we need to consider their effect
-    const segmentsY = [];
-    
-    if (lateralSupports.length > 0) {
-        // Create segments based on supports
-        let startPoint = 0;
-        let previousType = topSupport;
-        
-        // Process each lateral support
-        for (const support of lateralSupports) {
-            const segmentLength = support.position - startPoint;
-            const endCondition = `${previousType}-${support.type}`;
-            const segmentK = endConditionFactors[endCondition] || 1.0;
-            
-            segmentsY.push({
-                startPoint: startPoint,
-                endPoint: support.position,
-                length: segmentLength,
-                K: segmentK
-            });
-            
-            startPoint = support.position;
-            previousType = support.type;
-        }
-        
-        // Add final segment to bottom
-        const finalSegmentLength = length - startPoint;
-        const finalEndCondition = `${previousType}-${botSupport}`;
-        const finalSegmentK = endConditionFactors[finalEndCondition] || 1.0;
-        
-        segmentsY.push({
-            startPoint: startPoint,
-            endPoint: length,
-            length: finalSegmentLength,
-            K: finalSegmentK
+        // Determine k-factors for Y-axis segments
+        const kFactorsY = segments.map(segment => {
+            const startSupport = segment.startType;
+            const endSupport = segment.endType;
+            return determineKFactorY(startSupport, endSupport);
         });
         
-        // Find the maximum effective length factor among segments
-        let maxSegmentKL = 0;
-        for (const segment of segmentsY) {
-            const segmentKL = segment.K * segment.length;
-            if (segmentKL > maxSegmentKL) {
-                maxSegmentKL = segmentKL;
-            }
-        }
+        // Calculate KL values for X and Y axes
+        const KLx = kFactorX * columnLength;
         
-        // Calculate the overall effective length factor for Y-axis
-        Ky = maxSegmentKL / length;
+        // Calculate KL values for Y-axis segments
+        const KLySegments = segments.map((segment, index) => {
+            return {
+                segmentLength: segment.length,
+                kFactor: kFactorsY[index],
+                KL: kFactorsY[index] * segment.length
+            };
+        });
+        
+        // Find governing KLy (maximum KL value)
+        const governingKLy = Math.max(...KLySegments.map(segment => segment.KL));
+        
+        // Determine steel properties
+        const steelProperties = getSteelProperties(astmSpec);
+        const Fy = steelProperties.Fy;
+        const Fu = steelProperties.Fu;
+        
+        // Generate table with results
+        displayResults(DL, LL, columnLength, kFactorX, KLx, segments, kFactorsY, KLySegments, governingKLy, Fy, Fu, designMethod);
+        
+        // Store values for future use
+        storeDesignValues(DL, LL, columnLength, KLx, governingKLy, Fy, Fu, designMethod);
+        
+        console.log("Design calculations completed successfully");
+        
+        // Add delay before processing Excel export
+        setTimeout(() => {
+            exportToExcel();
+        }, 1500);
+        
+    } catch (error) {
+        console.error("Error performing design calculations:", error);
+        displayErrorMessage("An error occurred during calculation. Please check your inputs and try again.");
+    }
+}
+
+// Display error message
+function displayErrorMessage(message) {
+    const resultDiv = document.querySelector(".ResultofallCD");
+    if (resultDiv) {
+        resultDiv.innerHTML = `<div class="alert alert-danger">${message}</div>`;
+    } else {
+        console.error("Result div not found");
+        alert(message);
+    }
+}
+
+// Get the end support condition for top or bottom
+function getEndSupportCondition(position) {
+    if (position === "top") {
+        if (document.getElementById("topfixedC").checked) return "fixed";
+        if (document.getElementById("toppinnedC").checked) return "pinned";
+        if (document.getElementById("topfreeC").checked) return "free";
+    } else if (position === "bot") {
+        if (document.getElementById("botfixedC").checked) return "fixed";
+        if (document.getElementById("botpinnedC").checked) return "pinned";
+        if (document.getElementById("botfreeC").checked) return "free";
+    }
+    return "pinned"; // Default to pinned if not specified
+}
+
+// Get the lateral support type for a specific support
+function getLateralSupportType(supportIndex) {
+    if (document.getElementById(`fixed${supportIndex}C`).checked) return "fixed";
+    if (document.getElementById(`pinned${supportIndex}C`).checked) return "pinned";
+    if (document.getElementById(`Free${supportIndex}C`).checked) return "free";
+    return "free"; // Default to free if not specified
+}
+
+// Calculate segments between supports
+function calculateSegments(columnLength, lateralSupports) {
+    const segments = [];
+    
+    // If no lateral supports, entire column is one segment
+    if (lateralSupports.length === 0) {
+        segments.push({
+            start: 0,
+            end: columnLength,
+            length: columnLength,
+            startType: getEndSupportCondition("top"),
+            endType: getEndSupportCondition("bot")
+        });
+        return segments;
     }
     
-    return { Kx, Ky, segmentsY };
+    // First segment (from top to first support)
+    segments.push({
+        start: 0,
+        end: lateralSupports[0].position,
+        length: lateralSupports[0].position,
+        startType: getEndSupportCondition("top"),
+        endType: lateralSupports[0].type
+    });
+    
+    // Middle segments (between supports)
+    for (let i = 0; i < lateralSupports.length - 1; i++) {
+        segments.push({
+            start: lateralSupports[i].position,
+            end: lateralSupports[i + 1].position,
+            length: lateralSupports[i + 1].position - lateralSupports[i].position,
+            startType: lateralSupports[i].type,
+            endType: lateralSupports[i + 1].type
+        });
+    }
+    
+    // Last segment (from last support to bottom)
+    segments.push({
+        start: lateralSupports[lateralSupports.length - 1].position,
+        end: columnLength,
+        length: columnLength - lateralSupports[lateralSupports.length - 1].position,
+        startType: lateralSupports[lateralSupports.length - 1].type,
+        endType: getEndSupportCondition("bot")
+    });
+    
+    return segments;
 }
 
-// Calculate total load based on design method
-function calculateTotalLoad(deadLoad, liveLoad, designMethod) {
-    if (designMethod === "LRFD") {
-        // LRFD load combinations
-        return 1.2 * deadLoad + 1.6 * liveLoad;
-    } else {
-        // ASD load combinations
-        return deadLoad + liveLoad;
+// Determine k-factor for X-axis based on end supports
+function determineKFactorX(topSupport, botSupport) {
+    // Theoretical K factors based on AISC Column Design Guide
+    if (topSupport === "fixed" && botSupport === "fixed") return 0.65; // Fixed-Fixed
+    if (topSupport === "fixed" && botSupport === "pinned") return 0.80; // Fixed-Pinned
+    if (topSupport === "fixed" && botSupport === "free") return 2.10; // Fixed-Free (cantilever)
+    if (topSupport === "pinned" && botSupport === "pinned") return 1.0; // Pinned-Pinned
+    if (topSupport === "pinned" && botSupport === "fixed") return 0.80; // Pinned-Fixed
+    if (topSupport === "pinned" && botSupport === "free") return 2.0; // Pinned-Free
+    if (topSupport === "free" && botSupport === "fixed") return 2.10; // Free-Fixed
+    if (topSupport === "free" && botSupport === "pinned") return 2.0; // Free-Pinned
+    
+    // Default to pinned-pinned if combination not recognized
+    return 1.0;
+}
+
+// Determine k-factor for Y-axis segment based on end supports
+function determineKFactorY(startSupport, endSupport) {
+    // Same logic as X-axis
+    return determineKFactorX(startSupport, endSupport);
+}
+
+// Get steel properties based on ASTM specification
+function getSteelProperties(astmSpec) {
+    // Steel properties in ksi (yield and ultimate strengths)
+    const steelProperties = {
+        "A36": { Fy: 36, Fu: 58 },
+        "A572Gr.42": { Fy: 42, Fu: 60 },
+        "A572Gr.50": { Fy: 50, Fu: 65 },
+        "A572Gr.55": { Fy: 55, Fu: 70 },
+        "A572Gr.60": { Fy: 60, Fu: 75 },
+        "A572Gr.65": { Fy: 65, Fu: 80 },
+        "A588Gr.42": { Fy: 42, Fu: 63 },
+        "A588Gr.46": { Fy: 46, Fu: 67 },
+        "A588Gr.50": { Fy: 50, Fu: 70 },
+        "A687": { Fy: 50, Fu: 70 },
+        "A992": { Fy: 50, Fu: 65 }
+    };
+    
+    return steelProperties[astmSpec] || { Fy: 36, Fu: 58 }; // Default to A36 if not found
+}
+
+// Display results in the ResultofallCD div
+function displayResults(DL, LL, columnLength, kFactorX, KLx, segments, kFactorsY, KLySegments, governingKLy, Fy, Fu, designMethod) {
+    const resultDiv = document.querySelector(".ResultofallCD");
+    
+    if (!resultDiv) {
+        console.error("Result div not found");
+        return;
+    }
+    
+    // Create table HTML
+    let tableHTML = `
+        <h2>Column Design Results</h2>
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <th colspan="2">Design Parameters</th>
+                <th colspan="2">Material Properties</th>
+            </tr>
+            <tr>
+                <td>Dead Load (DL):</td>
+                <td>${DL.toFixed(2)} kips</td>
+                <td>Yield Strength (Fy):</td>
+                <td>${Fy} ksi</td>
+            </tr>
+            <tr>
+                <td>Live Load (LL):</td>
+                <td>${LL.toFixed(2)} kips</td>
+                <td>Ultimate Strength (Fu):</td>
+                <td>${Fu} ksi</td>
+            </tr>
+            <tr>
+                <td>Column Length:</td>
+                <td>${columnLength.toFixed(2)} ft</td>
+                <td>Design Method:</td>
+                <td>${designMethod}</td>
+            </tr>
+        </table>
+        
+        <h3>X-Axis Analysis</h3>
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <th>Segment</th>
+                <th>Length (ft)</th>
+                <th>K Factor</th>
+                <th>KL (ft)</th>
+            </tr>
+            <tr>
+                <td>Full Length</td>
+                <td>${columnLength.toFixed(2)}</td>
+                <td>${kFactorX.toFixed(2)}</td>
+                <td>${KLx.toFixed(2)}</td>
+            </tr>
+        </table>
+        
+        <h3>Y-Axis Analysis</h3>
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <th>Segment</th>
+                <th>Length (ft)</th>
+                <th>K Factor</th>
+                <th>KL (ft)</th>
+            </tr>
+    `;
+    
+    // Add rows for each Y-axis segment
+    KLySegments.forEach((segment, index) => {
+        tableHTML += `
+            <tr>
+                <td>y${index + 1}</td>
+                <td>${segment.segmentLength.toFixed(2)}</td>
+                <td>${segment.kFactor.toFixed(2)}</td>
+                <td>${segment.KL.toFixed(2)}</td>
+            </tr>
+        `;
+    });
+    
+    tableHTML += `
+        </table>
+        
+        <h3>Governing Values</h3>
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Governing KLx:</td>
+                <td>${KLx.toFixed(2)} ft</td>
+            </tr>
+            <tr>
+                <td>Governing KLy:</td>
+                <td>${governingKLy.toFixed(2)} ft</td>
+            </tr>
+            <tr>
+                <td>Critical KL (max of KLx, KLy):</td>
+                <td>${Math.max(KLx, governingKLy).toFixed(2)} ft</td>
+            </tr>
+        </table>
+        
+        <div class="downlaod">
+            <p>Processing data for Excel export, please wait...</p>
+        </div>
+    `;
+    
+    resultDiv.innerHTML = tableHTML;
+}
+
+// Store design values for future use
+function storeDesignValues(DL, LL, Length, KLx, KLy, Fy, Fu, designMethod) {
+    // Store values in localStorage or a global variable for export
+    window.columnDesignValues = {
+        deadLoad: DL,
+        liveLoad: LL,
+        columnLength: Length,
+        effectiveLengthX: KLx,
+        effectiveLengthY: KLy,
+        yieldStrength: Fy,
+        ultimateStrength: Fu,
+        designMethod: designMethod
+    };
+    
+    console.log("Design values stored:", window.columnDesignValues);
+}
+
+
+// Function to export design values to Excel
+function exportToExcel() {
+    try {
+        // Check if we have stored design values
+        if (!window.columnDesignValues) {
+            console.error("No design values to export");
+            return;
+        }
+        
+        const values = window.columnDesignValues;
+        console.log("Exporting values to Excel:", values);
+        
+        // Load the ExcelJS library dynamically if not already loaded
+        if (typeof ExcelJS === 'undefined') {
+            console.log("Loading ExcelJS...");
+            
+            // Create a loading message
+            const downloadDiv = document.querySelector('.downlaod');
+            if (downloadDiv) {
+                downloadDiv.innerHTML = '<p>Loading Excel libraries, please wait...</p>';
+            }
+            
+            // Load ExcelJS from CDN
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js';
+                script.onload = resolve;
+                script.onerror = () => reject(new Error('Failed to load ExcelJS'));
+                document.head.appendChild(script);
+            })
+            .then(() => {
+                // Continue with Excel processing once library is loaded
+                continueExcelProcessing(values);
+            })
+            .catch(error => {
+                console.error("Error loading ExcelJS:", error);
+                const downloadDiv = document.querySelector('.downlaod');
+                if (downloadDiv) {
+                    downloadDiv.innerHTML = `<p>Error loading Excel libraries: ${error.message}</p>`;
+                }
+            });
+        } else {
+            // ExcelJS is already loaded, continue processing
+            continueExcelProcessing(values);
+        }
+    } catch (error) {
+        console.error("Error in exportToExcel:", error);
+        window.alert("Error preparing Excel export: " + error.message);
     }
 }
 
+// Continue Excel processing with ExcelJS
+function continueExcelProcessing(values) {
+    // Fetch the Excel file
+    fetch('COMPRESSION-1.xlsx')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to load Excel file');
+            }
+            return response.arrayBuffer();
+        })
+        .then(async (arrayBuffer) => {
+            try {
+                // Create a new Excel workbook from the array buffer
+                const workbook = new ExcelJS.Workbook();
+                await workbook.xlsx.load(arrayBuffer);
+                
+                // Get the first worksheet
+                const worksheet = workbook.worksheets[0];
+                
+                // Update cell values without changing formatting
+                // We only update the cell value property
+                updateCellValue(worksheet, 'C35', values.deadLoad);
+                updateCellValue(worksheet, 'C36', values.liveLoad);
+                updateCellValue(worksheet, 'B31', values.yieldStrength);
+                updateCellValue(worksheet, 'B32', values.ultimateStrength);
+                updateCellValue(worksheet, 'C39', values.effectiveLengthX);
+                updateCellValue(worksheet, 'C40', values.effectiveLengthY);
+                
+                // Write to buffer
+                const buffer = await workbook.xlsx.writeBuffer();
+                
+                // Convert buffer to Blob
+                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                
+                // Create download link
+                const url = URL.createObjectURL(blob);
+                
+                // Update download div with link
+                const downloadDiv = document.querySelector('.downlaod');
+                if (downloadDiv) {
+                    downloadDiv.innerHTML = `
+                        <a href="${url}" download="COMPRESSION-1.xlsx" class="btn btn-success">
+                            Download Updated Excel File
+                        </a>
+                    `;
+                    console.log("Download link created");
+                } else {
+                    console.error("Download div not found");
+                    
+                    // Create and trigger download
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'COMPRESSION-1.xlsx';
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    // Clean up
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 0);
+                }
+            } catch (error) {
+                console.error("Error processing Excel file:", error);
+                const downloadDiv = document.querySelector('.downlaod');
+                if (downloadDiv) {
+                    downloadDiv.innerHTML = `<p>Error processing Excel file: ${error.message}</p>`;
+                } else {
+                    window.alert("Error processing Excel file: " + error.message);
+                }
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching Excel file:", error);
+            const downloadDiv = document.querySelector('.downlaod');
+            if (downloadDiv) {
+                downloadDiv.innerHTML = `<p>Error fetching Excel file: ${error.message}</p>`;
+            } else {
+                window.alert("Error fetching Excel file: " + error.message);
+            }
+        });
+}
+
+// Helper function to update cell value without modifying formatting
+function updateCellValue(worksheet, cellRef, newValue) {
+    // Parse cell reference (e.g., 'A1' into column and row)
+    const colLetters = cellRef.replace(/[0-9]/g, '');
+    const rowNum = parseInt(cellRef.replace(/[^0-9]/g, ''));
+    
+    // Get the column number from column letters
+    let colNum = 0;
+    for (let i = 0; i < colLetters.length; i++) {
+        colNum = colNum * 26 + (colLetters.charCodeAt(i) - 64);
+    }
+    
+    // Get the cell at the specified position
+    const cell = worksheet.getCell(rowNum, colNum);
+    
+    // Update only the value, preserving all other properties and formatting
+    cell.value = newValue;
+}
+
+// Update the DOM content loaded event listener to include ExcelJS
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("DOM loaded, initializing...");
+    
+    // Attach event listener to Design button
+    const designButton = document.getElementById("DesignC");
+    if (designButton) {
+        // Remove any existing event listeners first
+        const newButton = designButton.cloneNode(true);
+        designButton.parentNode.replaceChild(newButton, designButton);
+        
+        // Add our event listener
+        newButton.addEventListener("click", function(e) {
+            e.preventDefault();
+            console.log("Design button clicked, calling performDesign()");
+            performDesign();
+        });
+        console.log("Design button event listener attached");
+    } else {
+        console.error("Design button with ID 'DesignC' not found in the DOM");
+    }
+});
+
+       
 
 </script>
 

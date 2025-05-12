@@ -87,11 +87,10 @@
                     <label><input type="radio" name="designOption" value="block"> Include Block Shear Only</label><br>
                     <label><input type="radio" name="designOption" value="stagger"> Include Staggered Holes Only</label><br>
 
-                    
+                    <input type="button" class="Calculate" value="Calculate">
 
                 </form>
-                <div> <input type="button" class="Calculate" value="Calculate"></div>
-            
+                
             </div>
 
             <div class="AxialTenR" id="Result">
@@ -187,7 +186,15 @@
                        
                     </select>
                 </div>
-            
+                <div>
+                    Shear Lag:
+                    <select id="ulagCase"> 
+                        <option value="1">Case 1</option>
+                        <option value="2">Case 2</option>
+                        <option value="7">Case 7</option>
+                        <option value="8">Case 8</option>
+                    </select>
+                 </div>
                  <div>
 
                     <label for="DeadDload">Dead Load:</label>
@@ -197,6 +204,11 @@
                     <label for="Lload">Live Load:</label>
                     <input id="Lload" type="number" placeholder="kips">
                  </div>
+                 <div>
+                    <label for="length">Length:</label>
+                    
+                    <input id="LenghtD" type="number" placeholder="ft."  step="0.001">
+                </div>
                     <div>
 
                     <label for="dholeD"  >Diameter  of Bolts:</label>
@@ -224,47 +236,143 @@
     <div class="DesignTRes">
         <div class="DesignCalcT">
             
+            <h1>Design Calculation</h1>
+            <div class="LRFDdis">
+                <H2>Step 1: Load Combinations</H2>
+
+            <h4>LRFD Load Combination: 1.2D + 1.6L=<p id="LRFDdesignComb"></p></h4> <h4>ASD Load Combination: 1.4D =<p id="ASDdesignComb"></p></h4>
+            </div> 
+        </div>    
+            <div class="DesignCalcT">
+            <h2>Step 2: Required Area Calculation</h2>
+            <h3>For Yielding (LRFD):</h3>
+            <h4>Pu ≤ φPn = φFyAg <br>
+                Ag ≥ Pu / (φFy) = <p id="LRFDYielding"></p></h4>
+                <h3>For Yielding (ASD):</h3>
+            <h4>TnΩ = FyAg/Ω = FyAg /1.67 <br>
+                Ag ≥ Pu / (φFy) = <p id="ASDYielding"></p></h4>
+                <h3>For Fracture (LRFD):</h3>
+                <h4>Pu ≤ φPn = φFuAe = <p id="LRFDFracture"></p></p></h4>
+                <h3>For Fracture (ASD):</h3>
+                <h4>Tn/Ω = FuAe/Ω = FuAe/2.00 <p id="ASDFracture"></p></p></h4>
+
+            <H3 >Controlling Ag requirement: <p class="controlR"></p></H3>     
+        </div>
+                                <div class="DesignCon">
+                                                     <div class="recommended-shapes">
+                 <h2>Recommended W Shapes</h2>
+                <p>The following shapes provide sufficient area for the tension member:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Shape</th>
+                             <th>ry</th>
+                            <th>Area Gross (in²)</th>
+                            <th>Demand</th>
+                            <th>Weight (lb/ft)</th>
+                            <th>Ahole</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="rank1"></td>
+                             <td id="ry1"></td>
+                            <td id="Shape1"></td>
+                            <td id="AreaG1"></td>
+                            <td id="D1"></td>
+                            <td id="Weight1"></td>
+                            <td id="Ahole1"></td>
+                            <td id="Status1"></td>
+                        </tr>
+                        <tr>
+                            <td id="rank2"></td>
+                             <td id="ry2"></td>
+                            <td id="Shape2"></td>
+                            <td id="AreaG2"></td>
+                            <td id="D2"></td>
+                            <td id="Weight2"></td>
+                            <td id="Ahole2"></td>
+                            <td id="Status2"></td>
+                        </tr>
+                        <tr>
+                            <td id="rank3"></td>
+                             <td id="ry3"></td>
+                            <td id="Shape3"></td>
+                            <td id="AreaG3"></td>
+                            <td id="D3"></td>
+                            <td id="Weight3"></td>
+                            <td id="Ahole3"></td>
+                            <td id="Status3"></td>
+                        </tr>
+                        <tr>
+                            <td id="rank4"></td>
+                             <td id="ry4"></td>
+                            <td id="Shape4"></td>
+                            <td id="AreaG4"></td>
+                            <td id="D4"></td>
+                            <td id="Weight4"></td>
+                            <td id="Ahole4"></td>
+                            <td id="Status4"></td>
+                        </tr>
+                        
+                    </tbody>
+                </table>
+                
+                
+                
+               
+                                        </div>
+                                                    </div>
+
+        
+            
+ 
+   
+   
     </div>
 </div>
     <script>
     
- // Add a loading state
-let dataLoaded = false;
-let steelData = {}; // Define steelData object if not already defined elsewhere
+    // Add a loading state
 
-function loadExcelData() {
-    console.log("Loading Excel data...");
-    dataLoaded = false;
-    
-    // Show loading indicator
-    const loadingIndicator = document.createElement('div');
-    loadingIndicator.id = 'loading-indicator';
-    loadingIndicator.innerHTML = 'Loading steel section data...';
-    loadingIndicator.style.position = 'fixed';
-    loadingIndicator.style.top = '10px';
-    loadingIndicator.style.right = '10px';
-    loadingIndicator.style.padding = '5px 10px';
-    loadingIndicator.style.backgroundColor = '#ffe0e0';
-    loadingIndicator.style.border = '1px solid #ffcccc';
-    loadingIndicator.style.borderRadius = '3px';
-    loadingIndicator.style.zIndex = '1000';
-    document.body.appendChild(loadingIndicator);
-    
-    fetch('ASTMSPEC.xlsx')
-        .then(res => res.arrayBuffer())
-        .then(data => {
-            const workbook = XLSX.read(data, { type: 'array' });
-            const shapeSheet = workbook.Sheets[workbook.SheetNames[1]];
-            const shapeRows = XLSX.utils.sheet_to_json(shapeSheet);
+    let steelData = {}; // Define steelData object if not already defined elsewhere
 
-            console.log("Excel data loaded, processing", shapeRows.length, "rows");
-            
-            shapeRows.forEach(row => {
-                if (row["AISC_Manual_Label"]) {
-                    const label = row["AISC_Manual_Label"].trim().toUpperCase().replace(/\s/g, '');
-                    
-                    // Store data based on section type
-                    if (label.startsWith('W')) {
+    function loadExcelData() {
+        console.log("Loading Excel data...");
+        dataLoaded = false;
+        
+        // Show loading indicator
+        const loadingIndicator = document.createElement('div');
+        loadingIndicator.id = 'loading-indicator';
+        loadingIndicator.innerHTML = 'Loading steel section data...';
+        loadingIndicator.style.position = 'fixed';
+        loadingIndicator.style.top = '10px';
+        loadingIndicator.style.right = '10px';
+        loadingIndicator.style.padding = '5px 10px';
+        loadingIndicator.style.backgroundColor = '#ffe0e0';
+        loadingIndicator.style.border = '1px solid #ffcccc';
+        loadingIndicator.style.borderRadius = '3px';
+        loadingIndicator.style.zIndex = '1000';
+        document.body.appendChild(loadingIndicator);
+        
+        fetch('ASTMSPEC.xlsx')
+            .then(res => res.arrayBuffer())
+            .then(data => {
+                const workbook = XLSX.read(data, { type: 'array' });
+                const shapeSheet = workbook.Sheets[workbook.SheetNames[1]];
+                const shapeRows = XLSX.utils.sheet_to_json(shapeSheet);
+
+                console.log("Excel data loaded, processing", shapeRows.length, "rows");
+                
+                shapeRows.forEach(row => {
+                    if (row["AISC_Manual_Label"]) {
+                        const label = row["AISC_Manual_Label"].trim().toUpperCase().replace(/\s/g, '');
+                        
+                        // Store data based on section type
+                        if (label.startsWith('W')) {
                         // W shape (wide flange)
                         steelData[label] = {
                             type: 'W',
@@ -1405,33 +1513,82 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Function to load the SheetJS library
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Global variables for data storage
-let steelSpecs = [];    // Array to store steel specifications from sheet 1
-let wShapeData = {};    // Object to store W shape section data from sheet 3
-let lShapeData = {};    // Object to store L shape section data from sheet 3
+let steelSpecs = [];
+let sectionData = {};
+let beamData = {};  // To store beam data from sheet 3 if needed
+let dataLoaded = false;
 
 // Initialize the application when the document is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Initializing application");
+    
+    // Initialize event listeners
+    setupEventListeners();
     
     // Try to load the data from Excel file
     loadExcelData()
         .then(() => {
             console.log("Excel data loaded successfully");
             dataLoaded = true;
-            // You can call functions that depend on the data here
-            // For example: updateShapeOptions();
+            // Call updateShapeOptions to populate the W-shape and L-shape input datalist
+            updateShapeOptions();
         })
         .catch(error => {
             console.warn("Failed to load Excel data:", error);
             console.log("Using hardcoded data instead");
             useHardcodedData();
             dataLoaded = true;
-            // You can still call dependent functions here with the hardcoded data
+            // Still call updateShapeOptions with the hardcoded data
+            updateShapeOptions();
         });
 });
 
-// Function to load Excel data using SheetJS
+// Function to set up all event listeners
+function setupEventListeners() {
+    console.log("Setting up event listeners");
+    
+    // Get the button element first
+    const analyzeButton = document.getElementById('AnalysisShear');
+    
+    // Check if the button exists
+    if (analyzeButton) {
+        console.log("Found Analysis button, adding click listener");
+        analyzeButton.addEventListener('click', analyzeShear);
+    } else {
+        console.error("Could not find 'AnalysisShear' button");
+        // Try again when window is fully loaded
+        window.addEventListener('load', function() {
+            const buttonRetry = document.getElementById('AnalysisShear');
+            if (buttonRetry) {
+                console.log("Found button on window load, adding listener");
+                buttonRetry.addEventListener('click', analyzeShear);
+            }
+        });
+    }
+}
+
+// Function to load Excel data using fetch API
 async function loadExcelData() {
     // Show loading indicator
     const loadingIndicator = document.createElement('div');
@@ -1449,9 +1606,6 @@ async function loadExcelData() {
     
     try {
         console.log("Attempting to load Excel data...");
-        
-        // Ensure SheetJS is loaded
-        await addExcelLibrary();
         
         // Use fetch API to load the Excel file as a blob
         const response = await fetch('ASTMSPEC.xlsx', {
@@ -1471,110 +1625,78 @@ async function loadExcelData() {
         // Parse with SheetJS
         const workbook = XLSX.read(data, { type: 'array' });
         
-        console.log("Workbook sheets:", workbook.SheetNames);
+        // Load steel specifications from the first sheet
+        const steelSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rawSteelSpecs = XLSX.utils.sheet_to_json(steelSheet);
         
-        // Load steel specifications from sheet 1
-        if (workbook.SheetNames.length > 0) {
-            const steelSheet = workbook.Sheets[workbook.SheetNames[0]];
-            const rawSteelSpecs = XLSX.utils.sheet_to_json(steelSheet);
-            
-            // Validate steel specs data
-            steelSpecs = rawSteelSpecs.filter(spec => 
-                spec.Steel_name && 
-                typeof spec.Fy === 'number' && 
-                typeof spec.Fu === 'number'
+        // Validate steel specs data
+        steelSpecs = rawSteelSpecs.filter(spec => 
+            spec.Steel_name && 
+            typeof spec.Fy === 'number' && 
+            typeof spec.Fu === 'number'
+        );
+        
+        if (steelSpecs.length === 0) {
+            console.error("No valid steel specifications found in the Excel file");
+            console.log("Raw steel specs data:", rawSteelSpecs);
+            useHardcodedData();
+        } else {
+            console.log(`Successfully loaded ${steelSpecs.length} steel specifications`);
+            steelSpecs.slice(0, 5).forEach(spec => 
+                console.log(`Steel: ${spec.Steel_name}, Fy: ${spec.Fy}, Fu: ${spec.Fu}`)
             );
-            
-            if (steelSpecs.length === 0) {
-                console.error("No valid steel specifications found in the Excel file");
-                console.log("Raw steel specs data:", rawSteelSpecs);
-            } else {
-                console.log(`Successfully loaded ${steelSpecs.length} steel specifications`);
-                steelSpecs.slice(0, 5).forEach(spec => 
-                    console.log(`Steel: ${spec.Steel_name}, Fy: ${spec.Fy}, Fu: ${spec.Fu}`)
-                );
-            }
         }
         
-        // Load section data from sheet 2 (instead of sheet 3)
-        if (workbook.SheetNames.length > 1) {
-            const sectionSheet = workbook.Sheets[workbook.SheetNames[1]]; // Changed from index 2 to 1
-            const sectionsArray = XLSX.utils.sheet_to_json(sectionSheet);
+        // Load section data from the second sheet
+        const sectionSheet = workbook.Sheets[workbook.SheetNames[1]];
+        const sectionsArray = XLSX.utils.sheet_to_json(sectionSheet);
+        
+        // Convert array to object with section names as keys
+        sectionData = {};
+        sectionsArray.forEach(section => {
+            if (section.AISC_Manual_Label) {
+                const label = section.AISC_Manual_Label.trim().toUpperCase().replace(/\s/g, '');
+                sectionData[label] = {
+                    A: parseFloat(section.A) || 0,
+                    tw: parseFloat(section.tw) || 0,
+                    d: parseFloat(section.d) || 0,
+                    bf: parseFloat(section.bf) || 0,
+                    Zx: parseFloat(section.Zx) || 0,
+                    Sx: parseFloat(section.Sx) || 0,
+                    Ry: parseFloat(section.Ry) || 0,  // Added Ry support
+                    Zy: parseFloat(section.Zy) || 0,  // Added Zy support
+                    Sy: parseFloat(section.Sy) || 0,  // Added Sy support
+                    "bf/2tf": parseFloat(section["bf/2tf"]) || 0,
+                    "h/tw": parseFloat(section["h/tw"]) || 0,
+                    Kc: parseFloat(section.Kc) || 0,
+                    type: label.startsWith('L') ? 'L' : 
+                           label.startsWith('W') ? 'W' : 'Other',  // Added section type detection
+                    AISC_Manual_Label: label
+                };
+            }
+        });
+        
+        console.log(`Loaded ${Object.keys(sectionData).length} sections`);
+        
+        // Try to load beam data from third sheet if it exists
+        if (workbook.SheetNames.length > 2) {
+            const beamSheet = workbook.Sheets[workbook.SheetNames[2]];
+            const beamsArray = XLSX.utils.sheet_to_json(beamSheet);
             
-            console.log("Section data sample:", sectionsArray.slice(0, 2));
-            
-            // Process sections
-            sectionsArray.forEach(section => {
-                if (section.AISC_Manual_Label) {
-                    const label = section.AISC_Manual_Label.trim();
-                    
-                    // Create data object with all required properties, checking for each property
-                    const sectionData = {
-                        AISC_Manual_Label: label,
-                        W: parseFloat(section.W) || 0,
-                        A: parseFloat(section.A) || 0,
-                        tw: parseFloat(section.tw) || 0,
-                        bf: parseFloat(section.bf) || 0,
-                        bfdet: parseFloat(section.bfdet) || 0,
-                        twdet: parseFloat(section.twdet) || 0,
-                        "twdet/2": parseFloat(section["twdet/2"]) || 0,
-                        tf: parseFloat(section.tf) || 0,
-                        tfdet: parseFloat(section.tfdet) || 0,
-                        "bf/2tf": parseFloat(section["bf/2tf"]) || 0,
-                        "h/tw": parseFloat(section["h/tw"]) || 0,
-                        Ix: parseFloat(section.Ix) || 0,
-                        Zx: parseFloat(section.Zx) || 0,
-                        Sx: parseFloat(section.Sx) || 0,
-                        rx: parseFloat(section.rx) || 0,
-                        Iy: parseFloat(section.Iy) || 0,
-                        Zy: parseFloat(section.Zy) || 0,
-                        Sy: parseFloat(section.Sy) || 0,
-                        ry: parseFloat(section.ry) || 0,
-                        d: parseFloat(section.d) || 0,
-                        rz: parseFloat(section.rz) || 0
-                    };
-                    
-                    // Log section data being processed
-                    if (sectionsArray.indexOf(section) < 2) {
-                        console.log("Processing section:", label, sectionData);
-                    }
-                    
-                    // Separate W shapes and L shapes
-                    if (label.startsWith('W')) {
-                        wShapeData[label] = sectionData;
-                    } else if (label.startsWith('L')) {
-                        lShapeData[label] = sectionData;
-                    }
+            beamData = {};
+            beamsArray.forEach(beam => {
+                if (beam.BeamID) {
+                    beamData[beam.BeamID] = beam;
                 }
             });
             
-            console.log(`Loaded ${Object.keys(wShapeData).length} W shapes and ${Object.keys(lShapeData).length} L shapes`);
-            
-            // Display some sample sections
-            if (Object.keys(wShapeData).length > 0) {
-                console.log("Sample W shape:", Object.values(wShapeData)[0]);
-            }
-            if (Object.keys(lShapeData).length > 0) {
-                console.log("Sample L shape:", Object.values(lShapeData)[0]);
-            }
-        } else {
-            console.warn("Sheet 2 not found in the Excel file");
+            console.log(`Loaded ${Object.keys(beamData).length} beam entries`);
         }
         
         // Remove loading indicator
         if (document.getElementById('loading-indicator')) {
             document.getElementById('loading-indicator').remove();
         }
-        
-        // Set the data in the global window object to ensure accessibility
-        window.steelSpecs = steelSpecs;
-        window.wShapeData = wShapeData;
-        window.lShapeData = lShapeData;
-        
-        // Add functions to window to aid debugging
-        window.getWShapeData = getWShapeData;
-        window.getLShapeData = getLShapeData;
-        window.getSteelSpecData = getSteelSpecData;
         
         return true;
     } catch (error) {
@@ -1604,357 +1726,178 @@ function useHardcodedData() {
     // Default steel specifications
     const hardcodedSteelSpecs = [
         { Steel_name: "A36", Fy: 36, Fu: 58 },
+        { Steel_name: "A572Gr.42", Fy: 42, Fu: 60 },
         { Steel_name: "A572Gr.50", Fy: 50, Fu: 65 },
-        { Steel_name: "A992", Fy: 50, Fu: 65 },
-        { Steel_name: "A588Gr.50", Fy: 50, Fu: 70 },
+        { Steel_name: "A572Gr.55", Fy: 55, Fu: 70 },
         { Steel_name: "A572Gr.60", Fy: 60, Fu: 75 },
-        { Steel_name: "A572Gr.65", Fy: 65, Fu: 80 }
+        { Steel_name: "A572Gr.65", Fy: 65, Fu: 80 },
+        { Steel_name: "A588Gr.42", Fy: 42, Fu: 63 },
+        { Steel_name: "A588Gr.46", Fy: 46, Fu: 67 },
+        { Steel_name: "A588Gr.50", Fy: 50, Fu: 70 },
+        { Steel_name: "A687", Fy: 50, Fu: 70 },
+        { Steel_name: "A992", Fy: 50, Fu: 65 }
     ];
     
-    // Common W shapes with their properties
-    const hardcodedWShapeData = {
+    // Common W and L shapes with their properties
+    const hardcodedSectionData = {
         "W12X45": { 
-            AISC_Manual_Label: "W12X45",
-            W: 45,
-            A: 13.2, 
-            tw: 0.335, 
-            d: 12.1, 
-            bf: 8.05,
-            tf: 0.575,
-            "bf/2tf": 8.5,
-            "h/tw": 29.9,
-            Ix: 348,
-            Zx: 88.6,
-            Sx: 78.0,
-            rx: 5.18,
-            Iy: 108,
-            Zy: 33.4,
-            Sy: 21.4,
-            ry: 2.87,
-            rz: 3.38
+            A: 13.2, tw: 0.335, d: 12.1, bf: 8.05, 
+            Zx: 88.6, Sx: 78.0, Ry: 2.45, Zy: 16.4, Sy: 13.6,
+            "bf/2tf": 8.5, "h/tw": 29.9, Kc: 0.707, 
+            type: 'W', AISC_Manual_Label: "W12X45" 
         },
-        "W14X53": {
-            AISC_Manual_Label: "W14X53",
-            W: 53,
-            A: 15.6, 
-            tw: 0.37, 
-            d: 13.9, 
-            bf: 8.06,
-            tf: 0.66,
-            "bf/2tf": 7.33,
-            "h/tw": 32.3,
-            Ix: 541,
-            Zx: 115,
-            Sx: 102,
-            rx: 5.89,
-            Iy: 173,
-            Zy: 37.2,
-            Sy: 24.3,
-            ry: 3.33,
-            rz: 3.85
+        "W10X33": { 
+            A: 9.71, tw: 0.29, d: 9.73, bf: 5.77, 
+            Zx: 42.1, Sx: 36.6, Ry: 2.18, Zy: 8.7, Sy: 7.5,
+            "bf/2tf": 9.15, "h/tw": 27.9, Kc: 0.707, 
+            type: 'W', AISC_Manual_Label: "W10X33" 
         },
-        "W16X40": {
-            AISC_Manual_Label: "W16X40",
-            W: 40,
-            A: 11.8, 
-            tw: 0.305, 
-            d: 16.0, 
-            bf: 7.0,
-            tf: 0.505,
-            "bf/2tf": 9.2,
-            "h/tw": 46.2,
-            Ix: 518,
-            Zx: 92.0,
-            Sx: 81.0,
-            rx: 6.63,
-            Iy: 28.9,
-            Zy: 16.7,
-            Sy: 10.4,
-            ry: 1.57,
-            rz: 2.20
-        }
-    };
-    
-    // Common L shapes with their properties
-    const hardcodedLShapeData = {
-        "L4X4X1/2": {
-            AISC_Manual_Label: "L4X4X1/2",
-            W: 12.8,
-            A: 3.75,
-            d: 4,
-            bf: 4,
-            tf: 0.5,
-            Ix: 5.56,
-            Sx: 1.97,
-            rx: 1.22,
-            Iy: 5.56,
-            Sy: 1.97,
-            ry: 1.22,
-            rz: 0.78
+        "L4X3X3/8": {
+            A: 4.22, tw: 0.375, d: 4.0, bf: 3.0, 
+            Zx: 6.92, Sx: 5.64, Ry: 1.47, Zy: 2.83, Sy: 2.37,
+            "bf/2tf": 4.0, "h/tw": 8.0, Kc: 0.707, 
+            type: 'L', AISC_Manual_Label: "L4X3X3/8"
         },
-        "L6X6X3/8": {
-            AISC_Manual_Label: "L6X6X3/8",
-            W: 14.9,
-            A: 4.36,
-            d: 6,
-            bf: 6,
-            tf: 0.375,
-            Ix: 14.4,
-            Sx: 3.40,
-            rx: 1.82,
-            Iy: 14.4,
-            Sy: 3.40,
-            ry: 1.82,
-            rz: 1.17
+        "L5X3X1/2": {
+            A: 6.72, tw: 0.5, d: 5.0, bf: 3.0, 
+            Zx: 13.5, Sx: 11.2, Ry: 1.82, Zy: 5.51, Sy: 4.65,
+            "bf/2tf": 3.0, "h/tw": 8.0, Kc: 0.707, 
+            type: 'L', AISC_Manual_Label: "L5X3X1/2"
         },
-        "L3X3X1/4": {
-            AISC_Manual_Label: "L3X3X1/4",
-            W: 4.9,
-            A: 1.44,
-            d: 3,
-            bf: 3,
-            tf: 0.25,
-            Ix: 1.24,
-            Sx: 0.589,
-            rx: 0.929,
-            Iy: 1.24,
-            Sy: 0.589,
-            ry: 0.929,
-            rz: 0.595
+        "W8X24": { 
+            A: 7.08, tw: 0.25, d: 7.93, bf: 6.5, 
+            Zx: 23.2, Sx: 20.9, Ry: 2.05, Zy: 5.2, Sy: 4.8,
+            "bf/2tf": 10.8, "h/tw": 26.0, Kc: 0.707, 
+            type: 'W', AISC_Manual_Label: "W8X24" 
         }
     };
     
     // Set the data in both global and window scopes to ensure access
     window.steelSpecs = hardcodedSteelSpecs;
-    window.wShapeData = hardcodedWShapeData;
-    window.lShapeData = hardcodedLShapeData;
+    window.sectionData = hardcodedSectionData;
     steelSpecs = hardcodedSteelSpecs;
-    wShapeData = hardcodedWShapeData;
-    lShapeData = hardcodedLShapeData;
+    sectionData = hardcodedSectionData;
     
-    console.log("Using hardcoded data with", 
-                Object.keys(hardcodedWShapeData).length, "W shapes and",
-                Object.keys(hardcodedLShapeData).length, "L shapes");
+    console.log("Using hardcoded data with", Object.keys(hardcodedSectionData).length, "sections");
 }
 
-// Function to get W shape data with error handling
-function getWShapeData(sectionKey) {
+// Function to get section data with improved error handling
+function getSectionData(sectionKey) {
     if (!sectionKey) {
-        console.error("No W shape section key provided");
+        console.error("No section key provided");
         return null;
     }
     
-    // Normalize the input key
-    const normalizedKey = sectionKey.toString().trim().toUpperCase();
-    console.log("Looking for W shape:", normalizedKey);
+    // Normalize the input key by removing spaces and ensuring uppercase
+    const normalizedKey = sectionKey.toString().toUpperCase().replace(/\s/g, '');
+    console.log("Looking for section:", normalizedKey);
     
     // Direct lookup
-    if (wShapeData[normalizedKey]) {
-        console.log("W shape found directly:", normalizedKey);
-        return wShapeData[normalizedKey];
+    if (sectionData[normalizedKey]) {
+        console.log("Section found directly:", normalizedKey);
+        return sectionData[normalizedKey];
     }
     
     // Try alternative formats
     const alternatives = [
         normalizedKey.replace('X', 'x'),          // Try with lowercase x
         normalizedKey.replace('x', 'X'),          // Try with uppercase X
-        `W${normalizedKey.replace(/^W/i, '')}`    // Ensure W prefix
+        `W${normalizedKey.replace(/^W/i, '')}`,   // Ensure W prefix
+        `WX${normalizedKey.replace(/^W(?:X)?/i, '')}`, // Try WX format
+        `L${normalizedKey.replace(/^L/i, '')}`,   // Ensure L prefix
+        `L${normalizedKey.replace(/^L/i, '').replace('X', 'X')}`  // L shape variations
     ];
     
     for (const altKey of alternatives) {
-        if (wShapeData[altKey]) {
-            console.log("W shape found with alternative format:", altKey);
-            return wShapeData[altKey];
+        if (sectionData[altKey]) {
+            console.log("Section found with alternative format:", altKey);
+            return sectionData[altKey];
         }
     }
     
-    // Look for similar keys if not found
-    const possibleKeys = Object.keys(wShapeData).filter(key => 
-        key.startsWith('W') && (
-            key.includes(normalizedKey.replace(/^W/, '')) || 
-            normalizedKey.includes(key.replace(/^W/, ''))
-        )
+    // Look for similar keys, now including both W and L sections
+    const similarKeys = Object.keys(sectionData).filter(key => 
+        key.includes(normalizedKey.replace(/^[WL]/, '')) || 
+        normalizedKey.includes(key.replace(/^[WL]/, ''))
     );
     
-    if (possibleKeys.length > 0) {
-        console.log("Similar W shape found:", possibleKeys[0]);
-        return wShapeData[possibleKeys[0]];
+    if (similarKeys.length > 0) {
+        console.log("Similar keys found:", similarKeys);
+        console.log("Using first similar key:", similarKeys[0]);
+        return sectionData[similarKeys[0]];
     }
     
-    console.warn("W shape not found:", normalizedKey);
-    console.log("Available W shapes (sample):", Object.keys(wShapeData).slice(0, 5).join(", ") + "...");
+    console.warn("Section not found:", normalizedKey);
+    console.log("Available keys:", Object.keys(sectionData).slice(0, 10).join(", ") + "...");
     
-    // Return default W shape if not found
-    return wShapeData["W12X45"] || {
-        AISC_Manual_Label: "W12X45 (DEFAULT)",
-        W: 45,
+    // Return default values if not found, now including Ry and type
+    return {
         A: 13.2, 
         tw: 0.335, 
         d: 12.1, 
         bf: 8.05,
-        tf: 0.575,
-        "bf/2tf": 8.5,
-        "h/tw": 29.9,
-        Ix: 348,
         Zx: 88.6,
         Sx: 78.0,
-        rx: 5.18,
-        Iy: 108,
-        Zy: 33.4,
-        Sy: 21.4,
-        ry: 2.87,
-        rz: 3.38
+        Ry: 2.45,
+        Zy: 16.4,
+        Sy: 13.6,
+        "bf/2tf": 8.5,
+        "h/tw": 29.9,
+        Kc: 0.707,
+        type: 'W',
+        AISC_Manual_Label: "W12X45 (DEFAULT)"
     };
 }
 
-// Function to get L shape data with error handling
-function getLShapeData(sectionKey) {
-    if (!sectionKey) {
-        console.error("No L shape section key provided");
-        return null;
-    }
-    
-    // Normalize the input key
-    const normalizedKey = sectionKey.toString().trim().toUpperCase();
-    console.log("Looking for L shape:", normalizedKey);
-    
-    // Direct lookup
-    if (lShapeData[normalizedKey]) {
-        console.log("L shape found directly:", normalizedKey);
-        return lShapeData[normalizedKey];
-    }
-    
-    // Try alternative formats
-    const alternatives = [
-        normalizedKey.replace('X', 'x'),          // Try with lowercase x
-        normalizedKey.replace('x', 'X'),          // Try with uppercase X
-        `L${normalizedKey.replace(/^L/i, '')}`    // Ensure L prefix
-    ];
-    
-    for (const altKey of alternatives) {
-        if (lShapeData[altKey]) {
-            console.log("L shape found with alternative format:", altKey);
-            return lShapeData[altKey];
-        }
-    }
-    
-    // Look for similar keys if not found
-    const possibleKeys = Object.keys(lShapeData).filter(key => 
-        key.startsWith('L') && (
-            key.includes(normalizedKey.replace(/^L/, '')) || 
-            normalizedKey.includes(key.replace(/^L/, ''))
-        )
-    );
-    
-    if (possibleKeys.length > 0) {
-        console.log("Similar L shape found:", possibleKeys[0]);
-        return lShapeData[possibleKeys[0]];
-    }
-    
-    console.warn("L shape not found:", normalizedKey);
-    console.log("Available L shapes (sample):", Object.keys(lShapeData).slice(0, 5).join(", ") + "...");
-    
-    // Return default L shape if not found
-    return lShapeData["L4X4X1/2"] || {
-        AISC_Manual_Label: "L4X4X1/2 (DEFAULT)",
-        W: 12.8,
-        A: 3.75,
-        d: 4,
-        bf: 4,
-        tf: 0.5,
-        Ix: 5.56,
-        Sx: 1.97,
-        rx: 1.22,
-        Iy: 5.56,
-        Sy: 1.97,
-        ry: 1.22,
-        rz: 0.78
-    };
-}
-
-// Improved getSteelSpecData function
+// Function to get steel specification data
 function getSteelSpecData(steelName) {
     if (!steelName) {
         console.error("No steel specification name provided");
-        return getDefaultSteelSpec();
+        return null;
     }
     
     // Normalize the input
-    const normalizedName = steelName.toString().trim();
-    console.log("Looking for steel spec:", normalizedName);
+    const normalizedName = steelName.toString().toUpperCase().replace(/\s/g, '');
     
-    // Standard specs mapping - this ensures dropdown values match exactly with data
-    const standardSpecs = {
-        "A36": { Steel_name: "A36", Fy: 36, Fu: 58 },
-        "A572Gr.42": { Steel_name: "A572Gr.42", Fy: 42, Fu: 60 },
-        "A572Gr.50": { Steel_name: "A572Gr.50", Fy: 50, Fu: 65 },
-        "A572Gr.55": { Steel_name: "A572Gr.55", Fy: 55, Fu: 70 },
-        "A572Gr.60": { Steel_name: "A572Gr.60", Fy: 60, Fu: 75 },
-        "A572Gr.65": { Steel_name: "A572Gr.65", Fy: 65, Fu: 80 },
-        "A588Gr.42": { Steel_name: "A588Gr.42", Fy: 42, Fu: 63 },
-        "A588Gr.46": { Steel_name: "A588Gr.46", Fy: 46, Fu: 67 },
-        "A588Gr.50": { Steel_name: "A588Gr.50", Fy: 50, Fu: 70 },
-        "A687": { Steel_name: "A687", Fy: 50, Fu: 70 },
-        "A992": { Steel_name: "A992", Fy: 50, Fu: 65 }
-    };
+    // Find the steel specification
+    const spec = steelSpecs.find(s => 
+        s.Steel_name.toUpperCase().replace(/\s/g, '') === normalizedName
+    );
     
-    // First check if we have a standard mapping
-    if (standardSpecs[normalizedName]) {
-        console.log("Found standard spec for:", normalizedName);
-        return standardSpecs[normalizedName];
+    if (spec) {
+        return spec;
     }
     
-    // Then try to find in steelSpecs array
-    if (Array.isArray(steelSpecs) && steelSpecs.length > 0) {
-        // First, try exact match
-        let spec = steelSpecs.find(s => 
-            s.Steel_name === normalizedName
-        );
-        
-        // If not found, try case-insensitive match
-        if (!spec) {
-            spec = steelSpecs.find(s => 
-                s.Steel_name.toLowerCase().replace(/\s/g, '') === 
-                normalizedName.toLowerCase().replace(/\s/g, '')
-            );
-        }
-        
-        // If not found, try partial match
-        if (!spec) {
-            spec = steelSpecs.find(s => 
-                s.Steel_name.toLowerCase().includes(normalizedName.toLowerCase()) ||
-                normalizedName.toLowerCase().includes(s.Steel_name.toLowerCase())
-            );
-        }
-        
-        if (spec) {
-            console.log("Found steel spec in data:", spec.Steel_name);
-            return spec;
-        }
-    }
+    console.warn("Steel specification not found:", normalizedName);
     
-    // If still not found, check if it's a standard specification with different formatting
-    for (const [key, value] of Object.entries(standardSpecs)) {
-        if (key.toLowerCase().replace(/[^a-z0-9]/g, '') === 
-            normalizedName.toLowerCase().replace(/[^a-z0-9]/g, '')) {
-            console.log("Found steel spec with normalized formatting:", key);
-            return value;
-        }
-    }
-    
-    console.warn("Steel specification not found:", normalizedName, "- using default");
-    return getDefaultSteelSpec();
-}
-
-// Helper function to return default steel spec
-function getDefaultSteelSpec() {
+    // Return default values if not found
     return {
-        Steel_name: "A36",
+        Steel_name: "A36 (DEFAULT)",
         Fy: 36,
         Fu: 58
     };
 }
 
+// Function to update shape options for datalist input
+function updateShapeOptions() {
+    const datalist = document.getElementById('sectionShapes');
+    
+    // Clear existing options
+    if (datalist) {
+        datalist.innerHTML = '';
+        
+        // Add W-shapes and L-shapes to the datalist
+        Object.keys(sectionData).forEach(key => {
+            const option = document.createElement('option');
+            option.value = key;
+            datalist.appendChild(option);
+        });
+        
+        console.log("Updated section shape options");
+    } else {
+        console.warn("Could not find datalist for section shapes");
+    }
+}
 
 // Function to ensure SheetJS is loaded
 function addExcelLibrary() {
@@ -1980,308 +1923,185 @@ function addExcelLibrary() {
         document.head.appendChild(script);
     });
 }
-// Function to ensure steel specs are initialized
-function initializeDefaultSteelSpecs() {
-    if (!Array.isArray(window.steelSpecs) || window.steelSpecs.length === 0) {
-        window.steelSpecs = [
-            { Steel_name: "A36", Fy: 36, Fu: 58 },
-            { Steel_name: "A572Gr.42", Fy: 42, Fu: 60 },
-            { Steel_name: "A572Gr.50", Fy: 50, Fu: 65 },
-            { Steel_name: "A572Gr.55", Fy: 55, Fu: 70 },
-            { Steel_name: "A572Gr.60", Fy: 60, Fu: 75 },
-            { Steel_name: "A572Gr.65", Fy: 65, Fu: 80 },
-            { Steel_name: "A588Gr.42", Fy: 42, Fu: 63 },
-            { Steel_name: "A588Gr.46", Fy: 46, Fu: 67 },
-            { Steel_name: "A588Gr.50", Fy: 50, Fu: 70 },
-            { Steel_name: "A687", Fy: 50, Fu: 70 },
-            { Steel_name: "A992", Fy: 50, Fu: 65 }
-        ];
-        console.log("Initialized default steel specs");
-    }
-}
 
-// Update DOMContentLoaded event listener to initialize steel specs
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("Tension Member Design Calculator initialized");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Function to calculate tension member design
+function designTensionMember() {
+    // Get input values
+    const designMethod = document.getElementById('designMethod').value;
+    const steelSpec = document.getElementById('ASpecD').value;
+    const sectionShape = document.getElementById('sectionShapeD').value; // Add section shape input
+    const deadLoad = parseFloat(document.getElementById('Dload').value) || 0;
+    const liveLoad = parseFloat(document.getElementById('Lload').value) || 0;
+    const length = parseFloat(document.getElementById('LenghtD').value) || 0;
+    const boltDiameter = parseFloat(document.getElementById('dholeD').value) || 0;
+    const numberOfHoles = parseInt(document.getElementById('nholeD').value) || 0;
+
+    // Validate inputs
+    if (isNaN(deadLoad) || isNaN(liveLoad) || isNaN(length) || isNaN(boltDiameter) || isNaN(numberOfHoles)) {
+        alert('Please fill in all input fields with valid numbers');
+        return;
+    }
+
+    // Get steel specification data
+    const steelData = getSteelSpecData(steelSpec);
+    const Fy = steelData.Fy; // Yield strength
+    const Fu = steelData.Fu; // Ultimate strength
+
+    // Calculate load combinations
+    let Tu, phiFy, phiFu;
+    if (designMethod === 'LRFD') {
+        // LRFD Load Combination: 1.2D + 1.6L
+        Tu = 1.2 * deadLoad + 1.6 * liveLoad;
+        phiFy = 0.90 * Fy; // Resistance factor for yielding
+        phiFu = 0.75 * Fu; // Resistance factor for fracture
+        document.getElementById('LRFDdesignComb').textContent = Tu.toFixed(2) + ' kips';
+    } else { // ASD
+        // ASD Load Combination: 1.4D
+        Tu = 1.4 * deadLoad;
+        phiFy = Fy / 1.67; // ASD adjustment
+        phiFu = Fu / 2.00; // ASD adjustment
+        document.getElementById('ASDdesignComb').textContent = Tu.toFixed(2) + ' kips';
+    }
+
+    // Calculate required gross area for yielding
+    const AgYielding = Tu / phiFy;
+    const AgFracture = (Tu / (0.75 * Fu)) / 0.85; // Calculating net area with shear lag
+
+    // Determine controlling gross area requirement
+    const governingAg = Math.max(AgYielding, AgFracture);
     
-    // Initialize steel specs array
-    initializeDefaultSteelSpecs();
+    // Calculate hole area
+    const Ahole = boltDiameter * numberOfHoles * (length * 12 / 1000); // Assuming thickness is 1/8 inch
+
+    // Calculate minimum radius of gyration for L/300 deflection limit
+    const L_over_300 = length * 12 / 300; // Convert length to inches and divide by 300
+
+    // Find suitable shapes
+    const suitableShapes = [];
     
-    // Get the design button element
-    const designButton = document.getElementById('design');
+    // Scan through section data with improved filtering
+    Object.keys(sectionData).forEach(shapeKey => {
+        const shape = sectionData[shapeKey];
+        
+        // Check if the shape's gross area meets the requirement and matches the preferred type (if specified)
+        const areaCheck = shape.A >= governingAg;
+        const typeCheck = !sectionShape || 
+            (sectionShape.toUpperCase().startsWith('W') && shape.type === 'W') ||
+            (sectionShape.toUpperCase().startsWith('L') && shape.type === 'L');
+        
+        if (areaCheck && typeCheck) {
+            // Calculate Rz (minimum radius of gyration in the weakest axis)
+            const Rz = shape.type === 'W' ? Math.min(shape.Ry, shape.Rz || 1) : 
+                       shape.type === 'L' ? shape.Ry : 1;
+            
+            // Check deflection limit
+            const shapeRmin = length * 12 / (300 * Rz);
+            
+            suitableShapes.push({
+                shape: shapeKey,
+                area: shape.A,
+                demand: governingAg,
+                weight: calculateWeight(shape.A, length), // Assuming 10 lb/ft per sq inch
+                ahole: Ahole,
+                Rz: Rz,
+                rmin: shapeRmin,
+                status: shapeRmin >= Rz ? 'Safe' : 'Check Deflection'
+            });
+        }
+    });
+
+    // Sort shapes by multiple criteria
+    suitableShapes.sort((a, b) => {
+        // First, prioritize safe shapes
+        if (a.status === 'Safe' && b.status !== 'Safe') return -1;
+        if (a.status !== 'Safe' && b.status === 'Safe') return 1;
+        
+        // Then sort by weight
+        return a.weight - b.weight;
+    });
+
+    // Display results
+    const resultsToDisplay = suitableShapes.slice(0, 4); // Top 4 shapes
     
-    // Add click event listener to the design button
-    if (designButton) {
-        designButton.addEventListener('click', function() {
-            performDesign();
-        });
-    } else {
-        console.error("Design button not found in the document");
+    // Clear any existing results
+    for (let rank = 1; rank <= 4; rank++) {
+        document.getElementById(`rank${rank}`).textContent = '-';
+        document.getElementById(`Shape${rank}`).textContent = '-';
+        document.getElementById(`AreaG${rank}`).textContent = '-';
+        document.getElementById(`D${rank}`).textContent = '-';
+        document.getElementById(`Weight${rank}`).textContent = '-';
+        document.getElementById(`Ahole${rank}`).textContent = '-';
+        document.getElementById(`Rz${rank}`).textContent = '-';
+        document.getElementById(`rmin${rank}`).textContent = '-';
+        document.getElementById(`Status${rank}`).textContent = '-';
     }
     
-    // Initialize input values if needed
-    document.getElementById('Dload').value = document.getElementById('Dload').value || 30;
-    document.getElementById('Lload').value = document.getElementById('Lload').value || 30;
-    document.getElementById('dholeD').value = document.getElementById('dholeD').value || 0.75;
-    document.querySelector('.nholeD').value = document.querySelector('.nholeD').value || 1;
+    // Populate results table
+    resultsToDisplay.forEach((result, index) => {
+        const rank = index + 1;
+        document.getElementById(`rank${rank}`).textContent = rank;
+        document.getElementById(`Shape${rank}`).textContent = result.shape;
+        document.getElementById(`AreaG${rank}`).textContent = result.area.toFixed(2);
+        document.getElementById(`D${rank}`).textContent = result.demand.toFixed(2);
+        document.getElementById(`Weight${rank}`).textContent = result.weight.toFixed(2);
+        document.getElementById(`Ahole${rank}`).textContent = result.ahole.toFixed(2);
+        document.getElementById(`Rz${rank}`).textContent = result.Rz.toFixed(2);
+        document.getElementById(`rmin${rank}`).textContent = result.rmin.toFixed(2);
+        document.getElementById(`Status${rank}`).textContent = result.status;
+    });
+
+    // Update yielding and fracture calculations
+    document.getElementById('LRFDYielding').textContent = AgYielding.toFixed(2);
+    document.getElementById('ASDYielding').textContent = AgYielding.toFixed(2);
+    document.getElementById('LRFDFracture').textContent = AgFracture.toFixed(2);
+    document.getElementById('ASDFracture').textContent = AgFracture.toFixed(2);
     
-    // Populate steel specs if needed
-    const steelSpecSelect = document.getElementById('ASpecD');
-    if (steelSpecSelect && steelSpecSelect.options.length <= 1) {
-        window.steelSpecs.forEach(spec => {
-            const option = document.createElement('option');
-            option.value = spec.Steel_name;
-            option.textContent = spec.Steel_name;
-            steelSpecSelect.appendChild(option);
-        });
+    // Determine controlling requirement and show deflection limit
+    document.querySelector('.controlR').textContent = 
+        AgYielding > AgFracture ? 'Yielding' : 'Fracture';
+    
+    // Display deflection limit calculation
+    document.getElementById('deflectionLimit').textContent = `L/300 Rmin: ${rmin.toFixed(4)}`;
+}
+// Add event listener to design button
+document.addEventListener('DOMContentLoaded', function() {
+    const designButton = document.getElementById('design');
+    if (designButton) {
+        designButton.addEventListener('click', designTensionMember);
+    } else {
+        console.error("Design button not found");
     }
 });
 
-// Update the performDesign function to better handle steel spec selection
-function performDesign() {
-    console.log("Starting tension member design...");
-    
-    // Get input values
-    const designMethod = document.getElementById('designMethod').value;
-    const steelGradeElement = document.getElementById('ASpecD');
-    const steelGrade = steelGradeElement.value;
-    const deadLoad = parseFloat(document.getElementById('Dload').value);
-    const liveLoad = parseFloat(document.getElementById('Lload').value);
-    const boltDiameter = parseFloat(document.getElementById('dholeD').value);
-    const numberOfHoles = parseInt(document.querySelector('.nholeD').value);
-    
-    console.log("Selected steel grade:", steelGrade);
-    
-    // Calculate hole diameter (add 1/8" to bolt diameter as specified)
-    const holeDiameter = boltDiameter + 0.125;
-    
-    // Validate inputs
-    if (isNaN(deadLoad) || isNaN(liveLoad) || isNaN(boltDiameter) || isNaN(numberOfHoles)) {
-        alert("Please fill in all required fields with valid numbers.");
-        return;
-    }
-    
-    // Get steel specification data
-    const steelSpec = getSteelSpecData(steelGrade);
-    console.log("Using steel spec:", steelSpec);
-    
-    // Calculate load combination based on design method
-    const loadCombination = calculateLoadCombination(designMethod, deadLoad, liveLoad);
-    
-    // Factor of safety for yielding and fracture
-    const phiYielding = (designMethod === 'LRFD') ? 0.9 : 1.67;
-    const phiFracture = (designMethod === 'LRFD') ? 0.75 : 2.0;
-    
-    // Calculate required gross area for yielding
-    const requiredAgYielding = loadCombination / (phiYielding * steelSpec.Fy);
-    
-    // Shear lag factor (U), Case 8 as specified = 0.8
-    const shearLagFactor = 0.8;
-    
-    // Calculate required net area for fracture
-    const requiredAn = loadCombination / (phiFracture * steelSpec.Fu * shearLagFactor);
-    
-    // Convert required net area to required gross area (An = 0.85*Ag)
-    const requiredAgFracture = requiredAn / 0.85;
-    
-    // Determine governing gross area (max of yielding and fracture)
-    const governingAg = Math.max(requiredAgYielding, requiredAgFracture);
-    
-    // Get applicable L shapes and sort them by area
-    const applicableLShapes = getApplicableLShapes(governingAg);
-    
-    // Generate result HTML
-    const resultHTML = generateResultHTML(
-        designMethod, 
-        steelSpec, 
-        deadLoad, 
-        liveLoad, 
-        loadCombination, 
-        requiredAgYielding,
-        requiredAgFracture,
-        governingAg,
-        holeDiameter,
-        numberOfHoles,
-        phiYielding,
-        phiFracture,
-        shearLagFactor,
-        applicableLShapes
-    );
-    
-    // Display results
-    document.querySelector('.DesignCalcT').innerHTML = resultHTML;
-}
+// Ensure SheetJS and other libraries are loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Add SheetJS library
+    addExcelLibrary()
+        .then(() => {
+            // Attempt to load Excel data
+            return loadExcelData();
+        })
+        .catch(error => {
+            console.error("Error initializing application:", error);
+            // Fallback to hardcoded data
+            useHardcodedData();
+        });
+});
 
-
-// Calculate load combination based on design method
-function calculateLoadCombination(designMethod, deadLoad, liveLoad) {
-    let loadCombination;
-    
-    if (designMethod === 'LRFD') {
-        // LRFD: 1.2D + 1.6L
-        loadCombination = 1.2 * deadLoad + 1.6 * liveLoad;
-    } else {
-        // ASD: D + L
-        loadCombination = deadLoad + liveLoad;
-    }
-    
-    return loadCombination;
-}
-
-// Get applicable L shapes based on the required gross area
-function getApplicableLShapes(requiredAg) {
-    // Get all available L shapes
-    const allLShapes = Object.values(lShapeData);
-    
-    // Filter L shapes with area >= required area
-    const suitableLShapes = allLShapes.filter(shape => shape.A >= requiredAg);
-    
-    // Sort by increasing area (lightest first)
-    suitableLShapes.sort((a, b) => a.A - b.A);
-    
-    // Return the 4 lightest shapes (or fewer if less than 4 are available)
-    return suitableLShapes.slice(0, 4);
-}
-
-// Extract thickness from L shape designation
-function getThicknessFromLabel(label) {
-    // Extract the last part of the label which contains the thickness
-    const parts = label.split('X');
-    if (parts.length < 3) return 0;
-    
-    const thicknessPart = parts[parts.length - 1];
-    
-    // Handle fractions
-    if (thicknessPart.includes('/')) {
-        const [numerator, denominator] = thicknessPart.split('/').map(Number);
-        return numerator / denominator;
-    }
-    
-    // Handle decimal values
-    return parseFloat(thicknessPart);
-}
-
-// Generate results HTML
-function generateResultHTML(
-    designMethod, 
-    steelSpec, 
-    deadLoad, 
-    liveLoad, 
-    loadCombination, 
-    requiredAgYielding,
-    requiredAgFracture,
-    governingAg,
-    holeDiameter,
-    numberOfHoles,
-    phiYielding,
-    phiFracture,
-    shearLagFactor,
-    applicableLShapes
-) {
-    // Create HTML for calculation steps
-    let html = `
-        <h2>Tension Member Design Calculations</h2>
-        <h3>Input Data:</h3>
-        <ul>
-            <li>Design Method: ${designMethod}</li>
-            <li>Steel Specification: ${steelSpec.Steel_name}</li>
-            <li>Yield Strength (Fy): ${steelSpec.Fy} ksi</li>
-            <li>Ultimate Strength (Fu): ${steelSpec.Fu} ksi</li>
-            <li>Dead Load: ${deadLoad} kips</li>
-            <li>Live Load: ${liveLoad} kips</li>
-            <li>Bolt Diameter: ${document.getElementById('dholeD').value} in</li>
-            <li>Hole Diameter (Db + 1/8): ${holeDiameter.toFixed(3)} in</li>
-            <li>Number of Holes: ${numberOfHoles}</li>
-        </ul>
-        
-        <h3>Load Combination Calculation:</h3>
-    `;
-    
-    if (designMethod === 'LRFD') {
-        html += `
-            <p>LRFD Load Combination: Tu = 1.2D + 1.6L</p>
-            <p>Tu = 1.2 × ${deadLoad} + 1.6 × ${liveLoad} = ${loadCombination.toFixed(2)} kips</p>
-        `;
-    } else {
-        html += `
-            <p>ASD Load Combination: Tu = D + L</p>
-            <p>Tu = ${deadLoad} + ${liveLoad} = ${loadCombination.toFixed(2)} kips</p>
-        `;
-    }
-    
-    html += `
-        <h3>Required Area Calculations:</h3>
-        
-        <h4>1. Yielding Limit State:</h4>
-        <p>φ = ${phiYielding} for ${designMethod}</p>
-        <p>Required Ag = Tu / (φ × Fy)</p>
-        <p>Required Ag = ${loadCombination.toFixed(2)} / (${phiYielding} × ${steelSpec.Fy}) = ${requiredAgYielding.toFixed(4)} in²</p>
-        
-        <h4>2. Fracture Limit State:</h4>
-        <p>φ = ${phiFracture} for ${designMethod}</p>
-        <p>Shear Lag Factor (U) = ${shearLagFactor} (Case 8)</p>
-        <p>Required An = Tu / (φ × Fu × U)</p>
-        <p>Required An = ${loadCombination.toFixed(2)} / (${phiFracture} × ${steelSpec.Fu} × ${shearLagFactor}) = ${(loadCombination / (phiFracture * steelSpec.Fu * shearLagFactor)).toFixed(4)} in²</p>
-        <p>Converting to required gross area (An = 0.85Ag):</p>
-        <p>Required Ag = Required An / 0.85 = ${requiredAgFracture.toFixed(4)} in²</p>
-        
-        <h4>3. Governing Required Area:</h4>
-        <p>Governing Required Ag = max(${requiredAgYielding.toFixed(4)}, ${requiredAgFracture.toFixed(4)}) = ${governingAg.toFixed(4)} in²</p>
-        
-        <h3>L Shape Selection:</h3>
-    `;
-    
-    // Create table for L shape comparison
-    html += `
-        <table border="1" style="border-collapse: collapse; width: 100%; margin-top: 20px;">
-            <thead>
-                <tr style="background-color: #f2f2f2;">
-                    <th>Rank</th>
-                    <th>Section</th>
-                    <th>Ag (in²)</th>
-                    <th>Thickness (in)</th>
-                    <th>rz (in)</th>
-                    <th>Ahole (in²)</th>
-                    <th>Demanded Ag (in²)</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-    
-    // Add each L shape to the table
-    applicableLShapes.forEach((shape, index) => {
-        const thickness = getThicknessFromLabel(shape.AISC_Manual_Label);
-        const areaOfHoles = numberOfHoles * holeDiameter * thickness;
-        const requiredAn = loadCombination / (phiFracture * steelSpec.Fu * shearLagFactor);
-        const demandedAg = requiredAn + areaOfHoles;
-        const status = shape.A >= demandedAg ? "SAFE" : "UNSAFE";
-        const statusStyle = status === "SAFE" ? "color: green; font-weight: bold;" : "color: red; font-weight: bold;";
-        
-        html += `
-            <tr>
-                <td style="text-align: center;">${index + 1}</td>
-                <td>${shape.AISC_Manual_Label}</td>
-                <td>${shape.A.toFixed(2)}</td>
-                <td>${thickness.toFixed(3)}</td>
-                <td>${shape.rz.toFixed(3)}</td>
-                <td>${areaOfHoles.toFixed(3)}</td>
-                <td>${demandedAg.toFixed(3)}</td>
-                <td style="${statusStyle}">${status}</td>
-            </tr>
-        `;
-    });
-    
-    html += `
-            </tbody>
-        </table>
-        
-        <h3>Conclusion:</h3>
-        <p>Based on the calculated required area of ${governingAg.toFixed(4)} in², the recommended L shape is <strong>${applicableLShapes[0]?.AISC_Manual_Label || "No suitable shape found"}</strong>, which is the lightest section that meets the strength requirements.</p>
-    `;
-    
-    return html;
-}
 
 
     </script>
