@@ -749,11 +749,11 @@ function analyzeBending() {
         // Interpolate between plastic moment and yield moment
         if (flangeClass === "Non-compact") {
             const Mp = Zx * Fy;
-            const My = Sx * Fy;
+            const My = 0.7 * Sx * Fy;
             Mn = Mp - (Mp - My) * ((bf_2tf - lambdaPf) / (lambdaRf - lambdaPf));
         } else {
             const Mp = Zx * Fy;
-            const My = Sx * Fy;
+            const My = 0.7 * Sx * Fy;
             Mn = Mp - (Mp - My) * ((h_tw - lambdaPw) / (lambdaRw - lambdaPw));
         }
     }
