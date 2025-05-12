@@ -146,7 +146,7 @@
 
         </div>
 </div>
-    
+</div>
 
 <script>
 // Global variables for data storage
@@ -857,6 +857,2140 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
     console.log("Document already loaded, initializing app");
     setTimeout(initialize, 1);
 }
+
+
+
+//DESIGN
+// W-Shape database variable that will hold all the data
+
+// Global variable for W-shape database
+window.wShapeDatabase = null;
+
+// Function to ensure the XLSX library is loaded
+function ensureXLSXLoaded() {
+  return new Promise((resolve, reject) => {
+    // Check if SheetJS is already loaded
+    if (window.XLSX) {
+      console.log("SheetJS already loaded");
+      resolve();
+      return;
+    }
+    
+    console.log("Loading SheetJS...");
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    script.onload = () => {
+      console.log("SheetJS loaded successfully");
+      resolve();
+    };
+    script.onerror = () => {
+      console.error("Failed to load SheetJS");
+      reject(new Error("Failed to load SheetJS library"));
+    };
+    document.head.appendChild(script);
+  });
+}
+
+// Enhanced findValue helper to handle undefined/null values and return 0 as default
+function findValue(row, possibleColumns, defaultValue = 0) {
+  // Try each possible column name
+  for (const col of possibleColumns) {
+    if (row[col] !== undefined && row[col] !== null && row[col] !== '') {
+      // Convert to number if possible and ensure it's not NaN
+      const val = parseFloat(row[col]);
+      if (!isNaN(val)) {
+        return val;
+      } else if (typeof row[col] === 'string' && row[col].trim() !== '') {
+        // Return the string value if it's non-empty
+        return row[col];
+      }
+    }
+  }
+  return defaultValue; // Return default value if nothing valid found
+}
+
+// Enhanced processWShapeData function to better handle data parsing
+function processWShapeData(data) {
+    console.log("Processing data with", data.length, "rows");
+    
+    // Create a structured object with W-shapes indexed by their designation
+    const wShapes = {};
+    
+    // Process data rows
+    data.forEach((row, index) => {
+        // Skip empty rows
+        if (!row || Object.keys(row).length === 0) {
+            return;
+        }
+        
+        // Debug first 5 rows
+        if (index < 5) {
+            console.log(`Row ${index}:`, row);
+        }
+        
+        // Try various methods to find the shape designation
+        let shape = null;
+        
+        // Method 1: Check common column names
+        const possibleShapeColumns = ['Shape', 'W', 'Designation', 'Section', 'DESIGNATION', 'AISC_Manual_Label'];
+        for (const colName of possibleShapeColumns) {
+            if (row[colName] && typeof row[colName] === 'string' && row[colName].toUpperCase().startsWith('W')) {
+                shape = row[colName].toUpperCase();
+                break;
+            }
+        }
+        
+        // Method 2: Check first few values in the row
+        if (!shape) {
+            const values = Object.values(row);
+            for (const val of values.slice(0, 5)) {
+                if (val && typeof val === 'string' && val.toUpperCase().startsWith('W')) {
+                    shape = val.toUpperCase();
+                    break;
+                }
+            }
+        }
+        
+        if (shape) {
+            // Create an object for this W-shape with all relevant properties
+            // Use default values for any missing properties
+            wShapes[shape] = {
+                shape: shape,
+                weight_per_foot: findValue(row, ['W [lbs/ft]', 'Weight per foot', 'lbs/ft', 'Weight', 'WEIGHT']),
+                depth: findValue(row, ['d [in]', 'Depth', 'd', 'D', 'DEPTH']),
+                flange_thickness: findValue(row, ['tf [in]', 'tf', 'Flange Thickness', 'FLANGE THICKNESS']),
+                web_thickness: findValue(row, ['tw [in]', 'tw', 'Web Thickness', 'WEB THICKNESS']),
+                elastic_section_modulus: findValue(row, ['Sx [in3]', 'Sx', 'Section Modulus', 'SECTION MODULUS']),
+                plastic_section_modulus: findValue(row, ['Zx [in3]', 'Zx', 'Plastic Section Modulus']),
+                moment_of_inertia: findValue(row, ['Ix [in4]', 'Ix', 'Moment of Inertia'])
+            };
+            
+            // Validate critical properties - use estimated values if missing
+            if (!wShapes[shape].depth || wShapes[shape].depth <= 0) {
+                // Try to estimate depth from shape name
+                const depthMatch = shape.match(/W(\d+)/i);
+                if (depthMatch) {
+                    wShapes[shape].depth = parseInt(depthMatch[1]);
+                } else {
+                    wShapes[shape].depth = 12; // Default value
+                }
+            }
+            
+            // Ensure web thickness is reasonable
+            if (!wShapes[shape].web_thickness || wShapes[shape].web_thickness <= 0) {
+                wShapes[shape].web_thickness = wShapes[shape].depth * 0.02; // Approx. 2% of depth
+            }
+            
+            // Ensure flange thickness is reasonable
+            if (!wShapes[shape].flange_thickness || wShapes[shape].flange_thickness <= 0) {
+                wShapes[shape].flange_thickness = wShapes[shape].depth * 0.05; // Approx. 5% of depth
+            }
+            
+            // Ensure elastic section modulus is populated
+            if (!wShapes[shape].elastic_section_modulus || wShapes[shape].elastic_section_modulus <= 0) {
+                // Can be roughly estimated as Ix/(depth/2) if moment of inertia is available
+                if (wShapes[shape].moment_of_inertia > 0) {
+                    wShapes[shape].elastic_section_modulus = wShapes[shape].moment_of_inertia / (wShapes[shape].depth / 2);
+                } else {
+                    // Simple rule of thumb based on depth and weight
+                    wShapes[shape].elastic_section_modulus = wShapes[shape].depth * wShapes[shape].weight_per_foot / 10;
+                }
+            }
+            
+            // Calculate web height if not provided
+            const webHeight = wShapes[shape].depth - 2 * wShapes[shape].flange_thickness;
+            wShapes[shape].h = webHeight > 0 ? webHeight : wShapes[shape].depth * 0.9; // 90% of depth as fallback
+            
+            // Log the shape data to verify (only for first few shapes)
+            if (index < 5) {
+                console.log(`Processed ${shape}:`, wShapes[shape]);
+            }
+        }
+    });
+    
+    const shapeCount = Object.keys(wShapes).length;
+    console.log(`Processed ${shapeCount} W-shapes`);
+    
+    return wShapes;
+}
+
+
+// Hardcoded fallback data for common W-shapes in case file loading fails
+function getHardcodedData() {
+  console.log("Using hardcoded W-shape data as fallback");
+  
+  return {
+    "W12X26": {
+      shape: "W12X26",
+      weight_per_foot: 26,
+      depth: 12.22,
+      flange_thickness: 0.38,
+      web_thickness: 0.23,
+      elastic_section_modulus: 33.4,
+      plastic_section_modulus: 37.2,
+      moment_of_inertia: 204,
+      plastic_moment_asd: 103.3,
+      plastic_moment_lrfd: 155.8
+    },
+    "W14X30": {
+      shape: "W14X30",
+      weight_per_foot: 30,
+      depth: 13.84,
+      flange_thickness: 0.385,
+      web_thickness: 0.27,
+      elastic_section_modulus: 47.2,
+      plastic_section_modulus: 53.4,
+      moment_of_inertia: 291,
+      plastic_moment_asd: 148.3,
+      plastic_moment_lrfd: 223.8
+    },
+    "W16X26": {
+      shape: "W16X26",
+      weight_per_foot: 26,
+      depth: 15.69,
+      flange_thickness: 0.345,
+      web_thickness: 0.25,
+      elastic_section_modulus: 44.2,
+      plastic_section_modulus: 51.0,
+      moment_of_inertia: 301,
+      plastic_moment_asd: 141.7,
+      plastic_moment_lrfd: 213.8
+    },
+    "W16X40": {
+      shape: "W16X40",
+      weight_per_foot: 40,
+      depth: 16.0,
+      flange_thickness: 0.505,
+      web_thickness: 0.305,
+      elastic_section_modulus: 81.0,
+      plastic_section_modulus: 92.0,
+      moment_of_inertia: 518,
+      plastic_moment_asd: 255.6,
+      plastic_moment_lrfd: 385.6
+    },
+    "W18X35": {
+      shape: "W18X35",
+      weight_per_foot: 35,
+      depth: 17.7,
+      flange_thickness: 0.425,
+      web_thickness: 0.30,
+      elastic_section_modulus: 72.7,
+      plastic_section_modulus: 83.3,
+      moment_of_inertia: 510,
+      plastic_moment_asd: 231.4,
+      plastic_moment_lrfd: 349.4
+    },
+    "W21X44": {
+      shape: "W21X44",
+      weight_per_foot: 44,
+      depth: 20.7,
+      flange_thickness: 0.450,
+      web_thickness: 0.350,
+      elastic_section_modulus: 110,
+      plastic_section_modulus: 126,
+      moment_of_inertia: 843,
+      plastic_moment_asd: 350.0,
+      plastic_moment_lrfd: 528.0
+    },
+    "W24X55": {
+      shape: "W24X55",
+      weight_per_foot: 55,
+      depth: 23.6,
+      flange_thickness: 0.505,
+      web_thickness: 0.395,
+      elastic_section_modulus: 154,
+      plastic_section_modulus: 177,
+      moment_of_inertia: 1350,
+      plastic_moment_asd: 491.7,
+      plastic_moment_lrfd: 742.0
+    }
+  };
+}
+
+// Improved function to try all possible methods to load the XLSX file
+async function getWShapeDatabase() {
+  // Return cached database if already loaded
+  if (window.wShapeDatabase && Object.keys(window.wShapeDatabase).length > 0) {
+    console.log("Using cached W-shape database");
+    return window.wShapeDatabase;
+  }
+
+  try {
+    console.log('Loading W-shape database...');
+    
+    // Make sure XLSX library is loaded
+    await ensureXLSXLoaded();
+    
+    // Try file system method first (for Claude web interface)
+    try {
+      console.log("Attempting to load using file system API");
+      const data = await loadFromFileSystem();
+      window.wShapeDatabase = data; // Store in global scope
+      return data;
+    } catch (fsError) {
+      console.warn("File system method failed:", fsError);
+      
+      // Try fetch method next
+      try {
+        console.log("Attempting to load using fetch API");
+        const data = await loadFromFetch();
+        window.wShapeDatabase = data; // Store in global scope
+        return data;
+      } catch (fetchError) {
+        console.warn("Fetch method failed:", fetchError);
+        
+        // Fall back to hardcoded data
+        console.error("All file loading methods failed. Using hardcoded data.");
+        const data = getHardcodedData();
+        window.wShapeDatabase = data; // Store in global scope
+        return data;
+      }
+    }
+  } catch (error) {
+    console.error('Fatal error loading W-shape database:', error);
+    const data = getHardcodedData();
+    window.wShapeDatabase = data; // Store in global scope
+    return data;
+  }
+}
+
+// Improved function to load from file system
+async function loadFromFileSystem() {
+  return new Promise((resolve, reject) => {
+    if (!window.fs || typeof window.fs.readFile !== 'function') {
+      reject(new Error("File system API not available"));
+      return;
+    }
+    
+    // Log all available files
+    console.log("Attempting to load files from local filesystem");
+    
+    // Try to load the Excel file - note the precise filename with case sensitivity
+    window.fs.readFile('ASTMSPEC.xlsx', { encoding: null })
+      .then(data => {
+        try {
+          console.log("Successfully read ASTMSPEC.xlsx, size:", data.byteLength);
+          
+          // Process the Excel file using SheetJS
+          const workbook = XLSX.read(data, { type: 'array' });
+          
+          // Log available sheets
+          console.log("Available sheets:", workbook.SheetNames);
+          
+          // Try to get sheet 3 (index 2) specifically for beam data
+          let sheetIndex = 2; // Sheet 3 (0-indexed)
+          
+          // If that's not available, adjust to what is available
+          if (workbook.SheetNames.length <= sheetIndex) {
+            console.log(`Sheet at index ${sheetIndex} not found. Trying last available sheet.`);
+            sheetIndex = workbook.SheetNames.length - 1;
+          }
+          
+          const sheetName = workbook.SheetNames[sheetIndex];
+          console.log(`Processing sheet: ${sheetName}`);
+          
+          const worksheet = workbook.Sheets[sheetName];
+          
+          // Convert to JSON with header row
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: null });
+          
+          // Log first few rows for debugging
+          console.log("First row:", jsonData[0]);
+          if (jsonData.length > 1) {
+            console.log("Second row:", jsonData[1]);
+          }
+          
+          // Process the data into our structured format
+          const processedData = processWShapeData(jsonData);
+          
+          // If no shapes were found, try each sheet
+          if (Object.keys(processedData).length === 0) {
+            console.log("No shapes found in selected sheet. Trying all sheets...");
+            
+            for (let i = 0; i < workbook.SheetNames.length; i++) {
+              if (i === sheetIndex) continue; // Skip the one we already tried
+              
+              const altSheetName = workbook.SheetNames[i];
+              console.log(`Trying alternative sheet: ${altSheetName}`);
+              
+              const altWorksheet = workbook.Sheets[altSheetName];
+              const altJsonData = XLSX.utils.sheet_to_json(altWorksheet, { defval: null });
+              
+              // Process this sheet
+              const altProcessedData = processWShapeData(altJsonData);
+              
+              // If we found shapes, use this data
+              if (Object.keys(altProcessedData).length > 0) {
+                console.log(`Found ${Object.keys(altProcessedData).length} shapes in sheet: ${altSheetName}`);
+                window.wShapeDatabase = altProcessedData;  // Store in global
+                resolve(altProcessedData);
+                return;
+              }
+            }
+            
+            // If we got here, no shapes were found in any sheet
+            console.warn("No W-shapes found in any sheet. Using hardcoded data.");
+            const hardcodedData = getHardcodedData();
+            window.wShapeDatabase = hardcodedData;  // Store in global
+            resolve(hardcodedData);
+            return;
+          }
+          
+          console.log(`Processed ${Object.keys(processedData).length} W-shapes from sheet ${sheetName}`);
+          
+          // Store in the global variable
+          window.wShapeDatabase = processedData;
+          
+          resolve(processedData);
+        } catch (error) {
+          console.error("Error processing Excel file:", error);
+          reject(error);
+        }
+      })
+      .catch(error => {
+        console.error(`Error reading file ASTMSPEC.xlsx:`, error);
+        reject(error);
+      });
+  });
+}
+
+// Load using fetch API
+async function loadFromFetch() {
+  const response = await fetch('ASTMSPEC.xlsx', {
+    method: 'GET',
+    mode: 'cors',
+    cache: 'no-cache'
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch Excel file: ${response.status}`);
+  }
+  
+  // Get the file as an ArrayBuffer
+  const arrayBuffer = await response.arrayBuffer();
+  const data = new Uint8Array(arrayBuffer);
+  
+  // Parse with SheetJS
+  const workbook = XLSX.read(data, { type: 'array' });
+  
+  // Log available sheets for debugging
+  console.log("Available sheets (fetch method):", workbook.SheetNames);
+  
+  // Try to get sheet 3 (index 2)
+  const sheetIndex = 2; // Sheet 3 (0-indexed)
+  
+  if (workbook.SheetNames.length <= sheetIndex) {
+    throw new Error(`Sheet 3 not found in workbook. Available sheets: ${workbook.SheetNames.join(', ')}`);
+  }
+  
+  const sheetName = workbook.SheetNames[sheetIndex];
+  console.log(`Processing sheet (fetch method): ${sheetName}`);
+  
+  const worksheet = workbook.Sheets[sheetName];
+  
+  // Convert to JSON
+  const jsonData = XLSX.utils.sheet_to_json(worksheet);
+  console.log(`Successfully loaded ${jsonData.length} rows from Excel file`);
+  
+  // Process the data
+  const processedData = processWShapeData(jsonData);
+  console.log(`Processed ${Object.keys(processedData).length} W-shapes (fetch method)`);
+  
+  // Store in the global variable
+  window.wShapeDatabase = processedData;
+  
+  return processedData;
+}
+
+
+// Updated initialization function with better logging and error handling
+async function initializeDatabase() {
+  try {
+    console.log("Starting database initialization...");
+    
+    // Clear any previous results
+    const resultsElement = document.getElementById('results');
+    if (resultsElement) {
+      resultsElement.innerHTML = '<p>Loading W-shape database...</p>';
+    }
+    
+    // Load the database
+    const database = await getWShapeDatabase();
+    
+    // Ensure the database is stored in the global scope
+    window.wShapeDatabase = database;
+    
+    // Print some debug info about what shapes we have
+    const shapeCount = Object.keys(database).length;
+    console.log(`Database loaded with ${shapeCount} shapes`);
+    
+    // Check for specific examples to ensure data quality
+    const examples = ['W8X31', 'W10X45', 'W12X26', 'W14X30'];
+    examples.forEach(shape => {
+      const shapeData = database[shape];
+      if (shapeData) {
+        console.log(`Sample data for ${shape}:`, {
+          weight: shapeData.weight_per_foot,
+          depth: shapeData.depth,
+          Zx: shapeData.elastic_section_modulus
+        });
+      } else {
+        console.log(`Shape ${shape} not found in database`);
+      }
+    });
+    
+    // Update UI
+    if (resultsElement) {
+      resultsElement.innerHTML = 
+        `<p>W-shape database loaded successfully! ${shapeCount} shapes available.</p>
+         <p>Available shapes: ${Object.keys(database).slice(0, 5).join(', ')}...</p>`;
+    }
+    
+    // Show search container if it exists
+    const searchContainer = document.getElementById('search-container');
+    if (searchContainer) {
+      searchContainer.style.display = 'block';
+    }
+    
+    return database;
+  } catch (error) {
+    console.error('Database initialization failed:', error);
+    
+    // Fall back to hardcoded data
+    const hardcodedData = getHardcodedData();
+    window.wShapeDatabase = hardcodedData;
+    
+    // Update UI
+    const resultsElement = document.getElementById('results');
+    if (resultsElement) {
+      resultsElement.innerHTML = 
+        `<p style="color: red;">Error loading database: ${error.message}</p>
+         <p>Using hardcoded data with limited W-shapes.</p>`;
+    }
+    
+    return hardcodedData;
+  }
+}
+
+// Function to check if the database is loaded
+function isDatabaseLoaded() {
+  return window.wShapeDatabase && Object.keys(window.wShapeDatabase).length > 0;
+}
+
+// Function to get a specific shape from the database
+function getShapeData(shapeName) {
+  if (!window.wShapeDatabase) {
+    console.warn("W-shape database not loaded yet");
+    return null;
+  }
+  
+  // Normalize the shape name
+  const normalizedShape = shapeName.toString().toUpperCase().replace(/\s/g, '');
+  
+  // Try direct lookup
+  if (window.wShapeDatabase[normalizedShape]) {
+    return window.wShapeDatabase[normalizedShape];
+  }
+  
+  // Try alternative formats
+  const alternatives = [
+    normalizedShape.replace('X', 'x'),          // Try with lowercase x
+    normalizedShape.replace('x', 'X'),          // Try with uppercase X
+    `W${normalizedShape.replace(/^W/i, '')}`,   // Ensure W prefix
+  ];
+  
+  for (const alt of alternatives) {
+    if (window.wShapeDatabase[alt]) {
+      return window.wShapeDatabase[alt];
+    }
+  }
+  
+  console.warn(`Shape ${shapeName} not found in database`);
+  return null;
+}
+
+// Make sure to initialize the database when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  console.log("DOM Content Loaded, initializing W-Shape database");
+  initializeDatabase();
+});
+
+// Also try again when the window is fully loaded
+window.addEventListener('load', () => {
+  if (!isDatabaseLoaded()) {
+    console.log("Window loaded, database not initialized yet, trying again");
+    initializeDatabase();
+  }
+});
+
+// Export functions to global scope for access from other scripts
+window.getWShapeDatabase = getWShapeDatabase;
+window.initializeDatabase = initializeDatabase;
+window.getShapeData = getShapeData;
+window.isDatabaseLoaded = isDatabaseLoaded;
+
+// Steel Beam Design Calculator for Shear and Bending
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the design button and add click event
+    const designButton = document.getElementById('ShearBending');
+    if (designButton) {
+        designButton.addEventListener('click', calculateBeamDesign);
+    }
+});
+
+
+// Main calculation function
+function calculateBeamDesign() {
+    // Clear previous results
+    // FIXED: Changed resultDiv to reference the correct ID from your HTML
+    const resultDiv = document.getElementById('ResultShaer');
+    resultDiv.innerHTML = '<h3>Steel Beam Design Calculation</h3>';
+    
+    try {
+        // Check if database is loaded
+        if (!wShapeDatabase || Object.keys(wShapeDatabase).length === 0) {
+            resultDiv.innerHTML += '<p class="error">Error: W-shape database not loaded yet. Please wait and try again.</p>';
+            return;
+        }
+        
+        // Get input values
+        const deadLoad = parseFloat(document.getElementById('DeadLoad').value) || 0;
+        const liveLoad = parseFloat(document.getElementById('LiveLoad').value) || 0;
+        const length = parseFloat(document.getElementById('Lenght').value) || 0; // Note: ID misspelled as "Lenght"
+        const designMethod = document.getElementById('DesignMethod').value;
+        const steelSpec = document.getElementById('ASTMinputS').value; // FIXED: Changed from 'ASTMinputD' to 'ASTMinputS'
+        
+        console.log("Inputs:", { deadLoad, liveLoad, length, designMethod, steelSpec });
+        
+        // Validate inputs
+        if (deadLoad <= 0 || liveLoad <= 0 || length <= 0) {
+            resultDiv.innerHTML += '<p class="error">Error: Please enter valid positive values for loads and length.</p>';
+            return;
+        }
+        
+        // Get steel properties
+        const steelProps = getSteelProperties(steelSpec);
+        resultDiv.innerHTML += `<p>Selected Steel: ${steelSpec}, Fy = ${steelProps.Fy} ksi, Fu = ${steelProps.Fu} ksi</p>`;
+        
+        // Calculate load combination based on design method
+        const { factoredLoad, loadCombination } = getLoadCombination(deadLoad, liveLoad, designMethod);
+        resultDiv.innerHTML += `<p>Design Method: ${designMethod}</p>`;
+        resultDiv.innerHTML += `<p>Load Combination: ${loadCombination}</p>`;
+        resultDiv.innerHTML += `<p>Factored Load (w): ${factoredLoad.toFixed(2)} kips/ft</p>`;
+        
+        // Calculate moment and shear
+        const Mu = (factoredLoad * Math.pow(length, 2)) / 8; // Mu = wL²/8 for simply supported beam
+        const Vu = (factoredLoad * length) / 2; // Vu = wL/2 for simply supported beam
+        
+        resultDiv.innerHTML += `<p>Moment (Mu): ${Mu.toFixed(2)} kip-ft</p>`;
+        resultDiv.innerHTML += `<p>Shear (Vu): ${Vu.toFixed(2)} kips</p>`;
+        
+        // Calculate required plastic section modulus
+        const { Zx_req, Mu_ft_lbs } = calculateRequiredZx(Mu, steelProps.Fy, designMethod);
+        resultDiv.innerHTML += `<p>Required Plastic Section Modulus (Zx): ${Zx_req.toFixed(2)} in³</p>`;
+        
+        // Expose Mu to the global scope for use in getSuitableWShapes
+        window.Mu = Mu;
+        
+        // Get and check suitable W shapes
+        const suitableShapes = getSuitableWShapes(Zx_req, Vu, steelProps.Fy, designMethod);
+        
+        if (suitableShapes.length === 0) {
+            resultDiv.innerHTML += '<p class="error">No suitable W shapes found. Consider increasing the section size or using a different design approach.</p>';
+            return;
+        }
+        
+        // Display results and select the most economical section
+        displayResults(suitableShapes, factoredLoad, length, steelProps.Fy, designMethod, resultDiv);
+        
+    } catch (error) {
+        resultDiv.innerHTML += `<p class="error">Error during calculation: ${error.message}</p>`;
+        console.error("Calculation error:", error);
+    }
+}
+
+
+// Get steel properties based on specification
+function getSteelProperties(steelSpec) {
+    // Default steel specifications
+    const steelSpecs = [
+        { Steel_name: "A36", Fy: 36, Fu: 58 },
+        { Steel_name: "A572Gr.42", Fy: 42, Fu: 60 },
+        { Steel_name: "A572Gr.50", Fy: 50, Fu: 65 },
+        { Steel_name: "A572Gr.55", Fy: 55, Fu: 70 },
+        { Steel_name: "A572Gr.60", Fy: 60, Fu: 75 },
+        { Steel_name: "A572Gr.65", Fy: 65, Fu: 80 },
+        { Steel_name: "A588Gr.42", Fy: 42, Fu: 63 },
+        { Steel_name: "A588Gr.46", Fy: 46, Fu: 67 },
+        { Steel_name: "A588Gr.50", Fy: 50, Fu: 70 },
+        { Steel_name: "A687", Fy: 50, Fu: 70 },
+        { Steel_name: "A992", Fy: 50, Fu: 65 }
+    ];
+    
+    // Find matching steel spec
+    const steel = steelSpecs.find(s => s.Steel_name === steelSpec.replace(/\s/g, ''));
+    
+    if (!steel) {
+        throw new Error(`Steel specification ${steelSpec} not found.`);
+    }
+    
+    return steel;
+}
+
+// Calculate load combination based on design method
+function getLoadCombination(deadLoad, liveLoad, designMethod) {
+    let factoredLoad, loadCombination;
+    
+    if (designMethod === 'LRFD') {
+        // LRFD: 1.2D + 1.6L
+        factoredLoad = 1.2 * deadLoad + 1.6 * liveLoad;
+        loadCombination = '1.2D + 1.6L';
+    } else {
+        // ASD: D + L
+        factoredLoad = deadLoad + liveLoad;
+        loadCombination = 'D + L';
+    }
+    
+    return { factoredLoad, loadCombination };
+}
+// Calculate required plastic section modulus
+function calculateRequiredZx(Mu, Fy, designMethod) {
+    // Convert moment from kip-ft to kip-in
+    const Mu_in = Mu * 12;
+    
+    let Zx_req;
+    
+    if (designMethod === 'LRFD') {
+        // LRFD: Mu = φFyZx, φ = 0.9
+        // Solve for Zx: Zx = Mu / (φFy)
+        Zx_req = Mu_in / (0.9 * Fy);
+    } else {
+        // ASD: Mu = FyZx/Ω, Ω = 1.67
+        // Solve for Zx: Zx = Mu*Ω / Fy
+        Zx_req = Mu_in * 1.67 / Fy;
+    }
+    
+    return { Zx_req };
+}
+// Calculate required web area for shear (assuming Case 1 - full shear capacity)
+function calculateRequiredAw(Vu, Fy, designMethod) {
+    let Aw_req;
+    
+    if (designMethod === 'LRFD') {
+        // LRFD: Vu = φVn = φ(0.6FyAw) = 0.9(0.6FyAw)
+        // Solve for Aw: Aw = Vu / (0.9*0.6*Fy)
+        Aw_req = Vu / (0.9 * 0.6 * Fy);
+    } else {
+        // ASD: Vu = Vn/Ω = (0.6FyAw)/1.67
+        // Solve for Aw: Aw = Vu*1.67 / (0.6*Fy)
+        Aw_req = Vu * 1.67 / (0.6 * Fy);
+    }
+    
+    return { Aw_req };
+}
+
+// Find suitable W-shapes that meet both Zx and Aw requirements
+function findSuitableWShapes(Zx_req, Aw_req, Fy, designMethod) {
+    // Check if wShapeDatabase is loaded
+    if (!wShapeDatabase || Object.keys(wShapeDatabase).length === 0) {
+        throw new Error("W-shape database not loaded. Please wait for database to load and try again.");
+    }
+    
+    const E = 29000; // Modulus of elasticity for steel in ksi
+    
+    // Filter for W8, W10, W12, and W14 shapes only
+    const allowedPrefixes = ['W8', 'W10', 'W12', 'W14'];
+    const seriesShapes = {};
+    
+    // Initialize each series with an empty array
+    allowedPrefixes.forEach(prefix => {
+        seriesShapes[prefix] = [];
+    });
+    
+    // Examine each shape in the database
+    for (const shapeName in wShapeDatabase) {
+        const shape = wShapeDatabase[shapeName];
+        
+        // Match shape prefix (W8, W10, W12, W14)
+        const prefixMatch = shapeName.match(/^(W\d+)/);
+        if (!prefixMatch || !allowedPrefixes.includes(prefixMatch[1])) {
+            continue;
+        }
+        
+        const prefix = prefixMatch[1];
+        
+        // Extract relevant properties with defaults if missing
+        const depth = parseFloat(shape.depth) || 0;
+        const flangeThickness = parseFloat(shape.flange_thickness) || 0;
+        const webThickness = parseFloat(shape.web_thickness) || 0;
+        const webHeight = depth - 2 * flangeThickness;
+        const weightPerFoot = parseFloat(shape.weight_per_foot) || 0;
+        
+        // For section modulus, try both plastic and elastic
+        const plasticSectionModulus = parseFloat(shape.plastic_section_modulus) || 0;
+        const elasticSectionModulus = parseFloat(shape.elastic_section_modulus) || 0;
+        
+        // Use plastic section modulus if available, otherwise use elastic
+        const Zx = plasticSectionModulus > 0 ? plasticSectionModulus : elasticSectionModulus;
+        
+        // Skip if we don't have sufficient data
+        if (depth <= 0 || webThickness <= 0 || Zx <= 0) {
+            continue;
+        }
+        
+        // Calculate the web area
+        const Aw = depth * webThickness;
+        
+        // Calculate h/tw ratio for shear buckling checks
+        const h_tw_ratio = webHeight / webThickness;
+        
+        // Determine which case applies for shear coefficient
+        const Kv = 5.0; // Shear buckling coefficient for unstiffened webs
+        const limit1 = 2.24 * Math.sqrt(E/Fy);
+        const limit3 = 1.37 * Math.sqrt(Kv*E/Fy);
+        
+        let Cv = 1.0; // Default value for Case 1
+        let shearFactor = 1.0; // Default shear factor for ASD/LRFD
+        
+        // Determine shear coefficient based on h/tw ratio
+        if (h_tw_ratio <= limit1) {
+            // Case 1: h/tw ≤ 2.24√(E/Fy)
+            Cv = 1.0;
+            // Case 1 uses different factors: 1.0 for LRFD and 1.5 for ASD
+            shearFactor = designMethod === 'LRFD' ? 1.0 : 1.5;
+        } else if (h_tw_ratio <= limit3) {
+            // Case 2: 2.24√(E/Fy) < h/tw ≤ 1.37√(KvE/Fy)
+            Cv = (1.10 * Math.sqrt(E/Fy)) / h_tw_ratio;
+            // Cases 2 and 3 use standard factors: 0.9 for LRFD and 1.67 for ASD
+            shearFactor = designMethod === 'LRFD' ? 0.9 : 1.67;
+        } else {
+            // Case 3: h/tw > 1.37√(KvE/Fy)
+            Cv = (1.51 * E * Kv) / (Math.pow(h_tw_ratio, 2) * Fy);
+            shearFactor = designMethod === 'LRFD' ? 0.9 : 1.67;
+        }
+        
+        // Calculate nominal shear capacity
+        const Vn = 0.6 * Fy * Aw * Cv;
+        
+        // Calculate design shear capacity with appropriate factor
+        let shearCapacity;
+        if (designMethod === 'LRFD') {
+            shearCapacity = shearFactor * Vn; // LRFD: φVn
+        } else {
+            shearCapacity = Vn / shearFactor; // ASD: Vn/Ω
+        }
+        
+        // Calculate design moment capacity
+        let momentCapacity;
+        if (designMethod === 'LRFD') {
+            momentCapacity = 0.9 * Fy * Zx / 12; // LRFD: φMn = φFyZx (convert to kip-ft)
+        } else {
+            momentCapacity = (Fy * Zx / 1.67) / 12; // ASD: Mn/Ω = (FyZx)/Ω (convert to kip-ft)
+        }
+        
+        // Create a shape object with all relevant properties
+        const wShape = {
+            shape: shapeName,
+            prefix: prefix,
+            weight_per_foot: weightPerFoot,
+            depth: depth,
+            web_thickness: webThickness,
+            flange_thickness: flangeThickness,
+            web_height: webHeight,
+            Zx: Zx,
+            web_area: Aw,
+            h_tw_ratio: h_tw_ratio,
+            Cv: Cv,
+            shear_factor: shearFactor,
+            shear_capacity: shearCapacity,
+            moment_capacity: momentCapacity,
+            Zx_utilization: Zx / Zx_req,
+            Aw_utilization: Aw / Aw_req
+        };
+        
+        // Check if the shape meets both requirements
+        if (wShape.Zx >= Zx_req && wShape.web_area >= Aw_req) {
+            seriesShapes[prefix].push(wShape);
+        }
+    }
+    
+    // Collect all suitable shapes into a single array
+    const allShapes = [];
+    
+    // Add the most lightweight shape from each series
+    allowedPrefixes.forEach(prefix => {
+        if (seriesShapes[prefix].length > 0) {
+            // Sort by weight (lightest first)
+            seriesShapes[prefix].sort((a, b) => a.weight_per_foot - b.weight_per_foot);
+            allShapes.push(seriesShapes[prefix][0]);
+        }
+    });
+    
+    // Sort all shapes by weight
+    return allShapes.sort((a, b) => a.weight_per_foot - b.weight_per_foot);
+}
+
+
+
+// Calculate required elastic section modulus
+function calculateRequiredZx(Mu, Fy, designMethod) {
+    // Convert moment from kip-ft to kip-in
+    const Mu_in = Mu * 12;
+    
+    let Zx_req;
+    
+    if (designMethod === 'LRFD') {
+        // LRFD: Mu = φFyZx, φ = 0.9
+        // Solve for Zx: Zx = Mu / (φFy)
+        Zx_req = Mu_in / (0.9 * Fy);
+    } else {
+        // ASD: Mu = FyZx/Ω, Ω = 1.67
+        // Solve for Zx: Zx = Mu*Ω / Fy
+        Zx_req = Mu_in * 1.67 / Fy;
+    }
+    
+    return { Zx_req, Mu_ft_lbs: Mu };
+}
+
+// Display results and select the most economical section
+function displayResults(suitableShapes, factoredLoad, length, Fy, designMethod, resultDiv) {
+    if (suitableShapes.length === 0) {
+        resultDiv.innerHTML += '<p>No suitable W shapes found.</p>';
+        return;
+    }
+    
+    // Show design process and formulas for educational purposes
+    resultDiv.innerHTML += '<h3>Design Process and Formulas</h3>';
+    resultDiv.innerHTML += `<p><strong>Step 1:</strong> Calculate required elastic section modulus based on moment</p>`;
+    if (designMethod === 'LRFD') {
+        resultDiv.innerHTML += `<p>For LRFD: Z<sub>x-req</sub> = M<sub>u</sub> / (φF<sub>y</sub>) where φ = 0.9</p>`;
+    } else {
+        resultDiv.innerHTML += `<p>For ASD: Z<sub>x-req</sub> = M<sub>u</sub> × Ω / F<sub>y</sub> where Ω = 1.67</p>`;
+    }
+    resultDiv.innerHTML += `<p><strong>Step 2:</strong> Check web shear capacity</p>`;
+    resultDiv.innerHTML += `<p>For h/tw ≤ 2.24√(E/F<sub>y</sub>): C<sub>v</sub> = 1.0</p>`;
+    resultDiv.innerHTML += `<p>For 2.24√(E/F<sub>y</sub>) < h/tw ≤ 1.37√(K<sub>v</sub>E/F<sub>y</sub>): C<sub>v</sub> = 1.10√(E/F<sub>y</sub>)/(h/tw)</p>`;
+    resultDiv.innerHTML += `<p>For h/tw > 1.37√(K<sub>v</sub>E/F<sub>y</sub>): C<sub>v</sub> = 1.51EK<sub>v</sub>/(h/tw)²F<sub>y</sub></p>`;
+    resultDiv.innerHTML += `<p>V<sub>n</sub> = 0.6F<sub>y</sub>A<sub>w</sub>C<sub>v</sub> where A<sub>w</sub> = d × t<sub>w</sub></p>`;
+    if (designMethod === 'LRFD') {
+        resultDiv.innerHTML += `<p>Design shear: φV<sub>n</sub> where φ = 0.9</p>`;
+    } else {
+        resultDiv.innerHTML += `<p>Design shear: V<sub>n</sub>/Ω where Ω = 1.67</p>`;
+    }
+    resultDiv.innerHTML += `<p><strong>Step 3:</strong> Check flexural capacity</p>`;
+    if (designMethod === 'LRFD') {
+        resultDiv.innerHTML += `<p>Design moment: φF<sub>y</sub>Z<sub>x</sub> where φ = 0.9</p>`;
+    } else {
+        resultDiv.innerHTML += `<p>Design moment: F<sub>y</sub>Z<sub>x</sub>/Ω where Ω = 1.67</p>`;
+    }
+    
+    // Create a table for each series separately
+    allowedPrefixes = ['W8', 'W10', 'W12', 'W14'];
+    
+    allowedPrefixes.forEach(prefix => {
+        // Filter shapes for this series
+        const seriesShapes = suitableShapes.filter(shape => shape.shape.startsWith(prefix));
+        
+        if (seriesShapes.length === 0) {
+            resultDiv.innerHTML += `<h3>${prefix} Series</h3>`;
+            resultDiv.innerHTML += `<p>No suitable ${prefix} shapes found.</p>`;
+            return;
+        }
+        
+        resultDiv.innerHTML += `
+        <h3>${prefix} Series</h3>
+        <table border="1" style="border-collapse: collapse; width: 100%; margin-bottom: 20px;">
+            <tr>
+                <th>Shape</th>
+                <th>Weight (lbs/ft)</th>
+                <th>Zx (in³)</th>
+                <th>Depth (in)</th>
+                <th>Web Area (in²)</th>
+                <th>h/tw</th>
+                <th>Cv</th>
+                <th>Moment Capacity (kip-ft)</th>
+                <th>Shear Capacity (kips)</th>
+            </tr>
+        `;
+        
+        // Add rows for each shape in this series
+        seriesShapes.forEach(shape => {
+            resultDiv.innerHTML += `
+            <tr>
+                <td>${shape.shape}</td>
+                <td>${shape.weight_per_foot.toFixed(1)}</td>
+                <td>${shape.Zx.toFixed(1)}</td>
+                <td>${shape.d.toFixed(2)}</td>
+                <td>${shape.webArea.toFixed(2)}</td>
+                <td>${shape.h_tw_ratio.toFixed(2)}</td>
+                <td>${shape.Cv.toFixed(3)}</td>
+                <td>${shape.flexuralCapacity.toFixed(2)}</td>
+                <td>${shape.shearCapacity.toFixed(2)}</td>
+            </tr>
+            `;
+        });
+        
+        resultDiv.innerHTML += `</table>`;
+    });
+    
+    // Find the most economical shape (lowest weight that meets requirements)
+    const bestShape = suitableShapes[0]; // Already sorted by weight
+    
+    if (bestShape) {
+        resultDiv.innerHTML += `<h3>Most Economical Section: ${bestShape.shape}</h3>`;
+        resultDiv.innerHTML += `<p><strong>Properties:</strong></p>`;
+        resultDiv.innerHTML += `<ul>
+            <li>Weight: ${bestShape.weight_per_foot.toFixed(1)} lbs/ft</li>
+            <li>Elastic Section Modulus (Zx): ${bestShape.Zx.toFixed(1)} in³</li>
+            <li>Depth: ${bestShape.d.toFixed(2)} in</li>
+            <li>Web Area (Aw): ${bestShape.webArea.toFixed(2)} in²</li>
+            <li>h/tw ratio: ${bestShape.h_tw_ratio.toFixed(2)}</li>
+            <li>Shear coefficient (Cv): ${bestShape.Cv.toFixed(3)}</li>
+            <li>Moment Capacity: ${bestShape.flexuralCapacity.toFixed(2)} kip-ft</li>
+            <li>Shear Capacity: ${bestShape.shearCapacity.toFixed(2)} kips</li>
+        </ul>`;
+        
+        // Calculate the required values with beam self-weight
+        const beamWeight = bestShape.weight_per_foot / 1000; // Convert lbs/ft to kips/ft
+        const totalLoad = factoredLoad + beamWeight;
+        
+        const Mu = (totalLoad * Math.pow(length, 2)) / 8;
+        const Vu = (totalLoad * length) / 2;
+        
+        resultDiv.innerHTML += `<p><strong>Self-Weight Analysis:</strong></p>`;
+        resultDiv.innerHTML += `<ul>
+            <li>Beam Self-Weight: ${beamWeight.toFixed(4)} kips/ft</li>
+            <li>Total Load with Self-Weight: ${totalLoad.toFixed(2)} kips/ft</li>
+            <li>Resulting Maximum Moment: ${Mu.toFixed(2)} kip-ft</li>
+            <li>Resulting Maximum Shear: ${Vu.toFixed(2)} kips</li>
+        </ul>`;
+        
+        // Check if the shape is adequate
+        const isMomentOk = Mu <= bestShape.flexuralCapacity;
+        const isShearOk = Vu <= bestShape.shearCapacity;
+        const isSafe = isMomentOk && isShearOk;
+        
+        resultDiv.innerHTML += `<p><strong>Bending Check:</strong> ${isMomentOk ? 'PASS' : 'FAIL'} (${Mu.toFixed(2)} kip-ft ≤ ${bestShape.flexuralCapacity.toFixed(2)} kip-ft)</p>`;
+        resultDiv.innerHTML += `<p><strong>Shear Check:</strong> ${isShearOk ? 'PASS' : 'FAIL'} (${Vu.toFixed(2)} kips ≤ ${bestShape.shearCapacity.toFixed(2)} kips)</p>`;
+        resultDiv.innerHTML += `<p><strong>Result:</strong> ${bestShape.shape} is ${isSafe ? 'adequate' : 'not adequate'} for both bending and shear.</p>`;
+    } else {
+        resultDiv.innerHTML += `<h3 style="color: red;">No suitable W shape found among the available shapes.</h3>`;
+        resultDiv.innerHTML += `<p>Consider using a larger section, a different steel specification, or composite construction.</p>`;
+    }
+}
+
+//DESIGN
+// W-Shape database variable that will hold all the data
+
+// Global variable for W-shape database
+window.wShapeDatabase = null;
+
+// Function to ensure the XLSX library is loaded
+function ensureXLSXLoaded() {
+  return new Promise((resolve, reject) => {
+    // Check if SheetJS is already loaded
+    if (window.XLSX) {
+      console.log("SheetJS already loaded");
+      resolve();
+      return;
+    }
+    
+    console.log("Loading SheetJS...");
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    script.onload = () => {
+      console.log("SheetJS loaded successfully");
+      resolve();
+    };
+    script.onerror = () => {
+      console.error("Failed to load SheetJS");
+      reject(new Error("Failed to load SheetJS library"));
+    };
+    document.head.appendChild(script);
+  });
+}
+
+// Improved findValue helper function
+function findValue(row, possibleColumns, defaultValue = 0) {
+    // Try each possible column name
+    for (const col of possibleColumns) {
+        if (row[col] !== undefined && row[col] !== null && row[col] !== '') {
+            // Handle different formats for the value
+            let value = row[col];
+            
+            // If it's a string that could be a number with a unit suffix
+            if (typeof value === 'string') {
+                // Remove any unit suffixes or other non-numeric characters
+                const numericPart = value.replace(/[^\d.-]/g, '');
+                if (numericPart.trim() !== '') {
+                    const parsedValue = parseFloat(numericPart);
+                    if (!isNaN(parsedValue)) {
+                        return parsedValue;
+                    }
+                }
+                
+                // If still here and not empty, return the original string
+                if (value.trim() !== '') {
+                    return value;
+                }
+            } 
+            // Handle numeric values
+            else if (typeof value === 'number') {
+                return value;
+            }
+        }
+    }
+    
+    return defaultValue; // Return default value if nothing valid found
+}
+
+
+// Function to process and structure the W-shape data
+function processWShapeData(data) {
+  console.log("Processing data with", data.length, "rows");
+  
+  // Create a structured object with W-shapes indexed by their designation
+  const wShapes = {};
+  
+  data.forEach((row, index) => {
+    // Skip empty rows
+    if (!row || Object.keys(row).length === 0) {
+      return;
+    }
+    
+    // Debug first 5 rows
+    if (index < 5) {
+      console.log(`Row ${index}:`, row);
+    }
+    
+    // Try various methods to find the shape designation
+    let shape = null;
+    
+    // Method 1: Check common column names
+    const possibleShapeColumns = ['Shape', 'W', 'Designation', 'Section', 'DESIGNATION', 'AISC_Manual_Label'];
+    for (const colName of possibleShapeColumns) {
+      if (row[colName] && typeof row[colName] === 'string' && row[colName].toUpperCase().startsWith('W')) {
+        shape = row[colName].toUpperCase();
+        break;
+      }
+    }   
+    
+    // Method 2: Check first few values in the row
+    if (!shape) {
+      const values = Object.values(row);
+      for (const val of values.slice(0, 5)) {
+        if (val && typeof val === 'string' && val.toUpperCase().startsWith('W')) {
+          shape = val.toUpperCase();
+          break;
+        }
+      }
+    }
+    
+    if (shape) {
+      // Create an object for this W-shape with all relevant properties
+      wShapes[shape] = {
+        shape: shape,
+        weight_per_foot: findValue(row, ['W [lbs/ft]', 'Weight per foot', 'lbs/ft', 'Weight', 'WEIGHT']),
+        depth: findValue(row, ['d [in]', 'Depth', 'd', 'D', 'DEPTH']),
+        flange_thickness: findValue(row, ['tf [in]', 'tf', 'Flange Thickness', 'FLANGE THICKNESS']),
+        web_thickness: findValue(row, ['tw [in]', 'tw', 'Web Thickness', 'WEB THICKNESS']),
+        elastic_section_modulus: findValue(row, ['Sx [in3]', 'Sx', 'Section Modulus', 'SECTION MODULUS']),
+        plastic_section_modulus: findValue(row, ['Zx [in3]', 'Zx', 'Plastic Section Modulus']),
+        plastic_moment_asd: findValue(row, ['Mpx/Ωb [kip-ft] ASD', 'Mpx/Ωb']),
+        plastic_moment_lrfd: findValue(row, ['ΦbMpx [kip-ft] LRFD', 'ΦbMpx']),
+        reduced_moment_asd: findValue(row, ['Mrx/Ωb [kip-ft] ASD', 'Mrx/Ωb']),
+        reduced_moment_lrfd: findValue(row, ['ΦbMrx [kip-ft] LRFD', 'ΦbMrx']),
+        beam_force_asd: findValue(row, ['BF [kip] ASD', 'BF ASD']),
+        beam_force_lrfd: findValue(row, ['BF [kip] LRFD', 'BF LRFD']),
+        limit_length_plastic: findValue(row, ['Lp [ft]', 'Lp']),
+        limit_length_inelastic: findValue(row, ['Lr [ft]', 'Lr']),
+        moment_of_inertia: findValue(row, ['Ix [in4]', 'Ix', 'Moment of Inertia']),
+        shear_capacity_asd: findValue(row, ['Vnx/Ωv [kip] ASD', 'Vnx/Ωv']),
+        shear_capacity_lrfd: findValue(row, ['ΦvVnx [kip] LRFD', 'ΦvVnx'])
+      };
+      
+      // If any critical values are missing, try to estimate them based on typical ratios
+      if (!wShapes[shape].web_thickness && wShapes[shape].depth) {
+        wShapes[shape].web_thickness = wShapes[shape].depth * 0.02; // approximate as 2% of depth
+      }
+      
+      if (!wShapes[shape].flange_thickness && wShapes[shape].depth) {
+        wShapes[shape].flange_thickness = wShapes[shape].depth * 0.05; // approximate as 5% of depth
+      }
+    }
+  });
+  
+  const shapeCount = Object.keys(wShapes).length;
+  console.log(`Processed ${shapeCount} W-shapes`);
+  
+  return wShapes;
+}
+
+// Hardcoded fallback data for common W-shapes in case file loading fails
+function getHardcodedData() {
+  console.log("Using hardcoded W-shape data as fallback");
+  
+  return {
+    "W12X26": {
+      shape: "W12X26",
+      weight_per_foot: 26,
+      depth: 12.22,
+      flange_thickness: 0.38,
+      web_thickness: 0.23,
+      elastic_section_modulus: 33.4,
+      plastic_section_modulus: 37.2,
+      moment_of_inertia: 204,
+      plastic_moment_asd: 103.3,
+      plastic_moment_lrfd: 155.8
+    },
+    "W14X30": {
+      shape: "W14X30",
+      weight_per_foot: 30,
+      depth: 13.84,
+      flange_thickness: 0.385,
+      web_thickness: 0.27,
+      elastic_section_modulus: 47.2,
+      plastic_section_modulus: 53.4,
+      moment_of_inertia: 291,
+      plastic_moment_asd: 148.3,
+      plastic_moment_lrfd: 223.8
+    },
+    "W16X26": {
+      shape: "W16X26",
+      weight_per_foot: 26,
+      depth: 15.69,
+      flange_thickness: 0.345,
+      web_thickness: 0.25,
+      elastic_section_modulus: 44.2,
+      plastic_section_modulus: 51.0,
+      moment_of_inertia: 301,
+      plastic_moment_asd: 141.7,
+      plastic_moment_lrfd: 213.8
+    },
+    "W16X40": {
+      shape: "W16X40",
+      weight_per_foot: 40,
+      depth: 16.0,
+      flange_thickness: 0.505,
+      web_thickness: 0.305,
+      elastic_section_modulus: 81.0,
+      plastic_section_modulus: 92.0,
+      moment_of_inertia: 518,
+      plastic_moment_asd: 255.6,
+      plastic_moment_lrfd: 385.6
+    },
+    "W18X35": {
+      shape: "W18X35",
+      weight_per_foot: 35,
+      depth: 17.7,
+      flange_thickness: 0.425,
+      web_thickness: 0.30,
+      elastic_section_modulus: 72.7,
+      plastic_section_modulus: 83.3,
+      moment_of_inertia: 510,
+      plastic_moment_asd: 231.4,
+      plastic_moment_lrfd: 349.4
+    },
+    "W21X44": {
+      shape: "W21X44",
+      weight_per_foot: 44,
+      depth: 20.7,
+      flange_thickness: 0.450,
+      web_thickness: 0.350,
+      elastic_section_modulus: 110,
+      plastic_section_modulus: 126,
+      moment_of_inertia: 843,
+      plastic_moment_asd: 350.0,
+      plastic_moment_lrfd: 528.0
+    },
+    "W24X55": {
+      shape: "W24X55",
+      weight_per_foot: 55,
+      depth: 23.6,
+      flange_thickness: 0.505,
+      web_thickness: 0.395,
+      elastic_section_modulus: 154,
+      plastic_section_modulus: 177,
+      moment_of_inertia: 1350,
+      plastic_moment_asd: 491.7,
+      plastic_moment_lrfd: 742.0
+    }
+  };
+}
+
+// Improved function to try all possible methods to load the XLSX file
+async function getWShapeDatabase() {
+  // Return cached database if already loaded
+  if (window.wShapeDatabase && Object.keys(window.wShapeDatabase).length > 0) {
+    console.log("Using cached W-shape database");
+    return window.wShapeDatabase;
+  }
+
+  try {
+    console.log('Loading W-shape database...');
+    
+    // Make sure XLSX library is loaded
+    await ensureXLSXLoaded();
+    
+    // Try file system method first (for Claude web interface)
+    try {
+      console.log("Attempting to load using file system API");
+      const data = await loadFromFileSystem();
+      window.wShapeDatabase = data; // Store in global scope
+      return data;
+    } catch (fsError) {
+      console.warn("File system method failed:", fsError);
+      
+      // Try fetch method next
+      try {
+        console.log("Attempting to load using fetch API");
+        const data = await loadFromFetch();
+        window.wShapeDatabase = data; // Store in global scope
+        return data;
+      } catch (fetchError) {
+        console.warn("Fetch method failed:", fetchError);
+        
+        // Fall back to hardcoded data
+        console.error("All file loading methods failed. Using hardcoded data.");
+        const data = getHardcodedData();
+        window.wShapeDatabase = data; // Store in global scope
+        return data;
+      }
+    }
+  } catch (error) {
+    console.error('Fatal error loading W-shape database:', error);
+    const data = getHardcodedData();
+    window.wShapeDatabase = data; // Store in global scope
+    return data;
+  }
+}
+
+// Improved function to load from file system
+async function loadFromFileSystem() {
+  return new Promise((resolve, reject) => {
+    if (!window.fs || typeof window.fs.readFile !== 'function') {
+      reject(new Error("File system API not available"));
+      return;
+    }
+    
+    // Log all available files
+    console.log("Attempting to load files from local filesystem");
+    
+    // Try to load the Excel file - note the precise filename with case sensitivity
+    window.fs.readFile('ASTMSPEC.xlsx', { encoding: null })
+      .then(data => {
+        try {
+          console.log("Successfully read ASTMSPEC.xlsx, size:", data.byteLength);
+          
+          // Process the Excel file using SheetJS
+          const workbook = XLSX.read(data, { type: 'array' });
+          
+          // Log available sheets
+          console.log("Available sheets:", workbook.SheetNames);
+          
+          // Try to get sheet 3 (index 2) specifically for beam data
+          let sheetIndex = 2; // Sheet 3 (0-indexed)
+          
+          // If that's not available, adjust to what is available
+          if (workbook.SheetNames.length <= sheetIndex) {
+            console.log(`Sheet at index ${sheetIndex} not found. Trying last available sheet.`);
+            sheetIndex = workbook.SheetNames.length - 1;
+          }
+          
+          const sheetName = workbook.SheetNames[sheetIndex];
+          console.log(`Processing sheet: ${sheetName}`);
+          
+          const worksheet = workbook.Sheets[sheetName];
+          
+          // Convert to JSON with header row
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: null });
+          
+          // Log first few rows for debugging
+          console.log("First row:", jsonData[0]);
+          if (jsonData.length > 1) {
+            console.log("Second row:", jsonData[1]);
+          }
+          
+          // Process the data into our structured format
+          const processedData = processWShapeData(jsonData);
+          
+          // If no shapes were found, try each sheet
+          if (Object.keys(processedData).length === 0) {
+            console.log("No shapes found in selected sheet. Trying all sheets...");
+            
+            for (let i = 0; i < workbook.SheetNames.length; i++) {
+              if (i === sheetIndex) continue; // Skip the one we already tried
+              
+              const altSheetName = workbook.SheetNames[i];
+              console.log(`Trying alternative sheet: ${altSheetName}`);
+              
+              const altWorksheet = workbook.Sheets[altSheetName];
+              const altJsonData = XLSX.utils.sheet_to_json(altWorksheet, { defval: null });
+              
+              // Process this sheet
+              const altProcessedData = processWShapeData(altJsonData);
+              
+              // If we found shapes, use this data
+              if (Object.keys(altProcessedData).length > 0) {
+                console.log(`Found ${Object.keys(altProcessedData).length} shapes in sheet: ${altSheetName}`);
+                window.wShapeDatabase = altProcessedData;  // Store in global
+                resolve(altProcessedData);
+                return;
+              }
+            }
+            
+            // If we got here, no shapes were found in any sheet
+            console.warn("No W-shapes found in any sheet. Using hardcoded data.");
+            const hardcodedData = getHardcodedData();
+            window.wShapeDatabase = hardcodedData;  // Store in global
+            resolve(hardcodedData);
+            return;
+          }
+          
+          console.log(`Processed ${Object.keys(processedData).length} W-shapes from sheet ${sheetName}`);
+          
+          // Store in the global variable
+          window.wShapeDatabase = processedData;
+          
+          resolve(processedData);
+        } catch (error) {
+          console.error("Error processing Excel file:", error);
+          reject(error);
+        }
+      })
+      .catch(error => {
+        console.error(`Error reading file ASTMSPEC.xlsx:`, error);
+        reject(error);
+      });
+  });
+}
+
+// Load using fetch API
+async function loadFromFetch() {
+  const response = await fetch('ASTMSPEC.xlsx', {
+    method: 'GET',
+    mode: 'cors',
+    cache: 'no-cache'
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch Excel file: ${response.status}`);
+  }
+  
+  // Get the file as an ArrayBuffer
+  const arrayBuffer = await response.arrayBuffer();
+  const data = new Uint8Array(arrayBuffer);
+  
+  // Parse with SheetJS
+  const workbook = XLSX.read(data, { type: 'array' });
+  
+  // Log available sheets for debugging
+  console.log("Available sheets (fetch method):", workbook.SheetNames);
+  
+  // Try to get sheet 3 (index 2)
+  const sheetIndex = 2; // Sheet 3 (0-indexed)
+  
+  if (workbook.SheetNames.length <= sheetIndex) {
+    throw new Error(`Sheet 3 not found in workbook. Available sheets: ${workbook.SheetNames.join(', ')}`);
+  }
+  
+  const sheetName = workbook.SheetNames[sheetIndex];
+  console.log(`Processing sheet (fetch method): ${sheetName}`);
+  
+  const worksheet = workbook.Sheets[sheetName];
+  
+  // Convert to JSON
+  const jsonData = XLSX.utils.sheet_to_json(worksheet);
+  console.log(`Successfully loaded ${jsonData.length} rows from Excel file`);
+  
+  // Process the data
+  const processedData = processWShapeData(jsonData);
+  console.log(`Processed ${Object.keys(processedData).length} W-shapes (fetch method)`);
+  
+  // Store in the global variable
+  window.wShapeDatabase = processedData;
+  
+  return processedData;
+}
+
+// Initialize database and UI elements
+async function initializeDatabase() {
+  try {
+    // Clear any previous results
+    const resultsElement = document.getElementById('results');
+    if (resultsElement) {
+      resultsElement.innerHTML = '<p>Loading W-shape database...</p>';
+    }
+    
+    // Load the database
+    const database = await getWShapeDatabase();
+    
+    // Ensure the database is stored in the global scope
+    window.wShapeDatabase = database;
+    
+    // Print some debug info about what shapes we have
+    console.log("Database loaded with", Object.keys(database).length, "shapes");
+    console.log("Sample shapes:", Object.keys(database).slice(0, 5));
+    
+    // Update UI
+    if (resultsElement) {
+      resultsElement.innerHTML = 
+        `<p>W-shape database loaded successfully! ${Object.keys(database).length} shapes available.</p>
+         <p>Available shapes: ${Object.keys(database).slice(0, 5).join(', ')}...</p>`;
+    }
+    
+    // Show search container if it exists
+    const searchContainer = document.getElementById('search-container');
+    if (searchContainer) {
+      searchContainer.style.display = 'block';
+    }
+    
+    return database;
+  } catch (error) {
+    // Handle errors
+    const resultsElement = document.getElementById('results');
+    if (resultsElement) {
+      resultsElement.innerHTML = 
+        `<p style="color: red;">Error loading database: ${error.message}</p>
+         <p>Using hardcoded data with limited W-shapes.</p>`;
+    }
+    console.error('Database initialization failed:', error);
+    
+    // Fall back to hardcoded data
+    const hardcodedData = getHardcodedData();
+    window.wShapeDatabase = hardcodedData;
+    return hardcodedData;
+  }
+}
+
+// Function to check if the database is loaded
+function isDatabaseLoaded() {
+  return window.wShapeDatabase && Object.keys(window.wShapeDatabase).length > 0;
+}
+
+// Function to get a specific shape from the database
+function getShapeData(shapeName) {
+  if (!window.wShapeDatabase) {
+    console.warn("W-shape database not loaded yet");
+    return null;
+  }
+  
+  // Normalize the shape name
+  const normalizedShape = shapeName.toString().toUpperCase().replace(/\s/g, '');
+  
+  // Try direct lookup
+  if (window.wShapeDatabase[normalizedShape]) {
+    return window.wShapeDatabase[normalizedShape];
+  }
+  
+  // Try alternative formats
+  const alternatives = [
+    normalizedShape.replace('X', 'x'),          // Try with lowercase x
+    normalizedShape.replace('x', 'X'),          // Try with uppercase X
+    `W${normalizedShape.replace(/^W/i, '')}`,   // Ensure W prefix
+  ];
+  
+  for (const alt of alternatives) {
+    if (window.wShapeDatabase[alt]) {
+      return window.wShapeDatabase[alt];
+    }
+  }
+  
+  console.warn(`Shape ${shapeName} not found in database`);
+  return null;
+}
+
+// Make sure to initialize the database when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+  console.log("DOM Content Loaded, initializing W-Shape database");
+  initializeDatabase();
+});
+
+// Also try again when the window is fully loaded
+window.addEventListener('load', () => {
+  if (!isDatabaseLoaded()) {
+    console.log("Window loaded, database not initialized yet, trying again");
+    initializeDatabase();
+  }
+});
+
+// Export functions to global scope for access from other scripts
+window.getWShapeDatabase = getWShapeDatabase;
+window.initializeDatabase = initializeDatabase;
+window.getShapeData = getShapeData;
+window.isDatabaseLoaded = isDatabaseLoaded;
+
+
+
+
+
+// Call this function both on DOMContentLoaded and window load
+document.addEventListener('DOMContentLoaded', addDirectClickHandler);
+window.addEventListener('load', addDirectClickHandler);
+
+
+// Add this improved event listener setup after the existing event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("Setting up improved event listeners for ShearBending button");
+    
+    // Add multiple strategies to ensure the button event works
+    setTimeout(function() {
+        const designButton = document.getElementById('ShearBending');
+        if (designButton) {
+            console.log("Found ShearBending button with delay, attaching event");
+            
+            // Add multiple event listeners to ensure at least one works
+            designButton.addEventListener('click', function(e) {
+                console.log("ShearBending button clicked");
+                calculateBeamDesign();
+            });
+            
+            // Also set the onclick property directly
+            designButton.onclick = function() {
+                console.log("ShearBending button clicked (via onclick)");
+                calculateBeamDesign();
+            };
+        }
+    }, 1000); // Delay to ensure DOM is fully loaded
+});
+
+
+// Function to calculate beam design when button is clicked
+function calculateBeamDesign() {
+    console.log("Running beam design calculation...");
+    
+    // Get the results container
+    const resultsContainer = document.getElementById('ResultShaer');
+    if (!resultsContainer) {
+        console.error("Results container not found!");
+        return;
+    }
+    
+    // Show loading message
+    resultsContainer.innerHTML = '<p>Calculating beam design...</p>';
+    
+    // Get user inputs
+    const steelSpec = document.getElementById('ASTMinputS').value;
+    const designMethod = document.getElementById('DesignMethod').value;
+    const deadLoad = parseFloat(document.getElementById('DeadLoad').value) || 0;
+    const liveLoad = parseFloat(document.getElementById('LiveLoad').value) || 0;
+    const beamLength = parseFloat(document.getElementById('Lenght').value) || 0;
+    
+    // Validate inputs
+    if (beamLength <= 0) {
+        resultsContainer.innerHTML = '<p style="color: red;">Error: Please enter a valid beam length.</p>';
+        return;
+    }
+    
+    if (deadLoad <= 0 && liveLoad <= 0) {
+        resultsContainer.innerHTML = '<p style="color: red;">Error: Please enter at least one load value.</p>';
+        return;
+    }
+    
+    // Get steel properties
+    let steelData;
+    if (window.steelSpecs && window.steelSpecs.length > 0) {
+        steelData = window.steelSpecs.find(spec => spec.Steel_name === steelSpec);
+    }
+
+    if (!steelData) {
+        // Fallback steel data
+        steelData = {
+            Steel_name: steelSpec,
+            Fy: steelSpec === "A36" ? 36 : 50, // Default to 50 ksi for other steels
+            Fu: steelSpec === "A36" ? 58 : 65  // Default values
+        };
+    }
+    
+    console.log("Steel data:", steelData);
+    
+    // Constants
+    const E = 29000; // Steel modulus of elasticity (ksi)
+    const Kv = 5;    // Web shear coefficient for unstiffened webs
+    
+    // Compute load combinations based on design method
+    let Wu, phiF, omegaF;
+    if (designMethod === "LRFD") {
+        Wu = 1.2 * deadLoad + 1.6 * liveLoad;
+        phiF = 0.9;    // Phi factor for flexure
+        phiBending = 0.9;
+        phiShear = 1.0;
+        omegaF = 1.0;   // Not used in LRFD
+    } else { // ASD
+        Wu = 1.0 * deadLoad + 1.0 * liveLoad;
+        phiF = 1.0;    // Not used in ASD
+        phiBending = 1.0;
+        phiShear = 1.0;
+        omegaF = 1.67; // Omega factor for ASD
+    }
+    
+    // Calculate bending moment and shear force
+    const Mu = (Wu * Math.pow(beamLength, 2)) / 8;  // kip-ft
+    const Vu = (Wu * beamLength) / 2;               // kips
+    
+    // Calculate required Zx and Aw
+    const MuInchKips = Mu * 12; // Convert kip-ft to kip-in
+    
+    let ZxRequired;
+    if (designMethod === "LRFD") {
+        ZxRequired = MuInchKips / (phiBending * steelData.Fy);
+    } else { // ASD
+        ZxRequired = MuInchKips * omegaF / steelData.Fy;
+    }
+    
+    // Calculate required Aw (web area)
+    let AwRequired;
+    if (designMethod === "LRFD") {
+        AwRequired = Vu / (phiShear * 0.6 * steelData.Fy);
+    } else { // ASD
+        AwRequired = Vu * omegaF / (0.6 * steelData.Fy);
+    }
+    
+    // Create our own W-shape database with only W8, W10, W12, W14
+    // Using only the last digits of the shape number as the weight
+    const createCustomWShapes = () => {
+        // Generate shapes for W8, W10, W12, W14 with weights from 10 to 100 lb/ft in steps of 5
+        const shapes = [];
+        const depthValues = [8, 10, 12, 14];
+        
+        depthValues.forEach(depth => {
+            for (let weight = 10; weight <= 100; weight += 5) {
+                // Create shape properties based on typical proportions
+                // These are approximations
+                const tw = 0.25 + (weight / 200); // Web thickness increases with weight
+                const tf = 0.35 + (weight / 150); // Flange thickness increases with weight
+                const bf = depth * 0.5 + (weight / 50); // Flange width increases with weight
+                
+                // Estimate section properties
+                const d = depth - 0.1; // Nominal depth
+                const h = d - 2 * tf;  // Clear height of web
+                
+                // Estimate plastic section modulus based on weight and depth
+                // This is a simplified approximation
+                const Zx = (depth * weight) / 3;
+                
+                shapes.push({
+                    shape: `W${depth}x${weight}`,
+                    weight_per_foot: weight,
+                    depth: d,
+                    web_thickness: tw,
+                    flange_thickness: tf,
+                    flange_width: bf,
+                    plastic_section_modulus: Zx
+                });
+            }
+        });
+        
+        return shapes;
+    };
+    
+    // Generate our custom W-shape database
+    const wShapes = createCustomWShapes();
+    
+    // Main design processing function
+    processDesign(wShapes);
+    
+    function processDesign(shapes) {
+        console.log("Processing design with", shapes.length, "custom shapes");
+        
+        // Find eligible shapes based on BOTH Zx required AND web area requirements
+        const eligibleShapes = shapes.filter(shape => {
+            const webArea = shape.depth * shape.web_thickness;
+            return shape.plastic_section_modulus >= ZxRequired && webArea > AwRequired;
+        });
+        
+        // Sort by weight for efficiency
+        eligibleShapes.sort((a, b) => a.weight_per_foot - b.weight_per_foot);
+        
+        console.log(`Found ${eligibleShapes.length} eligible shapes based on Zx and Aw requirements`);
+        if (eligibleShapes.length > 0) {
+            console.log("Top 5 lightest eligible shapes:", eligibleShapes.slice(0, 5).map(s => s.shape));
+        } else {
+            console.log("No eligible shapes found based on Zx and Aw requirements");
+        }
+        
+        // Initialize arrays to store results
+        const validShapes = [];
+        const checkResults = [];
+        
+        // Process each eligible shape to check shear capacity
+        for (const shape of eligibleShapes) {
+            // Extract shape properties
+            const d = shape.depth; // in
+            const tw = shape.web_thickness; // in
+            const bf = shape.flange_width; // in
+            const tf = shape.flange_thickness; // in
+            const h = d - 2 * tf; // Clear height of web
+            const Aw = d * tw; // Web area
+            const beamWeight = shape.weight_per_foot / 1000; // Convert lbs/ft to kips/ft
+            
+            // Recalculate loads including beam weight
+            let WuWithBeamWeight;
+            if (designMethod === "LRFD") {
+                WuWithBeamWeight = 1.2 * (deadLoad + beamWeight) + 1.6 * liveLoad;
+            } else { // ASD
+                WuWithBeamWeight = 1.0 * (deadLoad + beamWeight) + 1.0 * liveLoad;
+            }
+            
+            // Recalculate demand
+            const MuWithBeamWeight = (WuWithBeamWeight * Math.pow(beamLength, 2)) / 8;  // kip-ft
+            const VuWithBeamWeight = (WuWithBeamWeight * beamLength) / 2;               // kips
+            const MuWithBeamWeightInchKips = MuWithBeamWeight * 12; // Convert kip-ft to kip-in
+            
+            // Calculate web slenderness ratio (h/tw)
+            const hTwRatio = h / tw;
+            
+            // Calculate limiting slenderness values
+            const limit1 = 2.24 * Math.sqrt(E / steelData.Fy);
+            const limit2 = 1.10 * Math.sqrt(E / steelData.Fy);
+            const limit3 = 1.37 * Math.sqrt(Kv * E / steelData.Fy);
+            
+            // Calculate shear coefficient Cv based on slenderness
+            let Cv, phiV;
+            if (hTwRatio <= limit1) {
+                Cv = 1.0;
+                phiV = designMethod === "LRFD" ? 1.0 : 1.5;
+            } else if (hTwRatio <= limit3) {
+                Cv = limit2 / hTwRatio;
+                phiV = designMethod === "LRFD" ? 1.0 : 1.5;
+            } else {
+                Cv = (1.51 * E * Kv) / (Math.pow(hTwRatio, 2) * steelData.Fy);
+                phiV = designMethod === "LRFD" ? 0.9 : 1.67;
+            }
+            
+            // Calculate shear capacity
+            let VnCapacity;
+            if (designMethod === "LRFD") {
+                VnCapacity = phiV * 0.6 * steelData.Fy * Aw * Cv;
+            } else { // ASD
+                VnCapacity = (0.6 * steelData.Fy * Aw * Cv) / phiV;
+            }
+            
+            // Calculate flexural capacity
+            let MnCapacity;
+            if (designMethod === "LRFD") {
+                MnCapacity = phiBending * shape.plastic_section_modulus * steelData.Fy / 12; // kip-ft
+            } else { // ASD
+                MnCapacity = (shape.plastic_section_modulus * steelData.Fy) / (12 * omegaF); // kip-ft
+            }
+            
+            // Recalculate required web area with beam weight
+            let AwRequiredWithBeamWeight;
+            if (designMethod === "LRFD") {
+                AwRequiredWithBeamWeight = VuWithBeamWeight / (phiShear * 0.6 * steelData.Fy);
+            } else { // ASD
+                AwRequiredWithBeamWeight = VuWithBeamWeight * omegaF / (0.6 * steelData.Fy);
+            }
+            
+            // Check if shape is adequate for both shear and flexure
+            const isAwOK = Aw > AwRequiredWithBeamWeight;
+            const isShearOK = VnCapacity >= VuWithBeamWeight;
+            const isFlexureOK = MnCapacity >= MuWithBeamWeight;
+            const isAdequate = isAwOK && isShearOK && isFlexureOK;
+            
+            if (isAdequate) {
+                validShapes.push(shape);
+            }
+            
+            // Store detailed check results for reporting
+            checkResults.push({
+                shape: shape.shape,
+                weight: shape.weight_per_foot,
+                Zx: shape.plastic_section_modulus,
+                depth: d,
+                webThickness: tw,
+                webArea: Aw,
+                AwRequired: AwRequiredWithBeamWeight,
+                isAwOK: isAwOK,
+                hTwRatio: hTwRatio,
+                Cv: Cv,
+                VnCapacity: VnCapacity,
+                MnCapacity: MnCapacity,
+                VuDemand: VuWithBeamWeight,
+                MuDemand: MuWithBeamWeight,
+                isShearOK: isShearOK,
+                isFlexureOK: isFlexureOK,
+                isAdequate: isAdequate
+            });
+        }
+        
+        // Sort valid shapes by weight
+        validShapes.sort((a, b) => a.weight_per_foot - b.weight_per_foot);
+        
+        // Generate result HTML
+        let resultHTML = `
+            <h2>Beam Design Results (${designMethod})</h2>
+            <div class="result-section">
+                <h3>Input Summary</h3>
+                <ul>
+                    <li>Steel Specification: ${steelData.Steel_name} (Fy = ${steelData.Fy} ksi, Fu = ${steelData.Fu} ksi)</li>
+                    <li>Dead Load: ${deadLoad.toFixed(3)} kips/ft</li>
+                    <li>Live Load: ${liveLoad.toFixed(3)} kips/ft</li>
+                    <li>Beam Length: ${beamLength.toFixed(2)} ft</li>
+                    <li>Design Method: ${designMethod}</li>
+                </ul>
+            </div>
+            
+            <div class="result-section">
+                <h3>Initial Load Combination</h3>
+                <p><strong>Load Combination:</strong> ${designMethod === "LRFD" ? "1.2D + 1.6L" : "1.0D + 1.0L"}</p>
+                <p><strong>Wu =</strong> ${Wu.toFixed(3)} kips/ft</p>
+                <p><strong>Mu =</strong> Wu·L²/8 = (${Wu.toFixed(3)} × ${beamLength.toFixed(2)}²)/8 = ${Mu.toFixed(2)} kip-ft</p>
+                <p><strong>Vu =</strong> Wu·L/2 = (${Wu.toFixed(3)} × ${beamLength.toFixed(2)})/2 = ${Vu.toFixed(2)} kips</p>
+            </div>
+            
+            <div class="result-section">
+                <h3>Required Section Properties</h3>
+                <p><strong>Required Zx =</strong> ${designMethod === "LRFD" ? 
+                    `Mu/(φ·Fy) = (${Mu.toFixed(2)} × 12)/(${phiBending} × ${steelData.Fy}) = ${ZxRequired.toFixed(2)} in³` : 
+                    `(Mu × Ω)/Fy = (${Mu.toFixed(2)} × 12 × ${omegaF})/${steelData.Fy} = ${ZxRequired.toFixed(2)} in³`}</p>
+                <p><strong>Required Aw =</strong> ${designMethod === "LRFD" ? 
+                    `Vu/(φ·0.6·Fy) = ${Vu.toFixed(2)}/(${phiShear} × 0.6 × ${steelData.Fy}) = ${AwRequired.toFixed(2)} in²` : 
+                    `(Vu × Ω)/(0.6·Fy) = (${Vu.toFixed(2)} × ${omegaF})/(0.6 × ${steelData.Fy}) = ${AwRequired.toFixed(2)} in²`}</p>
+            </div>
+        `;
+        
+        // Add shape checking results
+        if (checkResults.length > 0) {
+            resultHTML += `
+                <div class="result-section">
+                    <h3>Shape Analysis Results</h3>
+                    <p>Using only W8, W10, W12, W14 shapes with weights based on shape designation</p>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                        <tr style="background-color: #f2f2f2;">
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Shape</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Weight (lbs/ft)</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Zx (in³)</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">tw (in)</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Aw (in²)</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Aw Check</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Shear</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Flexure</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Result</th>
+                        </tr>
+            `;
+            
+            // Sort results by adequacy first, then by weight
+            checkResults.sort((a, b) => {
+                if (a.isAdequate !== b.isAdequate) return b.isAdequate - a.isAdequate;
+                return a.weight - b.weight;
+            });
+            
+            // Limit to top 10 results
+            const displayResults = checkResults.slice(0, 10);
+            
+            displayResults.forEach(result => {
+                resultHTML += `
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${result.shape}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${result.weight.toFixed(1)}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${result.Zx.toFixed(1)}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${result.webThickness.toFixed(3)}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${result.webArea.toFixed(3)}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; color: ${result.isAwOK ? 'green' : 'red'};">
+                            ${result.webArea.toFixed(3)} in² ${result.isAwOK ? '>' : '≤'} ${result.AwRequired.toFixed(3)} in²
+                        </td>
+                        <td style="border: 1px solid #ddd; padding: 8px; color: ${result.isShearOK ? 'green' : 'red'};">
+                            ${result.VnCapacity.toFixed(1)} kips ${result.isShearOK ? '≥' : '<'} ${result.VuDemand.toFixed(1)} kips
+                        </td>
+                        <td style="border: 1px solid #ddd; padding: 8px; color: ${result.isFlexureOK ? 'green' : 'red'};">
+                            ${result.MnCapacity.toFixed(1)} kip-ft ${result.isFlexureOK ? '≥' : '<'} ${result.MuDemand.toFixed(1)} kip-ft
+                        </td>
+                        <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold; color: ${result.isAdequate ? 'green' : 'red'};">
+                            ${result.isAdequate ? 'SAFE' : 'UNSAFE'}
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            resultHTML += `
+                    </table>
+                </div>
+            `;
+        }
+        
+        // Recommended shape section
+        if (validShapes.length > 0) {
+            const bestShape = validShapes[0]; // Lightest adequate shape
+            
+            // Recalculate with beam weight for the best shape
+            const beamWeight = bestShape.weight_per_foot / 1000; // Convert lbs/ft to kips/ft
+            
+            // Recalculate loads including beam weight
+            let WuWithBeamWeight;
+            if (designMethod === "LRFD") {
+                WuWithBeamWeight = 1.2 * (deadLoad + beamWeight) + 1.6 * liveLoad;
+            } else { // ASD
+                WuWithBeamWeight = 1.0 * (deadLoad + beamWeight) + 1.0 * liveLoad;
+            }
+            
+            // Recalculate demand
+            const MuWithBeamWeight = (WuWithBeamWeight * Math.pow(beamLength, 2)) / 8;  // kip-ft
+            const VuWithBeamWeight = (WuWithBeamWeight * beamLength) / 2;               // kips
+            
+            // Extract detailed properties for best shape
+            const d = bestShape.depth; // in
+            const tw = bestShape.web_thickness; // in
+            const tf = bestShape.flange_thickness; // in
+            const h = d - 2 * tf; // Clear height of web
+            const hTwRatio = h / tw;
+            const Aw = d * tw; // Web area
+            
+            // Recalculate required web area with beam weight
+            let AwRequiredWithBeamWeight;
+            if (designMethod === "LRFD") {
+                AwRequiredWithBeamWeight = VuWithBeamWeight / (phiShear * 0.6 * steelData.Fy);
+            } else { // ASD
+                AwRequiredWithBeamWeight = VuWithBeamWeight * omegaF / (0.6 * steelData.Fy);
+            }
+            
+            // Calculate limiting slenderness values
+            const limit1 = 2.24 * Math.sqrt(E / steelData.Fy);
+            const limit2 = 1.10 * Math.sqrt(E / steelData.Fy);
+            const limit3 = 1.37 * Math.sqrt(Kv * E / steelData.Fy);
+            
+            // Calculate shear coefficient Cv based on slenderness
+            let Cv, phiV, CvExplanation;
+            if (hTwRatio <= limit1) {
+                Cv = 1.0;
+                phiV = designMethod === "LRFD" ? 1.0 : 1.5;
+                CvExplanation = `h/tw ≤ 2.24√(E/Fy) → ${hTwRatio.toFixed(2)} ≤ ${limit1.toFixed(2)} → Cv = 1.0`;
+            } else if (hTwRatio <= limit3) {
+                Cv = limit2 / hTwRatio;
+                phiV = designMethod === "LRFD" ? 1.0 : 1.5;
+                CvExplanation = `2.24√(E/Fy) < h/tw ≤ 1.37√(Kv·E/Fy) → ${limit1.toFixed(2)} < ${hTwRatio.toFixed(2)} ≤ ${limit3.toFixed(2)} → Cv = ${limit2.toFixed(2)}/(h/tw) = ${Cv.toFixed(3)}`;
+            } else {
+                Cv = (1.51 * E * Kv) / (Math.pow(hTwRatio, 2) * steelData.Fy);
+                phiV = designMethod === "LRFD" ? 0.9 : 1.67;
+                CvExplanation = `h/tw > 1.37√(Kv·E/Fy) → ${hTwRatio.toFixed(2)} > ${limit3.toFixed(2)} → Cv = 1.51·E·Kv/((h/tw)²·Fy) = ${Cv.toFixed(3)}`;
+            }
+            
+            // Calculate capacities with phi factors
+            let VnCapacity, MnCapacity;
+            if (designMethod === "LRFD") {
+                VnCapacity = phiV * 0.6 * steelData.Fy * Aw * Cv;
+                MnCapacity = phiBending * bestShape.plastic_section_modulus * steelData.Fy / 12; // kip-ft
+            } else { // ASD
+                VnCapacity = (0.6 * steelData.Fy * Aw * Cv) / phiV;
+                MnCapacity = (bestShape.plastic_section_modulus * steelData.Fy) / (12 * omegaF); // kip-ft
+            }
+            
+            resultHTML += `
+                <div class="result-section">
+                    <h3>Recommended Shape: ${bestShape.shape}</h3>
+                    <h4>Shape Properties</h4>
+                    <ul>
+                        <li>Weight: ${bestShape.weight_per_foot.toFixed(1)} lbs/ft</li>
+                        <li>Depth (d): ${d.toFixed(3)} in</li>
+                        <li>Web thickness (tw): ${tw.toFixed(3)} in</li>
+                        <li>Web area (Aw): ${Aw.toFixed(3)} in²</li>
+                        <li>Web slenderness (h/tw): ${hTwRatio.toFixed(2)}</li>
+                        <li>Plastic section modulus (Zx): ${bestShape.plastic_section_modulus.toFixed(1)} in³</li>
+                    </ul>
+                    
+                    <h4>Load Combination with Beam Self-Weight</h4>
+                    <p>Beam weight = ${beamWeight.toFixed(3)} kips/ft</p>
+                    <p>Total factored load (Wu) = ${WuWithBeamWeight.toFixed(3)} kips/ft</p>
+                    <p>Updated Mu = ${MuWithBeamWeight.toFixed(2)} kip-ft</p>
+                    <p>Updated Vu = ${VuWithBeamWeight.toFixed(2)} kips</p>
+                    <p>Updated required web area (Aw) = ${AwRequiredWithBeamWeight.toFixed(3)} in²</p>
+                    
+                    <h4>Web Area Check</h4>
+                    <p>Provided web area (Aw) = d·tw = ${d.toFixed(3)} × ${tw.toFixed(3)} = ${Aw.toFixed(3)} in²</p>
+                    <p>Required web area = ${AwRequiredWithBeamWeight.toFixed(3)} in²</p>
+                    <p>Aw = ${Aw.toFixed(3)} in² ${Aw > AwRequiredWithBeamWeight ? '>' : '≤'} Aw required = ${AwRequiredWithBeamWeight.toFixed(3)} in² <span style="color: ${Aw > AwRequiredWithBeamWeight ? 'green' : 'red'}; font-weight: bold;">→ ${Aw > AwRequiredWithBeamWeight ? 'ADEQUATE' : 'INADEQUATE'} web area</span></p>
+                    
+                    <h4>Shear Capacity Calculation</h4>
+                    <p>${CvExplanation}</p>
+                    <p>
+                        ${designMethod === "LRFD" ? 
+                            `Vn = φv·0.6·Fy·Aw·Cv = ${phiV} × 0.6 × ${steelData.Fy} × ${Aw.toFixed(3)} × ${Cv.toFixed(3)} = ${VnCapacity.toFixed(2)} kips` : 
+                            `Vn = (0.6·Fy·Aw·Cv)/Ωv = (0.6 × ${steelData.Fy} × ${Aw.toFixed(3)} × ${Cv.toFixed(3)})/${phiV} = ${VnCapacity.toFixed(2)} kips`}
+                    </p>
+                    <p>Vu = ${VuWithBeamWeight.toFixed(2)} kips ${VnCapacity >= VuWithBeamWeight ? '≤' : '>'} Vn = ${VnCapacity.toFixed(2)} kips <span style="color: ${VnCapacity >= VuWithBeamWeight ? 'green' : 'red'}; font-weight: bold;">→ ${VnCapacity >= VuWithBeamWeight ? 'SAFE' : 'UNSAFE'} for shear</span></p>
+                    
+                    <h4>Flexural Capacity Calculation</h4>
+                    <p>
+                        ${designMethod === "LRFD" ? 
+                            `Mn = φb·Zx·Fy/12 = ${phiBending} × ${bestShape.plastic_section_modulus.toFixed(1)} × ${steelData.Fy}/12 = ${MnCapacity.toFixed(2)} kip-ft` : 
+                            `Mn = (Zx·Fy)/(12·Ωb) = (${bestShape.plastic_section_modulus.toFixed(1)} × ${steelData.Fy})/(12 × ${omegaF}) = ${MnCapacity.toFixed(2)} kip-ft`}
+                    </p>
+                    <p>Mu = ${MuWithBeamWeight.toFixed(2)} kip-ft ${MnCapacity >= MuWithBeamWeight ? '≤' : '>'} Mn = ${MnCapacity.toFixed(2)} kip-ft <span style="color: ${MnCapacity >= MuWithBeamWeight ? 'green' : 'red'}; font-weight: bold;">→ ${MnCapacity >= MuWithBeamWeight ? 'SAFE' : 'UNSAFE'} for flexure</span></p>
+                    
+                    <h4>Final Verification</h4>
+                    <p style="font-size: 1.1em; font-weight: bold; color: green;">
+                        ${bestShape.shape} IS ADEQUATE FOR WEB AREA, SHEAR AND FLEXURE
+                    </p>
+                </div>
+            `;
+        } else {
+            resultHTML += `
+                <div class="result-section" style="background-color: #ffeeee; padding: 10px; border-radius: 5px;">
+                    <h3 style="color: red;">No Adequate Shapes Found</h3>
+                    <p>None of the analyzed shapes meet both shear and flexural requirements.</p>
+                    <p>Recommendations:</p>
+                    <ul>
+                        <li>Consider using a deeper section</li>
+                        <li>Reduce the span length if possible</li>
+                        <li>Add intermediate supports to reduce moments and shears</li>
+                    </ul>
+                </div>
+            `;
+        }
+        
+        // Add some styling
+        resultHTML = `
+            <style>
+                .result-section {
+                    margin-bottom: 20px;
+                    padding: 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    background-color: #f9f9f9;
+                }
+                .result-section h3 {
+                    margin-top: 0;
+                    color: #333;
+                    border-bottom: 1px solid #ccc;
+                    padding-bottom: 8px;
+                }
+                .result-section ul {
+                    margin-left: 20px;
+                }
+                @media print {
+                    .result-section {
+                        break-inside: avoid;
+                    }
+                }
+            </style>
+            ${resultHTML}
+        `;
+        
+        // Update results container
+        resultsContainer.innerHTML = resultHTML;
+    }
+}
+
+// Add direct click handler for button
+function addDirectClickHandler() {
+    const designButton = document.getElementById('ShearBending');
+    if (designButton) {
+        console.log("Found ShearBending button, adding direct click handler");
+        designButton.onclick = calculateBeamDesign;
+    }
+}
+
+// Add event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM Content Loaded, setting up event listeners");
+    addDirectClickHandler();
+    
+    // Also try with window load and with delay
+    window.addEventListener('load', addDirectClickHandler);
+    
+    setTimeout(addDirectClickHandler, 1000);
+});
+
 
 </script>
 </body>
