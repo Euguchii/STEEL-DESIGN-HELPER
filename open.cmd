@@ -1,30 +1,20 @@
 @echo off
-echo Starting local web server to host files...
+echo Starting setup for local web server...
 
 REM Check if Python is installed for running a simple HTTP server
 where python >nul 2>nul
 if %ERRORLEVEL% EQU 0 (
-    echo Using Python to create a local web server...
-    echo Access your application at: http://localhost:8000
-    echo Press Ctrl+C to stop the server when done.
-    echo.
-    start "" http://localhost:8000
-    python -m http.server 8000
-    goto :end
+    echo Python is already installed.
+    goto runserver
 )
 
 where python3 >nul 2>nul
 if %ERRORLEVEL% EQU 0 (
-    echo Using Python3 to create a local web server...
-    echo Access your application at: http://localhost:8000
-    echo Press Ctrl+C to stop the server when done.
-    echo.
-    start "" http://localhost:8000
-    python3 -m http.server 8000
-    goto :end
+    echo Python3 is already installed.
+    goto runserver
 )
 
-REM If Python is not available, install it automatically
+REM Python is not available, install it automatically
 echo Python is not installed or not found in PATH.
 echo Installing Python automatically...
 
@@ -38,28 +28,43 @@ powershell -Command "& {Invoke-WebRequest -Uri 'https://www.python.org/ftp/pytho
 
 if not exist "%temp_dir%\python_installer.exe" (
     echo Failed to download Python installer.
-    goto :fallback
+    goto fallback
 )
 
 REM Install Python (silent mode, add to PATH)
 echo Installing Python...
 "%temp_dir%\python_installer.exe" /quiet PrependPath=1
 
-REM Wait a bit for installation to complete
-timeout /t 10 /nobreak
+REM Wait for installation to complete
+echo Waiting for installation to complete...
+timeout /t 15 /nobreak
+
+REM Refresh environment variables to get the updated PATH
+echo Refreshing environment variables...
+call :refresh_env
 
 REM Check if Python is now installed
 where python >nul 2>nul
-if %ERRORLEVEL% EQU 0 (
-    echo Python successfully installed!
-    echo Using Python to create a local web server...
-    echo Access your application at: http://localhost:8000
-    echo Press Ctrl+C to stop the server when done.
-    echo.
-    start "" http://localhost:8000
-    python -m http.server 8000
-    goto :end
+if %ERRORLEVEL% NEQ 0 (
+    echo Python installation may not have completed properly.
+    goto fallback
 )
+
+echo Python successfully installed!
+
+:runserver
+echo Using Python to create a local web server...
+echo Access your application at: http://localhost:8000
+echo Press Ctrl+C to stop the server when done.
+echo.
+
+REM Start the browser after a short delay
+timeout /t 2 /nobreak >nul
+start "" http://localhost:8000
+
+REM Start the server
+python -m http.server 8000 2>nul || python3 -m http.server 8000
+goto end
 
 :fallback
 echo Python installation failed or was not completed.
@@ -92,4 +97,13 @@ if exist "%excel_file%" (
 
 :end
 echo.
+echo Press any key to exit...
 pause
+exit /b
+
+:refresh_env
+REM This subroutine refreshes environment variables
+echo Refreshing PATH variable...
+for /f "tokens=2*" %%a in ('reg query "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v PATH') do set "PATH=%%b"
+for /f "tokens=2*" %%a in ('reg query "HKCU\Environment" /v PATH 2>nul') do set "PATH=%%b;%PATH%"
+exit /b
